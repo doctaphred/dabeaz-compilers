@@ -1,0 +1,41 @@
+#!/usr/bin/env bash -euo pipefail
+IFS=$'\n\t'
+
+# Remove Python cruft from the given directory or $PWD.
+
+# `cd` with no args defaults to $HOME, but `cd <empty string>` is a
+# no-op: if no argument is given, nothing happens.
+cd "${1:-}"
+
+echo "Removing Python cruft from $PWD ..."
+
+while read pattern; do
+    find . -name "$pattern" -exec rm -vr {} +
+done <<EOF
+*.egg-info
+.hypothesis
+.mypy_cache
+.nox
+.pytest_cache
+.tox
+__pycache__
+htmlcov
+EOF
+
+while read pattern; do
+    find . -name "$pattern" -exec rm -v {} +
+done <<EOF
+*.cover
+*.egg
+*.py[cod]
+*.so
+.cache
+.coverage
+.coverage.*
+.installed.cfg
+.Python
+coverage.xml
+nosetests.xml
+EOF
+
+echo "Done"
