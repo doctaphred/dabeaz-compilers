@@ -3,7 +3,7 @@ from setuptools import find_packages, setup
 
 # Requirements for using this library in another project.
 requirements = [
-    'sly==0.3',
+    'sly>=0.3',
 ]
 
 
