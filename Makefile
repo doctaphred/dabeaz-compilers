@@ -33,8 +33,11 @@ clean: pyclean
 
 pin-requirements: venv/bin/pip-compile
 	# TODO (maybe): Figure out how to do this via make dependencies.
-	venv/bin/pip-compile requirements/base.in
-	venv/bin/pip-compile requirements/build.in
+	venv/bin/pip-compile --generate-hashes requirements/base.in
+	venv/bin/pip-compile --generate-hashes requirements/build.in
+	# ipython depends on setuptools, which is not safe to include in
+	# requirements files: so we can't generate hashes for this one, or
+	# else we'd have to install it with --allow-unsafe ಠ_ಠ
 	venv/bin/pip-compile requirements/dev.in
 
 # "Phony" targets do not reflect actual files. (It's not necessary to
