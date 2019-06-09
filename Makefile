@@ -5,25 +5,23 @@ build: venv lint test
 run: venv
 	venv/bin/python -m $(project)
 
-venv $(addprefix venv/bin/,python pip):
+venv:
 	python3 -m venv venv
 	venv/bin/pip install --upgrade pip==19.1.1  # TODO: is this fine?
+	venv/bin/pip install -r requirements/base.txt -r requirements/build.txt
 	venv/bin/pip install --editable .
 
-lint: venv/bin/flake8
+lint: venv
 	venv/bin/flake8 *.py src tests
 
-test: venv/bin/pytest
+test: venv
 	venv/bin/pytest tests
 
 shell: venv/bin/ipython
 	venv/bin/ipython -i -c 'from $(project) import *'
 
-$(addprefix venv/bin/,flake8 pytest pycodestyle pyflakes): venv
-	venv/bin/pip install --editable .[dev]
-
 dev venv/bin/%: venv
-	venv/bin/pip install ipython pdbpp pp-ez
+	venv/bin/pip install -r requirements/dev.txt
 
 pyclean:
 	bin/pyclean
@@ -31,7 +29,7 @@ pyclean:
 clean: pyclean
 	-rm -r venv
 
-pin-requirements: venv/bin/pip-compile
+pin-requirements: venv
 	# TODO (maybe): Figure out how to do this via make dependencies.
 	venv/bin/pip-compile --generate-hashes requirements/base.in
 	venv/bin/pip-compile --generate-hashes requirements/build.in

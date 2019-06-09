@@ -2,16 +2,9 @@ from setuptools import find_packages, setup
 
 
 # Requirements for using this library in another project.
-requirements = [
-    'sly>=0.3',
-]
-
-
-# Requirements for developing this project.
-requirements_dev = [
-    'flake8==3.7.7',
-    'pytest==4.6.2',
-]
+# TODO: Is it okay to open this file here?
+with open('requirements/base.in') as f:
+    requirements = [line.strip() for line in f]
 
 
 setup(
@@ -24,7 +17,4 @@ setup(
     packages=find_packages('src'),
     package_dir={'': 'src'},
     install_requires=requirements,
-    extras_require={
-        'dev': requirements_dev,
-    },
 )
