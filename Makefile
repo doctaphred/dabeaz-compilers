@@ -7,7 +7,7 @@ run: venv
 
 venv $(addprefix venv/bin/,python pip):
 	python3 -m venv venv
-	venv/bin/pip install --upgrade pip
+	venv/bin/pip install --upgrade pip==19.1.1  # TODO: is this fine?
 	venv/bin/pip install --editable .
 
 lint: venv/bin/flake8
