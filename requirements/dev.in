@@ -1,3 +1,4 @@
+# Utilities only used for local development, not in CI.
 -r build.in
 ipython>=7.5
 pdbpp>=0.10
