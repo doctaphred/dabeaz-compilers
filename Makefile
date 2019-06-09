@@ -31,6 +31,12 @@ pyclean:
 clean: pyclean
 	-rm -r venv
 
+pin-requirements: venv/bin/pip-compile
+	# TODO (maybe): Figure out how to do this via make dependencies.
+	venv/bin/pip-compile requirements/base.in
+	venv/bin/pip-compile requirements/build.in
+	venv/bin/pip-compile requirements/dev.in
+
 # "Phony" targets do not reflect actual files. (It's not necessary to
 # list them here unless they clash with actual file paths.)
-.PHONY: build run lint test shell dev pyclean clean
+.PHONY: build run lint test shell dev pyclean clean pin-requirements

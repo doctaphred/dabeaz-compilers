@@ -1,0 +1,4 @@
+-r build.in
+ipython>=7.5
+pdbpp>=0.10
+pp-ez>=0.2

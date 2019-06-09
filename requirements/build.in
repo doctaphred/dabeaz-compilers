@@ -1,0 +1,4 @@
+-r base.in
+flake8>=3.7
+pip-tools>=3.8
+pytest>-4.6
