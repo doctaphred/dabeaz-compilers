@@ -1,10 +1,13 @@
 project := compilers
 
+# Default action: run the full build.
 build: venv lint test
 
+# Run the project's main module.
 run: venv
 	venv/bin/python -m $(project)
 
+# Create a virtualenv ready to run a build.
 venv:
 	python3 -m venv venv
 	venv/bin/pip install --upgrade pip==19.1.1  # TODO: is this fine?
@@ -17,18 +20,23 @@ lint: venv
 test: venv
 	venv/bin/pytest tests
 
+# Open an IPython shell and import all top-level attributes.
 shell: venv/bin/ipython
 	venv/bin/ipython -i -c 'from $(project) import *'
 
+# If a rule depends on a specific binary, assume it's a dev requirement.
 dev venv/bin/%: venv
 	venv/bin/pip install -r requirements/dev.txt
 
+# Remove Python cruft.
 pyclean:
 	bin/pyclean
 
+# Remove the virtualenv and any Python cruft.
 clean: pyclean
 	-rm -r venv
 
+# Update all pinned requirements to their latest versions.
 pin-requirements: venv
 	# TODO (maybe): Figure out how to do this via make dependencies.
 	venv/bin/pip-compile --generate-hashes requirements/base.in
