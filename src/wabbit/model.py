@@ -162,17 +162,30 @@ class Literal(Expression):
     def __init__(self, value):
         super().__init__(value=value)
 
-    def literal(self):
+    def __str__(self):
         return repr(self.value)
+
+    def validate(self):
+        if type(self.value) != self.python_type:
+            raise TypeError(
+                f"expected {self.python_type}, got {type(self.value)}"
+            )
 
 
 class Integer(Literal):
     """
     >>> Integer(0)
     Integer(value=0)
+
+    >>> str(Integer(0))
+    '0'
+
+    >>> Integer('a')
+    Traceback (most recent call last):
+      ...
+    TypeError: expected <class 'int'>, got <class 'str'>
     """
-    def validate(self):
-        assert isinstance(self.value, int)
+    python_type = int
 
 
 class Float(Literal):
@@ -180,8 +193,7 @@ class Float(Literal):
     >>> Float(0.0)
     Float(value=0.0)
     """
-    def validate(self):
-        assert isinstance(self.value, float)
+    python_type = float
 
 
 class Bool(Literal):
@@ -189,8 +201,7 @@ class Bool(Literal):
     >>> Bool(False)
     Bool(value=False)
     """
-    def validate(self):
-        assert isinstance(self.value, bool)
+    python_type = bool
 
 
 class Character(Literal):
@@ -198,8 +209,10 @@ class Character(Literal):
     >>> Character('a')
     Character(value='a')
     """
+    python_type = str
+
     def validate(self):
-        assert isinstance(self.value, str)
+        super().validate()
         assert len(self.value) == 1
 
 
