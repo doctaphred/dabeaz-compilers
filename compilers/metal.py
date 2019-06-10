@@ -111,8 +111,15 @@ if __name__ == '__main__':
 
     prog2 = [ # Instructions here
               # ...
-              ('CONST', 2187, 'R1'),
-              ('STORE', 'R1', 'R7', 0),
+              ('CONST', 1, 'R1'),
+              ('CONST', 7, 'R2'),
+              ('CONST', 3, 'R3'),
+              ('CONST', 1, 'R4'),
+              ('MUL', 'R3', 'R4', 'R4'),
+              ('SUB', 'R2', 'R1', 'R2'),
+              ('BZ', 'R2', 1),
+              ('JMP', 'R0', 4),
+              ('STORE', 'R4', 'R7', 0),
               ('HALT',),
               0           # Store result here
             ]
