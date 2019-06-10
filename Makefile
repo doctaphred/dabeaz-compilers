@@ -19,6 +19,7 @@ lint: venv
 
 test: venv
 	venv/bin/pytest tests
+	venv/bin/pytest --doctest-modules src
 
 # Open an IPython shell and import all top-level attributes.
 shell: venv/bin/ipython
