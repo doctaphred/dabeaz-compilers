@@ -131,14 +131,7 @@
 from .utils.reprs import vars_repr
 
 
-class Expression:
-
-    # TODO: global registry?
-    # def __init_subclass__(cls, **kwargs):
-    #     kind = cls.kind()
-    #     if kind in cls.kinds:
-    #         raise TypeError(f"{kind} is already {cls.kinds[kind]}")
-    #     cls.kinds[kind] = cls
+class AttrValidator:
 
     def __init__(self, **kwargs):
         vars(self).update(kwargs)
@@ -149,6 +142,17 @@ class Expression:
         raise TypeError(f"{self.__class__.__name__} cannot be instantiated")
 
     __repr__ = vars_repr
+
+
+class Expression(AttrValidator):
+    pass
+
+    # TODO: global registry?
+    # def __init_subclass__(cls, **kwargs):
+    #     kind = cls.kind()
+    #     if kind in cls.kinds:
+    #         raise TypeError(f"{kind} is already {cls.kinds[kind]}")
+    #     cls.kinds[kind] = cls
 
 
 class Literal(Expression):
@@ -317,26 +321,6 @@ class Call(Expression):
         super().__init__(func=func, args=args)
 
 
-class VarDecl(Expression):
-    # 2.1 Variables.  Variables can be declared in a few different forms.
-    #
-    #    const name = value;
-    #    var name type [= value];
-    #    var name [type] = value;
-    def __init__(self, name, type):
-        super().__init__(name=name, type=type)
-
-
-class VarDef(Expression):
-    def __init__(self, name, value):
-        super().__init__(name=name, value=value)
-
-
-class VarDeclDef(Expression):
-    def __init__(self, name, type, value, const):
-        super().__init__(name=name, type=type, value=value, const=const)
-
-
 class FuncParam(Expression):
     # 2.2 Function Parameters
     #
@@ -350,28 +334,20 @@ class FuncParam(Expression):
         super().__init__(name=name, type=type)
 
 
-class FuncDef(Expression):
-    # 2.3 Function definitions.
-    #
-    #    func name(parameters) return_type { statements }
-    def __init__(self, name, params, return_type):
-        super().__init__(
-            self,
-            name=name,
-            params=params,
-            return_type=return_type,
-        )
-
-
-class Import(FuncDef):
-    # Functions can be imported from external libraries using
-    # the special statement
-    #
-    #    import func name(parms) type;
+class Statement(AttrValidator):
     pass
 
 
-class AssignVar(Expression):
+class DeclareVar(Statement):
+    # 2.1 Variables.  Variables can be declared in a few different forms.
+    #
+    #    var name type [= value];
+    #    var name [type] = value;
+    def __init__(self, name, type):
+        super().__init__(name=name, type=type)
+
+
+class AssignVar(Statement):
     # 3.1 Assignment
     #
     #     location = expression ;
@@ -379,13 +355,50 @@ class AssignVar(Expression):
         super().__init__(name=name, value=value)
 
 
-class AssignMem(Expression):
+class DeclareAssignVar(Statement):
+    #    var name type [= value];
+    #    const name = value;
+    def __init__(self, name, type, value, const):
+        super().__init__(name=name, type=type, value=value, const=const)
+
+
+class AssignMem(Statement):
     # `location = expression ;
     def __init__(self, loc: Expression, value: Expression):
         super().__init__(loc=loc, value=value)
 
 
-class Print(Expression):
+class Block:
+    def __init__(self, statements):
+        for statement in statements:
+            if not isinstance(statement, Statement):
+                raise TypeError(f"{type(statement)}: {statement}")
+        self.statements = statements
+
+
+class DefineFunc(Statement):
+    # 2.3 Function definitions.
+    #
+    #    func name(parameters) return_type { statements }
+    def __init__(self, name, params, return_type, block: Block):
+        super().__init__(
+            self,
+            name=name,
+            params=params,
+            return_type=return_type,
+            block=block,
+        )
+
+
+class ImportFunc(DefineFunc):
+    # Functions can be imported from external libraries using
+    # the special statement
+    #
+    #    import func name(parms) type;
+    pass
+
+
+class Print(Statement):
     # 3.2 Printing
     #
     #     print expression ;
@@ -393,26 +406,24 @@ class Print(Expression):
         super().__init__(value=value)
 
 
-class Conditional(Expression):
+class Conditional(Statement):
     #
     # 3.3 Conditional
     #
     #     if test { consequence} else { alternative }
-    def __init__(self, test: Expression, then, otherwise):
-        # TODO: what are `then` and `otherwise`??
+    def __init__(self, test: Expression, then: Block, otherwise: Block):
         super().__init__(test=test, then=then, otherwise=otherwise)
 
 
-class Loop(Expression):
+class Loop(Statement):
     # 3.4 Loop
     #
     #  while test { body }
-    def __init__(self, test: Expression, body):
-        # TODO: what is body??
+    def __init__(self, test: Expression, body: Block):
         super().__init__(test=test, body=body)
 
 
-class Break(Expression):
+class Break(Statement):
     # 3.5 Break and Continue
     #
     #   while test {
@@ -423,7 +434,7 @@ class Break(Expression):
         pass
 
 
-class Continue(Expression):
+class Continue(Statement):
     #   while test {
     #       ...
     #       continue;
@@ -432,7 +443,7 @@ class Continue(Expression):
         pass
 
 
-class Return(Expression):
+class Return(Statement):
     # 3.6 Function Return
     #
     #  return expression ;
