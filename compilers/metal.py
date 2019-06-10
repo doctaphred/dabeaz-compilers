@@ -111,12 +111,15 @@ if __name__ == '__main__':
 
     prog2 = [ # Instructions here
               # ...
+              ('CONST', 2187, 'R1'),
+              ('STORE', 'R1', 'R7', 0),
               ('HALT',),
               0           # Store result here
             ]
 
     machine.run(prog2)
     print('Program 2 Result:', prog2[-1], f'(Should be {2187})')
+    assert prog2[-1] == 2187, prog2
 
     # ----------------------------------------------------------------------
     # Problem 3: Abstraction
