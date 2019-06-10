@@ -1,0 +1,2348 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+    "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />
+<meta name="generator" content="AsciiDoc 8.6.10" />
+<title></title>
+<style type="text/css">
+/* Shared CSS for AsciiDoc xhtml11 and html5 backends */
+
+/* Default font. */
+body {
+  font-family: Georgia,serif;
+}
+
+/* Title font. */
+h1, h2, h3, h4, h5, h6,
+div.title, caption.title,
+thead, p.table.header,
+#toctitle,
+#author, #revnumber, #revdate, #revremark,
+#footer {
+  font-family: Arial,Helvetica,sans-serif;
+}
+
+body {
+  margin: 1em 5% 1em 5%;
+}
+
+a {
+  color: blue;
+  text-decoration: underline;
+}
+a:visited {
+  color: fuchsia;
+}
+
+em {
+  font-style: italic;
+  color: navy;
+}
+
+strong {
+  font-weight: bold;
+  color: #083194;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: #527bbd;
+  margin-top: 1.2em;
+  margin-bottom: 0.5em;
+  line-height: 1.3;
+}
+
+h1, h2, h3 {
+  border-bottom: 2px solid silver;
+}
+h2 {
+  padding-top: 0.5em;
+}
+h3 {
+  float: left;
+}
+h3 + * {
+  clear: left;
+}
+h5 {
+  font-size: 1.0em;
+}
+
+div.sectionbody {
+  margin-left: 0;
+}
+
+hr {
+  border: 1px solid silver;
+}
+
+p {
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+}
+
+ul, ol, li > p {
+  margin-top: 0;
+}
+ul > li     { color: #aaa; }
+ul > li > * { color: black; }
+
+.monospaced, code, pre {
+  font-family: "Courier New", Courier, monospace;
+  font-size: inherit;
+  color: navy;
+  padding: 0;
+  margin: 0;
+}
+pre {
+  white-space: pre-wrap;
+}
+
+#author {
+  color: #527bbd;
+  font-weight: bold;
+  font-size: 1.1em;
+}
+#email {
+}
+#revnumber, #revdate, #revremark {
+}
+
+#footer {
+  font-size: small;
+  border-top: 2px solid silver;
+  padding-top: 0.5em;
+  margin-top: 4.0em;
+}
+#footer-text {
+  float: left;
+  padding-bottom: 0.5em;
+}
+#footer-badges {
+  float: right;
+  padding-bottom: 0.5em;
+}
+
+#preamble {
+  margin-top: 1.5em;
+  margin-bottom: 1.5em;
+}
+div.imageblock, div.exampleblock, div.verseblock,
+div.quoteblock, div.literalblock, div.listingblock, div.sidebarblock,
+div.admonitionblock {
+  margin-top: 1.0em;
+  margin-bottom: 1.5em;
+}
+div.admonitionblock {
+  margin-top: 2.0em;
+  margin-bottom: 2.0em;
+  margin-right: 10%;
+  color: #606060;
+}
+
+div.content { /* Block element content. */
+  padding: 0;
+}
+
+/* Block element titles. */
+div.title, caption.title {
+  color: #527bbd;
+  font-weight: bold;
+  text-align: left;
+  margin-top: 1.0em;
+  margin-bottom: 0.5em;
+}
+div.title + * {
+  margin-top: 0;
+}
+
+td div.title:first-child {
+  margin-top: 0.0em;
+}
+div.content div.title:first-child {
+  margin-top: 0.0em;
+}
+div.content + div.title {
+  margin-top: 0.0em;
+}
+
+div.sidebarblock > div.content {
+  background: #ffffee;
+  border: 1px solid #dddddd;
+  border-left: 4px solid #f0f0f0;
+  padding: 0.5em;
+}
+
+div.listingblock > div.content {
+  border: 1px solid #dddddd;
+  border-left: 5px solid #f0f0f0;
+  background: #f8f8f8;
+  padding: 0.5em;
+}
+
+div.quoteblock, div.verseblock {
+  padding-left: 1.0em;
+  margin-left: 1.0em;
+  margin-right: 10%;
+  border-left: 5px solid #f0f0f0;
+  color: #888;
+}
+
+div.quoteblock > div.attribution {
+  padding-top: 0.5em;
+  text-align: right;
+}
+
+div.verseblock > pre.content {
+  font-family: inherit;
+  font-size: inherit;
+}
+div.verseblock > div.attribution {
+  padding-top: 0.75em;
+  text-align: left;
+}
+/* DEPRECATED: Pre version 8.2.7 verse style literal block. */
+div.verseblock + div.attribution {
+  text-align: left;
+}
+
+div.admonitionblock .icon {
+  vertical-align: top;
+  font-size: 1.1em;
+  font-weight: bold;
+  text-decoration: underline;
+  color: #527bbd;
+  padding-right: 0.5em;
+}
+div.admonitionblock td.content {
+  padding-left: 0.5em;
+  border-left: 3px solid #dddddd;
+}
+
+div.exampleblock > div.content {
+  border-left: 3px solid #dddddd;
+  padding-left: 0.5em;
+}
+
+div.imageblock div.content { padding-left: 0; }
+span.image img { border-style: none; vertical-align: text-bottom; }
+a.image:visited { color: white; }
+
+dl {
+  margin-top: 0.8em;
+  margin-bottom: 0.8em;
+}
+dt {
+  margin-top: 0.5em;
+  margin-bottom: 0;
+  font-style: normal;
+  color: navy;
+}
+dd > *:first-child {
+  margin-top: 0.1em;
+}
+
+ul, ol {
+    list-style-position: outside;
+}
+ol.arabic {
+  list-style-type: decimal;
+}
+ol.loweralpha {
+  list-style-type: lower-alpha;
+}
+ol.upperalpha {
+  list-style-type: upper-alpha;
+}
+ol.lowerroman {
+  list-style-type: lower-roman;
+}
+ol.upperroman {
+  list-style-type: upper-roman;
+}
+
+div.compact ul, div.compact ol,
+div.compact p, div.compact p,
+div.compact div, div.compact div {
+  margin-top: 0.1em;
+  margin-bottom: 0.1em;
+}
+
+tfoot {
+  font-weight: bold;
+}
+td > div.verse {
+  white-space: pre;
+}
+
+div.hdlist {
+  margin-top: 0.8em;
+  margin-bottom: 0.8em;
+}
+div.hdlist tr {
+  padding-bottom: 15px;
+}
+dt.hdlist1.strong, td.hdlist1.strong {
+  font-weight: bold;
+}
+td.hdlist1 {
+  vertical-align: top;
+  font-style: normal;
+  padding-right: 0.8em;
+  color: navy;
+}
+td.hdlist2 {
+  vertical-align: top;
+}
+div.hdlist.compact tr {
+  margin: 0;
+  padding-bottom: 0;
+}
+
+.comment {
+  background: yellow;
+}
+
+.footnote, .footnoteref {
+  font-size: 0.8em;
+}
+
+span.footnote, span.footnoteref {
+  vertical-align: super;
+}
+
+#footnotes {
+  margin: 20px 0 20px 0;
+  padding: 7px 0 0 0;
+}
+
+#footnotes div.footnote {
+  margin: 0 0 5px 0;
+}
+
+#footnotes hr {
+  border: none;
+  border-top: 1px solid silver;
+  height: 1px;
+  text-align: left;
+  margin-left: 0;
+  width: 20%;
+  min-width: 100px;
+}
+
+div.colist td {
+  padding-right: 0.5em;
+  padding-bottom: 0.3em;
+  vertical-align: top;
+}
+div.colist td img {
+  margin-top: 0.3em;
+}
+
+@media print {
+  #footer-badges { display: none; }
+}
+
+#toc {
+  margin-bottom: 2.5em;
+}
+
+#toctitle {
+  color: #527bbd;
+  font-size: 1.1em;
+  font-weight: bold;
+  margin-top: 1.0em;
+  margin-bottom: 0.1em;
+}
+
+div.toclevel0, div.toclevel1, div.toclevel2, div.toclevel3, div.toclevel4 {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+div.toclevel2 {
+  margin-left: 2em;
+  font-size: 0.9em;
+}
+div.toclevel3 {
+  margin-left: 4em;
+  font-size: 0.9em;
+}
+div.toclevel4 {
+  margin-left: 6em;
+  font-size: 0.9em;
+}
+
+span.aqua { color: aqua; }
+span.black { color: black; }
+span.blue { color: blue; }
+span.fuchsia { color: fuchsia; }
+span.gray { color: gray; }
+span.green { color: green; }
+span.lime { color: lime; }
+span.maroon { color: maroon; }
+span.navy { color: navy; }
+span.olive { color: olive; }
+span.purple { color: purple; }
+span.red { color: red; }
+span.silver { color: silver; }
+span.teal { color: teal; }
+span.white { color: white; }
+span.yellow { color: yellow; }
+
+span.aqua-background { background: aqua; }
+span.black-background { background: black; }
+span.blue-background { background: blue; }
+span.fuchsia-background { background: fuchsia; }
+span.gray-background { background: gray; }
+span.green-background { background: green; }
+span.lime-background { background: lime; }
+span.maroon-background { background: maroon; }
+span.navy-background { background: navy; }
+span.olive-background { background: olive; }
+span.purple-background { background: purple; }
+span.red-background { background: red; }
+span.silver-background { background: silver; }
+span.teal-background { background: teal; }
+span.white-background { background: white; }
+span.yellow-background { background: yellow; }
+
+span.big { font-size: 2em; }
+span.small { font-size: 0.6em; }
+
+span.underline { text-decoration: underline; }
+span.overline { text-decoration: overline; }
+span.line-through { text-decoration: line-through; }
+
+div.unbreakable { page-break-inside: avoid; }
+
+
+/*
+ * xhtml11 specific
+ *
+ * */
+
+div.tableblock {
+  margin-top: 1.0em;
+  margin-bottom: 1.5em;
+}
+div.tableblock > table {
+  border: 3px solid #527bbd;
+}
+thead, p.table.header {
+  font-weight: bold;
+  color: #527bbd;
+}
+p.table {
+  margin-top: 0;
+}
+/* Because the table frame attribute is overriden by CSS in most browsers. */
+div.tableblock > table[frame="void"] {
+  border-style: none;
+}
+div.tableblock > table[frame="hsides"] {
+  border-left-style: none;
+  border-right-style: none;
+}
+div.tableblock > table[frame="vsides"] {
+  border-top-style: none;
+  border-bottom-style: none;
+}
+
+
+/*
+ * html5 specific
+ *
+ * */
+
+table.tableblock {
+  margin-top: 1.0em;
+  margin-bottom: 1.5em;
+}
+thead, p.tableblock.header {
+  font-weight: bold;
+  color: #527bbd;
+}
+p.tableblock {
+  margin-top: 0;
+}
+table.tableblock {
+  border-width: 3px;
+  border-spacing: 0px;
+  border-style: solid;
+  border-color: #527bbd;
+  border-collapse: collapse;
+}
+th.tableblock, td.tableblock {
+  border-width: 1px;
+  padding: 4px;
+  border-style: solid;
+  border-color: #527bbd;
+}
+
+table.tableblock.frame-topbot {
+  border-left-style: hidden;
+  border-right-style: hidden;
+}
+table.tableblock.frame-sides {
+  border-top-style: hidden;
+  border-bottom-style: hidden;
+}
+table.tableblock.frame-none {
+  border-style: hidden;
+}
+
+th.tableblock.halign-left, td.tableblock.halign-left {
+  text-align: left;
+}
+th.tableblock.halign-center, td.tableblock.halign-center {
+  text-align: center;
+}
+th.tableblock.halign-right, td.tableblock.halign-right {
+  text-align: right;
+}
+
+th.tableblock.valign-top, td.tableblock.valign-top {
+  vertical-align: top;
+}
+th.tableblock.valign-middle, td.tableblock.valign-middle {
+  vertical-align: middle;
+}
+th.tableblock.valign-bottom, td.tableblock.valign-bottom {
+  vertical-align: bottom;
+}
+
+
+/*
+ * manpage specific
+ *
+ * */
+
+body.manpage h1 {
+  padding-top: 0.5em;
+  padding-bottom: 0.5em;
+  border-top: 2px solid silver;
+  border-bottom: 2px solid silver;
+}
+body.manpage h2 {
+  border-style: none;
+}
+body.manpage div.sectionbody {
+  margin-left: 3em;
+}
+
+@media print {
+  body.manpage div#toc { display: none; }
+}
+
+
+</style>
+<script type="text/javascript">
+/*<![CDATA[*/
+var asciidoc = {  // Namespace.
+
+/////////////////////////////////////////////////////////////////////
+// Table Of Contents generator
+/////////////////////////////////////////////////////////////////////
+
+/* Author: Mihai Bazon, September 2002
+ * http://students.infoiasi.ro/~mishoo
+ *
+ * Table Of Content generator
+ * Version: 0.4
+ *
+ * Feel free to use this script under the terms of the GNU General Public
+ * License, as long as you do not remove or alter this notice.
+ */
+
+ /* modified by Troy D. Hanson, September 2006. License: GPL */
+ /* modified by Stuart Rackham, 2006, 2009. License: GPL */
+
+// toclevels = 1..4.
+toc: function (toclevels) {
+
+  function getText(el) {
+    var text = "";
+    for (var i = el.firstChild; i != null; i = i.nextSibling) {
+      if (i.nodeType == 3 /* Node.TEXT_NODE */) // IE doesn't speak constants.
+        text += i.data;
+      else if (i.firstChild != null)
+        text += getText(i);
+    }
+    return text;
+  }
+
+  function TocEntry(el, text, toclevel) {
+    this.element = el;
+    this.text = text;
+    this.toclevel = toclevel;
+  }
+
+  function tocEntries(el, toclevels) {
+    var result = new Array;
+    var re = new RegExp('[hH]([1-'+(toclevels+1)+'])');
+    // Function that scans the DOM tree for header elements (the DOM2
+    // nodeIterator API would be a better technique but not supported by all
+    // browsers).
+    var iterate = function (el) {
+      for (var i = el.firstChild; i != null; i = i.nextSibling) {
+        if (i.nodeType == 1 /* Node.ELEMENT_NODE */) {
+          var mo = re.exec(i.tagName);
+          if (mo && (i.getAttribute("class") || i.getAttribute("className")) != "float") {
+            result[result.length] = new TocEntry(i, getText(i), mo[1]-1);
+          }
+          iterate(i);
+        }
+      }
+    }
+    iterate(el);
+    return result;
+  }
+
+  var toc = document.getElementById("toc");
+  if (!toc) {
+    return;
+  }
+
+  // Delete existing TOC entries in case we're reloading the TOC.
+  var tocEntriesToRemove = [];
+  var i;
+  for (i = 0; i < toc.childNodes.length; i++) {
+    var entry = toc.childNodes[i];
+    if (entry.nodeName.toLowerCase() == 'div'
+     && entry.getAttribute("class")
+     && entry.getAttribute("class").match(/^toclevel/))
+      tocEntriesToRemove.push(entry);
+  }
+  for (i = 0; i < tocEntriesToRemove.length; i++) {
+    toc.removeChild(tocEntriesToRemove[i]);
+  }
+
+  // Rebuild TOC entries.
+  var entries = tocEntries(document.getElementById("content"), toclevels);
+  for (var i = 0; i < entries.length; ++i) {
+    var entry = entries[i];
+    if (entry.element.id == "")
+      entry.element.id = "_toc_" + i;
+    var a = document.createElement("a");
+    a.href = "#" + entry.element.id;
+    a.appendChild(document.createTextNode(entry.text));
+    var div = document.createElement("div");
+    div.appendChild(a);
+    div.className = "toclevel" + entry.toclevel;
+    toc.appendChild(div);
+  }
+  if (entries.length == 0)
+    toc.parentNode.removeChild(toc);
+},
+
+
+/////////////////////////////////////////////////////////////////////
+// Footnotes generator
+/////////////////////////////////////////////////////////////////////
+
+/* Based on footnote generation code from:
+ * http://www.brandspankingnew.net/archive/2005/07/format_footnote.html
+ */
+
+footnotes: function () {
+  // Delete existing footnote entries in case we're reloading the footnodes.
+  var i;
+  var noteholder = document.getElementById("footnotes");
+  if (!noteholder) {
+    return;
+  }
+  var entriesToRemove = [];
+  for (i = 0; i < noteholder.childNodes.length; i++) {
+    var entry = noteholder.childNodes[i];
+    if (entry.nodeName.toLowerCase() == 'div' && entry.getAttribute("class") == "footnote")
+      entriesToRemove.push(entry);
+  }
+  for (i = 0; i < entriesToRemove.length; i++) {
+    noteholder.removeChild(entriesToRemove[i]);
+  }
+
+  // Rebuild footnote entries.
+  var cont = document.getElementById("content");
+  var spans = cont.getElementsByTagName("span");
+  var refs = {};
+  var n = 0;
+  for (i=0; i<spans.length; i++) {
+    if (spans[i].className == "footnote") {
+      n++;
+      var note = spans[i].getAttribute("data-note");
+      if (!note) {
+        // Use [\s\S] in place of . so multi-line matches work.
+        // Because JavaScript has no s (dotall) regex flag.
+        note = spans[i].innerHTML.match(/\s*\[([\s\S]*)]\s*/)[1];
+        spans[i].innerHTML =
+          "[<a id='_footnoteref_" + n + "' href='#_footnote_" + n +
+          "' title='View footnote' class='footnote'>" + n + "</a>]";
+        spans[i].setAttribute("data-note", note);
+      }
+      noteholder.innerHTML +=
+        "<div class='footnote' id='_footnote_" + n + "'>" +
+        "<a href='#_footnoteref_" + n + "' title='Return to text'>" +
+        n + "</a>. " + note + "</div>";
+      var id =spans[i].getAttribute("id");
+      if (id != null) refs["#"+id] = n;
+    }
+  }
+  if (n == 0)
+    noteholder.parentNode.removeChild(noteholder);
+  else {
+    // Process footnoterefs.
+    for (i=0; i<spans.length; i++) {
+      if (spans[i].className == "footnoteref") {
+        var href = spans[i].getElementsByTagName("a")[0].getAttribute("href");
+        href = href.match(/#.*/)[0];  // Because IE return full URL.
+        n = refs[href];
+        spans[i].innerHTML =
+          "[<a href='#_footnote_" + n +
+          "' title='View footnote' class='footnote'>" + n + "</a>]";
+      }
+    }
+  }
+},
+
+install: function(toclevels) {
+  var timerId;
+
+  function reinstall() {
+    asciidoc.footnotes();
+    if (toclevels) {
+      asciidoc.toc(toclevels);
+    }
+  }
+
+  function reinstallAndRemoveTimer() {
+    clearInterval(timerId);
+    reinstall();
+  }
+
+  timerId = setInterval(reinstall, 500);
+  if (document.addEventListener)
+    document.addEventListener("DOMContentLoaded", reinstallAndRemoveTimer, false);
+  else
+    window.onload = reinstallAndRemoveTimer;
+}
+
+}
+asciidoc.install();
+/*]]>*/
+</script>
+</head>
+<body class="article">
+<div id="header">
+</div>
+<div id="content">
+<div class="sect1">
+<h2 id="_the_mechanics_of_execution_an_overview_of_code_generation">The Mechanics of Execution - An Overview of Code Generation</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>This is an extended tutorial on how to generate backend code from
+intermediate code.   Don&#8217;t start this until instructed. At
+the very least, you should have intermediate code generation
+working in your compiler first.</p></div>
+<div class="paragraph"><p>With that out of the way, this document introduces
+introduces the basic mechanics of writing an interpreter, a
+transpiler, and generation of machine code using LLVM and WebAssembly.
+In general, none of this is "hard" except that there often a lot of
+fiddly bits concerning tooling and data formats.</p></div>
+<div class="paragraph"><p>For this tutorial, we&#8217;re going to consider the following code fragment:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>var x int = 4;
+var y int = 5;
+var d int = x * x + y * y;
+print d;</code></pre>
+</div></div>
+<div class="paragraph"><p>When compiled by your compiler, this should generate the following
+intermediate code:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>code = [
+   ('GLOBALI', 'x'),
+   ('CONSTI', 4),
+   ('STORE', 'x'),
+   ('GLOBALI', 'y'),
+   ('CONSTI', 5),
+   ('STORE', 'y'),
+   ('GLOBALI', 'd'),
+   ('LOAD', 'x'),
+   ('LOAD', 'x'),
+   ('MULI',),
+   ('LOAD', 'y'),
+   ('LOAD', 'y'),
+   ('MULI',),
+   ('ADDI',),
+   ('STORE', 'd'),
+   ('LOAD', 'd'),
+   ('PRINTI',)
+]</code></pre>
+</div></div>
+<div class="paragraph"><p>Copy the above <code>code</code> variable to a Python file where you can use it
+in some code examples.</p></div>
+<div class="sect2">
+<h3 id="_part_a_writing_an_interpreter">Part (a) - Writing an Interpreter</h3>
+<div class="paragraph"><p>One possible target for your compiler is to write an interpreter.  An
+interpreter directly runs the instructions on a kind of simulated
+machine. The simulated machine has memory, a stack, and a program
+counter just like a real CPU.  Define the following class and try it
+with the above code:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>class Interpreter:
+    def __init__(self):
+        self.store = { }
+        self.stack = [ ]
+        self.pc = 0
+
+    def run(self, code):
+        self.pc = 0
+        while self.pc &lt; len(code):
+            op, *opargs = code[self.pc]
+            getattr(self, f'run_{op}')(*opargs)
+            self.pc += 1
+
+    def push(self, item):
+        self.stack.append(item)
+
+    def pop(self):
+        return self.stack.pop()
+
+    def run_GLOBALI(self, name):
+        self.store[name] = None
+
+    def run_CONSTI(self, value):
+        self.push(value)
+
+    def run_STORE(self, name):
+        self.store[name] = self.pop()
+
+    def run_LOAD(self, name):
+        self.push(self.store[name])
+
+    def run_ADDI(self):
+        self.push(self.pop() + self.pop())
+
+    def run_MULI(self):
+        self.push(self.pop() * self.pop())
+
+    def run_PRINTI(self):
+        print(self.pop())
+
+# Run it!
+interp = Interpreter()
+interp.run(code)</code></pre>
+</div></div>
+<div class="paragraph"><p>Modify your interpreter by giving it a new instruction <code>SUBI</code> and
+running it on this program which should produce an output of "1":</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>code = [
+    ('CONSTI', 5),
+    ('CONSTI', 4),
+    ('SUBI',)
+    ('PRINTI',)
+]</code></pre>
+</div></div>
+<div class="paragraph"><p>Direct interpretation of simulated instructions on a simulated machine
+is how various scripting languages such as Python, Ruby, PHP, and so
+forth work.  This "simulation" is a big part of dynamic typing.  It&#8217;s
+also why these languages run substantially slower than compiled languages
+like C.</p></div>
+</div>
+<div class="sect2">
+<h3 id="_part_b_writing_a_transpiler">Part (b) - Writing a Transpiler</h3>
+<div class="paragraph"><p>Instead of directly running intermediate code, another option is to
+turn the code into source code for another programming language such
+as Python or C.  This is how early versions of C++ worked. It&#8217;s also
+the basis of modern languages such as TypeScript (transpiled to JavaScript).
+A common target of transpiling is C.   Here is a transpiler that produces
+Python:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>class Transpiler:
+    def __init__(self):
+        self.outcode = 'def main():\n'
+        self.stack = [ ]
+
+    def translate(self, code):
+        for op, *opargs in code:
+            getattr(self, f'translate_{op}')(*opargs)
+        self.outcode += '\nmain()\n'
+        return self.outcode
+
+    def push(self, item):
+        self.stack.append(item)
+
+    def pop(self):
+        return self.stack.pop()
+
+    def translate_GLOBALI(self, name):
+        pass
+
+    def translate_CONSTI(self, value):
+        self.push(repr(value))
+
+    def translate_STORE(self, name):
+        self.outcode += f'    {name} = {self.pop()}\n'
+
+    def translate_LOAD(self, name):
+        self.push(name)
+
+    def translate_ADDI(self):
+        self.push(f'({self.pop()} + {self.pop()})')
+
+    def translate_MULI(self):
+        self.push(f'({self.pop()} * {self.pop()})')
+
+    def translate_PRINTI(self):
+        self.outcode += f'    print({self.pop()})\n'
+
+trans = Transpiler()
+print(trans.translate(code))</code></pre>
+</div></div>
+<div class="paragraph"><p>In this implementation, you still maintain an internal stack to manage
+the construction of expressions (e.g., certain methods still push and pop
+things from the stack).  However, instead of actually performing an
+operation as with the interpreter, you&#8217;re now producing source code to
+perform the operation.</p></div>
+<div class="paragraph"><p>If you run the program, you should get this:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>bash % python3 transpile.py
+def main():
+    x = 4
+    y = 5
+    d = ((y * y) + (x * x))
+    print(d)
+
+main()
+bash %</code></pre>
+</div></div>
+<div class="paragraph"><p>Try redirecting the output to a file and running it:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>bash % python3 transpile.py &gt; out.py
+bash % python3 out.py
+41
+bash %</code></pre>
+</div></div>
+<div class="paragraph"><p>See if you can modify the program so that it produces C instead, creating the following
+output code:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>#include &lt;stdio.h&gt;
+int main() {
+    int x;
+    int y;
+    int d;
+    x = 4;
+    y = 5;
+    d = ((y * y) + (x * x));
+    printf("%i\n", (d));
+}</code></pre>
+</div></div>
+<div class="paragraph"><p>If you&#8217;re making a new language, transpiling is often a easy approach for getting
+things to work.  Take your language, transpile it to C, combine with a few
+library functions and you&#8217;re running.</p></div>
+</div>
+<div class="sect2">
+<h3 id="_part_c_generating_assembly_code_with_llvm">Part (c) - Generating Assembly Code with LLVM</h3>
+<div class="paragraph"><p>With transpiling, you&#8217;re taking a high-level language and producing
+output in a different high-level language.  Instead of that, you could
+compile down to a low-level machine language that is either the actual
+hardware or a very close approximation to it.  One such tool for doing
+that is LLVM.  LLVM is used in a number of major projects such as the
+clang C/C++ compiler.  It&#8217;s also used to implement various so-called
+JIT (Just in Time) compilation features.</p></div>
+<div class="paragraph"><p>LLVM is an extremely large project that can be daunting to jump into.
+However, using it in a simple manner is not so bad. To explore the
+basics, we&#8217;re going to use the <code>llvmlite</code> package.  This is available
+in the Anaconda Python distribution so if you&#8217;re using that, you
+should already have it.</p></div>
+<div class="sect3">
+<h4 id="_llvm_preliminaries">LLVM Preliminaries</h4>
+<div class="paragraph"><p>Your first task is to make sure Anaconda Python and the clang C/C++
+compiler have been installed on your machine. Please review the README
+file for the compilers project regarding installation notes.</p></div>
+</div>
+<div class="sect3">
+<h4 id="_hello_world">Hello World</h4>
+<div class="paragraph"><p>The first step in using LLVM is to make a LLVM module which contains
+all of the code you will be generating.  Create a file
+<code>hellollvm.py</code> and put this code into it:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code># hellollvm.py
+from llvmlite.ir import Module
+
+mod = Module('hello')
+print(mod)</code></pre>
+</div></div>
+<div class="paragraph"><p>Run the program and you should get some output like this:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>bash % python3 hellollvm.py
+; ModuleID = "hello"
+target triple = "unknown-unknown-unknown"
+target datalayout = ""
+
+bash %</code></pre>
+</div></div>
+<div class="paragraph"><p>The output you&#8217;re using is LLVM low-level code&#8212;a kind of architecture
+independent assembly language. At this point, it&#8217;s not too
+interesting.  However, let&#8217;s declare a function to put in the module.
+Change the program to the following to declare a function with the C
+prototype <code>int hello()</code>:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code># hellollvm.py
+
+from llvmlite.ir import (
+    Module, Function, FunctionType, IntType
+    )
+
+mod = Module('hello')
+int_type = IntType(32)
+hello_func = Function(mod, FunctionType(int_type, []), name='hello')
+print(mod)</code></pre>
+</div></div>
+<div class="paragraph"><p>Running the program, you should now get the following:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>bash % python3 hellollvm.py
+; ModuleID = "hello"
+target triple = "unknown-unknown-unknown"
+target datalayout = ""
+
+declare i32 @"hello"()
+
+bash %</code></pre>
+</div></div>
+<div class="paragraph"><p>Again, it&#8217;s not too interesting at this point.  However, you can see
+how a function declaration was placed in the module output. The LLVM
+statement <code>declare i32 @"hello"()</code> is declaring a function that
+returns a 32-bit integer and takes no arguments.</p></div>
+<div class="paragraph"><p>Let&#8217;s add some code to the function.  To do this, you first need to
+create a basic block. A basic block is a container that holds
+low-level instructions.  Add the following to the program:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code># hellollvm.py
+
+from llvmlite.ir import (
+    Module, Function, FunctionType, IntType, IRBuilder
+    )
+
+mod = Module('hello')
+int_type = IntType(32)
+hello_func = Function(mod, FunctionType(int_type, []), name='hello')
+block = hello_func.append_basic_block('entry')
+builder = IRBuilder(block)
+builder.ret(Constant(IntType(32), 37))
+print(mod)</code></pre>
+</div></div>
+<div class="paragraph"><p>Running the program should now produce this:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>; ModuleID = "hello"
+target triple = "unknown-unknown-unknown"
+target datalayout = ""
+
+define i32 @"hello"()
+{
+entry:
+  ret i32 37
+}</code></pre>
+</div></div>
+<div class="paragraph"><p>There you are---a complete LLVM function that does nothing but return
+the value 37. Now, a question arises: How do you go about getting it to run?</p></div>
+</div>
+<div class="sect3">
+<h4 id="_compilation_to_a_standalone_executable">Compilation to a Standalone Executable</h4>
+<div class="paragraph"><p>If you want to run your LLVM generated code, one approach is to feed it
+to a LLVM-based compiler such as <code>clang</code>.  Save your generated
+code to a file <code>hello.ll</code>:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>bash % python3 hellollvm.py &gt; hello.ll
+bash %</code></pre>
+</div></div>
+<div class="paragraph"><p>Now, write a short C program to bootstrap the function:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>/* main.c */
+#include &lt;stdio.h&gt;
+
+extern int hello();
+
+int main() {
+    printf("hello() returned %i\n", hello());
+}</code></pre>
+</div></div>
+<div class="paragraph"><p>Compile this program together with <code>hello.ll</code> to make an executable:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>bash % clang main.c hello.ll
+bash % ./a.out
+hello() returned 37
+bash %</code></pre>
+</div></div>
+<div class="paragraph"><p>This basic technique for invoking your code and creating stand-alone
+programs will be useful for testing and development.  You also get the
+advantage of being able to use C library functions such as
+<code>printf()</code>.  Without this, you&#8217;d have to figure out how to perform
+I/O directly using low-level LLVM instructions&#8212;which would not be
+fun.</p></div>
+</div>
+<div class="sect3">
+<h4 id="_just_in_time_compilation">Just in Time Compilation</h4>
+<div class="paragraph"><p>In our example, we are creating LLVM instructions, writing them to a
+file, and using the <code>clang</code> compiler to produce an executable.
+It&#8217;s possible that this won&#8217;t work due to the local setup on
+your machine (maybe you don&#8217;t have clang installed correctly).
+One feature of LLVM is that it can compile it&#8217;s own code to executable
+machine instructions without ever going to a file or using clang.
+You can do this entirely in Python and have Python call the resulting
+function.</p></div>
+<div class="paragraph"><p>This part is rather tricky and obscure, but add the following code to
+<code>hellollvm.py</code>:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code># hellollvm.py
+
+... keep earlier LLVM example here ...
+
+def run_jit(module):
+    import llvmlite.binding as llvm
+
+    llvm.initialize()
+    llvm.initialize_native_target()
+    llvm.initialize_native_asmprinter()
+
+    target = llvm.Target.from_default_triple()
+    target_machine = target.create_target_machine()
+    compiled_mod = llvm.parse_assembly(str(module))
+    engine = llvm.create_mcjit_compiler(compiled_mod, target_machine)
+
+    # Look up the function pointer (a Python int)
+    func_ptr = engine.get_function_address("hello")
+
+    # Turn into a Python callable using ctypes
+    from ctypes import CFUNCTYPE, c_int
+    hello = CFUNCTYPE(c_int)(func_ptr)
+
+    res = hello()
+    print('hello() returned', res)
+
+# Run it!
+run_jit(mod)</code></pre>
+</div></div>
+<div class="paragraph"><p>If you run this, you should see the program run the code, and
+produce output such as this:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>bash % python3 hellollvm.py
+hello() returned 37
+bash %</code></pre>
+</div></div>
+<div class="paragraph"><p>This version runs entirely inside an active Python interpreter process.
+If you can&#8217;t get clang to work, you can always use this as a fallback.</p></div>
+</div>
+<div class="sect3">
+<h4 id="_local_variables_and_math_operations">Local Variables and Math Operations</h4>
+<div class="paragraph"><p>To do more with LLVM, you need to use more instructions on the
+<code>builder</code> object in the example.   To declare a local variable "x",
+you use this method:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>x = builder.alloca(int_type, name="x")</code></pre>
+</div></div>
+<div class="paragraph"><p>To load and store values, you use these instructions:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>r = builder.load(x)        # Load a value from x into r
+builder.store(r, x)        # Store r into y</code></pre>
+</div></div>
+<div class="paragraph"><p>To perform arithmetic, you use instructions such as these:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>r3 = builder.add(r1, r2)   # r3 = r1 + r2
+r3 = builder.mul(r1, r2)   # r3 = r1 + r2</code></pre>
+</div></div>
+<div class="paragraph"><p>Here is an example that implements the program given at the start
+of this exercise:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code># hellollvm.py
+from llvmlite.ir import (
+    Module, Function, FunctionType, IntType,
+    Constant, IRBuilder
+    )
+
+mod = Module('hello')
+int_type = IntType(32)
+
+hello_func = Function(mod, FunctionType(int_type, []), name='hello')
+block = hello_func.append_basic_block('entry')
+builder = IRBuilder(block)
+
+x = builder.alloca(int_type, name='x')
+y = builder.alloca(int_type, name='y')
+builder.store(Constant(int_type, 4), x)
+builder.store(Constant(int_type, 5), y)
+r1 = builder.load(x)
+r2 = builder.mul(r1, r1)
+r3 = builder.load(y)
+r4 = builder.mul(r3, r3)
+r5 = builder.add(r2, r4)
+d = builder.alloca(int_type, name='d')
+builder.store(r5, d)
+builder.ret(builder.load(d))
+
+print(mod)</code></pre>
+</div></div>
+<div class="paragraph"><p>An important thing about LLVM is that it is NOT a stack machine. It is based
+on registers and Single Static Assignment (SSA).  Basically, every operation
+produces a new variable that can only be assigned once.  It also requires explicit
+load/store instructions to go between local variables and registers.  In the
+above example, you can&#8217;t do an instruction such as <code>builder.add(x, y)</code> between
+local variables.  You have to load the variables into registers first and
+perform the instruction on the registers.</p></div>
+<div class="paragraph"><p>Try compiling the above program and running you code again:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>bash % python3 hellollvm.py &gt; hello.ll
+bash % clang main.c hello.ll
+bash % ./a.out
+hello() returned 41
+bash %</code></pre>
+</div></div>
+</div>
+<div class="sect3">
+<h4 id="_functions_with_arguments">Functions with Arguments</h4>
+<div class="paragraph"><p>Let&#8217;s make a more interesting function.  This function takes two
+arguments <code>x</code> and <code>y</code> and computes the value <code>x**2 + y**2</code>.  To
+do this, we&#8217;re going to follow similar steps as above. First, declare
+the function, add a basic block, and make a new builder.  Once the
+builder is obtained, we&#8217;ll create some instructions to compute and
+return the result. Add the following code to your <code>hellollvm.py</code>
+program::</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code># hellollvm.py
+...
+
+# A user-defined function
+from llvmlite.ir import DoubleType
+
+ty_double = DoubleType()
+dsquared_func = Function(mod,
+                         FunctionType(ty_double, [ty_double, ty_double]),
+                         name='dsquared')
+block = dsquared_func.append_basic_block('entry')
+builder = IRBuilder(block)
+
+# Get the function args
+x, y = dsquared_func.args
+
+# Compute temporary values for x*x and y*y
+xsquared = builder.fmul(x, x)
+ysquared = builder.fmul(y, y)
+
+# Sum the values and return the result
+d2 = builder.fadd(xsquared, ysquared)
+builder.ret(d2)
+
+# Output the final module
+print(mod)</code></pre>
+</div></div>
+<div class="paragraph"><p>One thing to notice is that you use the builder to carry out the steps
+needed to perform the calculation that you&#8217;re trying to perform. Python
+variables such as <code>x</code>, <code>xsquared</code>, and <code>d2</code> are being used to
+hold intermediate results.</p></div>
+<div class="dlist"><dl>
+<dt class="hdlist1">
+If you run this program, you should output similar to the following
+</dt>
+<dd>
+</dd>
+</dl></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>; ModuleID = "hello"
+...
+
+define double @"dsquared"(double %".1", double %".2")
+{
+entry:
+  %".4" = fmul double %".1", %".1"
+  %".5" = fmul double %".2", %".2"
+  %".6" = fadd double %".4", %".5"
+  ret double %".6"
+}</code></pre>
+</div></div>
+<div class="dlist"><dl>
+<dt class="hdlist1">
+To test it, modify the C bootstrap code as follows
+</dt>
+<dd>
+</dd>
+</dl></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>/* main.c */
+#include &lt;stdio.h&gt;
+
+extern int hello();
+extern double dsquared(double, double);
+
+int main() {
+  printf("Hello returned: %i\n", hello());
+  printf("dsquared(3, 4) = %f\n", dsquared(3.0, 4.0));
+}</code></pre>
+</div></div>
+<div class="dlist"><dl>
+<dt class="hdlist1">
+Compile as follows
+</dt>
+<dd>
+</dd>
+</dl></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>bash % python3 hellollvm.py &gt; hello.ll
+bash % clang main.c hello.ll
+bash % ./a.out
+Hello returned: 41
+dsquared(3, 4) = 25.000000
+bash %</code></pre>
+</div></div>
+</div>
+<div class="sect3">
+<h4 id="_calling_an_external_function">Calling an external function</h4>
+<div class="paragraph"><p>Even though you&#8217;re emitting low-level assembly code, there&#8217;s no need
+to completely reinvent the wheel from scratch.  One problem concerns
+printing.  In our IR code, there is an instruction to print a value
+to the screen.  How do you do that in LLVM?  The short answer is that
+you don&#8217;t (well, unless you&#8217;re some kind of masochist).  You do printing
+in C.  Make a new file <code>runtime.c</code> and put a
+a <code>_print_int()</code> function in it like this:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>/* runtime.c */
+#include &lt;stdio.h&gt;
+
+void _print_int(int x) {
+    printf("out: %i\n", x);
+}</code></pre>
+</div></div>
+<div class="paragraph"><p>Now, suppose you wanted to call that function from LLVM.  To do it,
+you need to declare it:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code># hellollvm.py
+...
+from llvmlite.ir import VoidType, IntType
+
+void_type = VoidType()
+int_type = IntType(32)
+
+_print_int = Function(mod,
+                     FunctionType(void_type, [int_type]),
+                     name='_print_int')</code></pre>
+</div></div>
+<div class="paragraph"><p>To call the function, you use the <code>builder.call()</code> instruction:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>r2 = builder.call(_print_int, [r1])</code></pre>
+</div></div>
+<div class="paragraph"><p>Change your <code>hellollvm.py</code> program so that it looks like this:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code># hellollvm.py
+
+from llvmlite.ir import (
+    Module, Function, FunctionType, IntType, VoidType,
+    Constant, IRBuilder
+    )
+
+mod = Module('hello')
+
+int_type = IntType(32)
+void_type = VoidType()
+
+_print_int = Function(mod,
+                      FunctionType(void_type, [int_type]),
+                      name='_print_int')
+
+hello_func = Function(mod, FunctionType(int_type, []), name='hello')
+block = hello_func.append_basic_block('entry')
+builder = IRBuilder(block)
+
+x = builder.alloca(int_type, name='x')
+y = builder.alloca(int_type, name='y')
+builder.store(Constant(int_type, 4), x)
+builder.store(Constant(int_type, 5), y)
+t1 = builder.load(x)
+t2 = builder.load(x)
+t3 = builder.mul(t1, t2)
+t4 = builder.load(y)
+t5 = builder.load(y)
+t6 = builder.mul(t4, t5)
+t7 = builder.add(t3, t6)
+d = builder.alloca(int_type, name='d')
+builder.store(t7, d)
+builder.call(_print_int, [builder.load(d)])     # Call _print_int()
+builder.ret(Constant(int_type, 37))             # Return 37
+print(mod)</code></pre>
+</div></div>
+<div class="paragraph"><p>Compile and run (note inclusion of <code>runtime.c</code>):</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>bash % python3 hellollvm.py &gt; hello.ll
+bash % clang main.c runtime.c hello.ll
+bash % ./a.out
+out: 41
+hello() returned 41
+bash %</code></pre>
+</div></div>
+<div class="paragraph"><p>Notice that there is output from the <code>_print_int()</code> function as well as
+the return value from the <code>hello()</code> function itself.</p></div>
+<div class="paragraph"><p>As an aside, you can implement almost anything that you want in C and
+link it as library code into your output assembly code.  Printing,
+memory access, and all sorts of other things could potentially be
+written in this way.  You&#8217;ll have to do some of this in the project.</p></div>
+</div>
+<div class="sect3">
+<h4 id="_global_variables_and_state">Global Variables and State</h4>
+<div class="paragraph"><p>You might want to define a variable that keeps its state.  Let&#8217;s make
+a global variable <code>x</code>::</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code># hellollvm.py
+...
+from llvmlite.ir import GlobalVariable
+x_var = GlobalVariable(mod, ty_double, 'x')
+x_var.initializer = Constant(ty_double, 0.0)</code></pre>
+</div></div>
+<div class="paragraph"><p>Now, let&#8217;s write a function that increments the variable and
+prints its new value.  To do this, you use <code>load</code> and <code>store</code>
+instructions to manipulate the variable state::</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code># hellollvm.py
+...
+
+from llvmlite.ir import VoidType
+
+incr_func = Function(mod,
+                     FunctionType(VoidType(), []),
+                     name='incr')
+block = incr_func.append_basic_block('entry')
+builder = IRBuilder(block)
+tmp1 = builder.load(x_var)
+tmp2 = builder.fadd(tmp1, Constant(ty_double, 1.0))
+builder.store(tmp2, x_var)
+builder.ret_void()</code></pre>
+</div></div>
+<div class="dlist"><dl>
+<dt class="hdlist1">
+Modify the <code>main.c</code> file as follows
+</dt>
+<dd>
+</dd>
+</dl></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>/* main.c */
+#include &lt;stdio.h&gt;
+
+extern int hello();
+extern double dsquared(double, double);
+extern double x;
+extern void incr();
+
+int main() {
+  printf("Hello returned: %i\n", hello());
+  printf("dsquared(3, 4) = %f\n", dsquared(3.0, 4.0));
+  printf("x is %f\n", x);
+  incr();
+  printf("x is now %f\n", x);
+}</code></pre>
+</div></div>
+<div class="dlist"><dl>
+<dt class="hdlist1">
+Compile and run the program again
+</dt>
+<dd>
+</dd>
+</dl></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>bash % python3 hellollvm.py &gt; hello.ll
+bash % clang main.c hello.ll -lm
+bash % ./a.out
+out: 41
+Hello returned: 41
+dsquared(3, 4) = 25.000000
+x is 0.000000
+x is now 1.000000
+bash %</code></pre>
+</div></div>
+</div>
+<div class="sect3">
+<h4 id="_compiling_to_llvm">Compiling to LLVM</h4>
+<div class="paragraph"><p>In building your compiler, you&#8217;ll need to figure out how to translate
+IR code into the appropriate low-level LLVM operations.  This part
+is left to the project, but the mechanics of it are going to be almost
+identical to the interpreter/transpiler exercises you did earlier.
+You need to keep track of variables. You need a stack to keep track of
+LLVM values. Most of the code generation will involve operations on this
+stack.</p></div>
+</div>
+<div class="sect3">
+<h4 id="_a_llvm_mini_reference">A LLVM Mini-Reference</h4>
+<div class="paragraph"><p>This section aims to provide a mini-reference for using LLVM in the
+next part of the project.   It summarizes some of the critical bits.</p></div>
+<div class="paragraph"><p>For creating LLVM code, use the following import:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>from llvmlite.ir import (
+     Module, Function, FunctionType, IRBuilder,
+     IntType, DoubleType, VoidType, Constant
+)</code></pre>
+</div></div>
+<div class="paragraph"><p>All LLVM code is placed in a module.  You create one like this:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>mod = Module("modname")</code></pre>
+</div></div>
+<div class="paragraph"><p>You declare functions like this:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>func = Function(mod,
+                FunctionType(rettype, [argtypes]),
+                name="funcname")</code></pre>
+</div></div>
+<div class="paragraph"><p>The following basic datatypes are used heavily in declarations:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>IntType(32)             # A 32-bit integer
+DoubleType()            # A double-precision float</code></pre>
+</div></div>
+<div class="paragraph"><p>It is usually easier to make aliases for the types:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>int_type = IntType(32)
+float_type = DoubleType()</code></pre>
+</div></div>
+<div class="paragraph"><p>To define constants corresponding to the above types, do this:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>c = Constant(int_type, value)
+d = Constant(float_type, value)</code></pre>
+</div></div>
+<div class="paragraph"><p>To start adding code to a function, you must add a basic block
+and create a builder.  For example:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>block = func.append_basic_block('entry')
+builder = IRBuilder(block)</code></pre>
+</div></div>
+<div class="paragraph"><p>Builder objects have a variety of useful methods for adding
+instructions.  These include:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code># Returning values
+builder.ret(value)
+builder.ret_void()
+
+# Integer math
+result = builder.add(left, right)
+result = builder.sub(left, right)
+result = builder.mul(left, right)
+result = builder.sdiv(left, right)
+
+# Floating math
+result = builder.fadd(left, right)
+result = builder.fsub(left, right)
+result = builder.fmul(left, right)
+result = builder.fdiv(left, right)
+
+# Function call
+result = builder.call(func, args)</code></pre>
+</div></div>
+<div class="paragraph"><p>When using the builder, it is important to emphasize that you must
+save the results of the above operations and use them in subsequent
+calls.  For example:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>t1 = builder.fmul(a, b)
+t2 = builder.fmul(c, d)
+t3 = builder.fadd(t1, t2)
+...</code></pre>
+</div></div>
+<div class="paragraph"><p>To declare a local variable do something like this:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>name_var = builder.alloca(int_type, name='varname')</code></pre>
+</div></div>
+<div class="paragraph"><p>To declare a global variabel do something like this:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>x_var = GlobalVariable(mod, ty_double, 'x')
+x_var.initializer = Constant(ty_double, 0.0)</code></pre>
+</div></div>
+<div class="paragraph"><p>To access either kind of variable, use load and store instructions:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>tmp = builder.load(name_var)
+builder.store(tmp, name_var)</code></pre>
+</div></div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_part_d_taking_it_to_the_web_assembly">Part (d) - Taking it to the Web (Assembly)</h3>
+<div class="paragraph"><p>As our final target, we&#8217;re going to compile our code to Web Assembly
+(Wasm).  Wasm is a relatively new technology that is usually
+introduced with a fairly complicated toolchain.  For example, it is
+possible to compile C, C++, Rust, and other languages to Wasm and to
+have that code run (somehow) in the browser.  You can even find demos
+of game engines and other interesting things.  However, it can be a
+bit tough to wrap your brain around what&#8217;s happening.  In this last
+part, we&#8217;re going to look at raw low-level Wasm without any assistive
+tooling.  This is not the way that you&#8217;d likely work with it for real,
+but for the purposes of a compilers course, it&#8217;s instructive.</p></div>
+<div class="paragraph"><p>At a high-level, Wasm is a small "machine code" that is not too unlike
+the IR Code for our compiler.  It simulates a stack machine and it
+only understands 4 datatypes&#8212;integers and floats in both 32-bit and
+64-bit encodings.  The main difference is that Wasm is encoded in a
+compact binary encoding---not a list of tuples as we have done.
+Much of our effort to make Wasm work concerns details of the binary
+encoding.</p></div>
+<div class="sect3">
+<h4 id="_low_level_encoding_of_values">Low-level Encoding of Values</h4>
+<div class="paragraph"><p>To start out, there are some basic encodings of integers, floats, and
+text strings that need to take place.</p></div>
+<div class="paragraph"><p>Integers are encoded into a LEB-128, a variable length encoding. The
+following functions can be used for this purpose:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>def encode_unsigned(value):
+    '''
+    Produce an LEB128 encoded unsigned integer.
+    '''
+    parts = []
+    while value:
+        parts.append((value &amp; 0x7f) | 0x80)
+        value &gt;&gt;= 7
+    if not parts:
+        parts.append(0)
+    parts[-1] &amp;= 0x7f
+    return bytes(parts)
+
+def encode_signed(value):
+    '''
+    Produce a LEB128 encoded signed integer.
+    '''
+    parts = [ ]
+    if value &lt; 0:
+        # Sign extend the value up to a multiple of 7 bits
+        value = (1 &lt;&lt; (value.bit_length() + (7 - value.bit_length() % 7))) + value
+        negative = True
+    else:
+        negative = False
+    while value:
+        parts.append((value &amp; 0x7f) | 0x80)
+        value &gt;&gt;= 7
+    if not parts or (not negative and parts[-1] &amp; 0x40):
+        parts.append(0)
+    parts[-1] &amp;= 0x7f
+    return bytes(parts)
+
+assert encode_unsigned(624485) == bytes([0xe5, 0x8e, 0x26])
+assert encode_unsigned(127) == bytes([0x7f])
+assert encode_signed(-624485) == bytes([0x9b, 0xf1, 0x59])
+assert encode_signed(127) == bytes([0xff, 0x00])</code></pre>
+</div></div>
+<div class="paragraph"><p>Floating point numbers are encoded directly as a little-endian 8-byte double precision
+value using this function:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>def encode_f64(value):
+    '''
+    Encode a 64-bit float point as little endian
+    '''
+    return struct.pack('&lt;d', value)</code></pre>
+</div></div>
+<div class="paragraph"><p>Wasm sometimes involves the encoding of a so-called "vector".  A vector is
+list of identically typed items. For example, you could have a vector of
+integers, a vector of floats, a vector of bytes, and so forth.  Vectors are
+encoded as an unsigned length followed by the raw encoding of whatever items
+it contains.  So, write the following function:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>def encode_vector(items):
+    '''
+    A size-prefixed collection of objects.  If items is already
+    bytes, it is prepended by a length and returned.  If items
+    is a list of byte-strings, the length of the list is prepended
+    to byte-string formed by concatenating all of the items.
+    '''
+    if isinstance(items, bytes):
+        return encode_unsigned(len(items)) + items
+    else:
+        return encode_unsigned(len(items)) + b''.join(items)</code></pre>
+</div></div>
+<div class="paragraph"><p>Names are represented as a UTF-8 encoded vector of bytes.  The following
+function will encoded a name:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>def encode_name(name):
+    '''
+    Encode a text name as a UTF-8 vector
+    '''
+    return encode_vector(name.encode('utf-8'))</code></pre>
+</div></div>
+<div class="paragraph"><p>The first rule of Wasm is that ALL literal values (integers, floats, names, etc.) must
+be encoded by the functions. So, put these in a file <code>wasm.py</code> and use it as a starting
+point.</p></div>
+<div class="paragraph"><p>Try a few examples to see what the encodings look like:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>&gt;&gt;&gt; encode_unsigned(1234)
+b'\xd2\t'
+&gt;&gt;&gt; encode_signed(-1234)
+b'\xae\xf6\x00'
+&gt;&gt;&gt; encode_f64(123.45)
+b'\xcd\xcc\xcc\xcc\xcc\xdc^@'
+&gt;&gt;&gt; encode_name('spam')
+b'\x04spam'
+&gt;&gt;&gt;</code></pre>
+</div></div>
+<div class="paragraph"><p>Reminder: You must use these functions.</p></div>
+</div>
+<div class="sect3">
+<h4 id="_some_basic_instructions">Some Basic Instructions</h4>
+<div class="paragraph"><p>Wasm defines a set of instructions similar to our own IR code.  Wasm
+is also a stack machine just like our IR code. The following table
+shows a few basic instruction encodings:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>b'\x20' &lt;idx&gt;  =&gt; local.get (idx is local-variable index. unsigned int)
+b'\x21' &lt;idx&gt;  =&gt; local.set (idx is local-variable index. unsigned int)
+b'\x41' &lt;val&gt;  =&gt; i32.const (val is signed integer)
+b'\x6a'        =&gt; i32.add
+b'\x6b'        =&gt; i32.sub
+b'\x6c'        =&gt; i32.mul
+b'\x6d'        =&gt; i32.div_s
+b'\x0f'        =&gt; return
+b'\x10' &lt;idx&gt;  =&gt; call (idx is function index. unsigned int)
+b'\x0b'        =&gt; end block</code></pre>
+</div></div>
+<div class="paragraph"><p>One tricky thing in the instruction encoding is that there are no text strings or
+names.  Everything is referenced by numeric indices.  For local variables,
+you (as in the compiler) need to keep a table mapping names to local variable
+indices. For example:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>vars = {
+   'x': 0,
+   'y': 1,
+   'd': 2
+}</code></pre>
+</div></div>
+<div class="paragraph"><p>An instruction such as <code>('LOAD', 'x')</code> is going to map to a byte sequence
+like <code>b'\x20' + encode_unsigned(vars['x'])</code> where the name gets replaced
+by a numeric index.</p></div>
+<div class="paragraph"><p>Using this, we can write a basic Wasm instruction encoder for our example
+code. This is surprising easy---since Wasm is also a stack machine, we
+don&#8217;t need to maintain a stack or do much of anything other than translate
+the tuples of IR code into the binary coded version in Wasm:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>class WasmEncoder:
+    def encode(self, code):
+        self.wcode = b''
+        self.vars = { }
+        for op, *opargs in code:
+            getattr(self, f'encode_{op}')(*opargs)
+
+        # Put a block terminator on the code
+        self.wcode += b'\x0b'
+
+    def encode_GLOBALI(self, name):
+        self.vars[name] = len(self.vars)
+
+    def encode_CONSTI(self, value):
+        self.wcode += b'\x41' + encode_signed(value)
+
+    def encode_STORE(self, name):
+        self.wcode += b'\x21' + encode_unsigned(self.vars[name])
+
+    def encode_LOAD(self, name):
+        self.wcode += b'\x20' + encode_unsigned(self.vars[name])
+
+    def encode_ADDI(self):
+        self.wcode += b'\x6a'
+
+    def encode_MULI(self):
+        self.wcode += b'\x6c'
+
+    def encode_PRINTI(self):
+        # Not sure what to do here yet
+        pass
+
+encoder = WasmEncoder()
+encoder.encode(code)
+print(encoder.wcode)</code></pre>
+</div></div>
+<div class="paragraph"><p>Try running this example. You should get some low-level output that looks like this:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>bash % python3 wasm.py
+b'A\x04!\x00A\x05!\x01 \x00 \x00l \x01 \x01lj!\x02 \x02\x0b'
+bash %</code></pre>
+</div></div>
+<div class="paragraph"><p>It&#8217;s not meant to be easily human readable.</p></div>
+</div>
+<div class="sect3">
+<h4 id="_types_and_function_code_encoding">Types and Function Code Encoding</h4>
+<div class="paragraph"><p>The low-level instruction stream you just generated is not enough to make Wasm
+work.  For one thing, Wasm expects all code to be packaged up inside a proper
+function object.  We haven&#8217;t done anything like that.  We also didn&#8217;t address anything
+related to the declaration of local variables or types (yes, the code included
+the indices of local variables, but had no proper declaration of those variables).</p></div>
+<div class="paragraph"><p>Wasm only has a few core datatypes. Instead of being referenced by nice names
+like "int" or "float", they are identified by specific byte codes:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>b'\x7f'   =&gt; i32 (32-bit int)
+b'\x7e'   =&gt; i64 (64-bit int)
+b'\x7d'   =&gt; f32 (32-bit float)
+b'\x7c'   =&gt; f64 (64-bit float)</code></pre>
+</div></div>
+<div class="paragraph"><p>Remember our local variables?  In our code, we created a mapping of names
+to indices:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>vars = {
+   'x': 0,
+   'y': 1,
+   'd': 2
+}</code></pre>
+</div></div>
+<div class="paragraph"><p>This is not enough&#8212;you also need to keep a record of their types:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>vartypes = [ b'\x7f', b'\x7f', b'\x7f' ]</code></pre>
+</div></div>
+<div class="paragraph"><p>Think of this as a kind of "type-signature" for all of the
+locals. When encoding Wasm, the code for a function need to be encoded
+with information about the locals. Now, unfortunately, this next bit
+is a bit gnarly.  Basically, the locals are grouped by type and
+represented as a list of length/type combinations.  Like this:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>group = [
+     (3, b'\x7f'),      # 3 local variables of type i32
+     (2, b'\x7c'),      # 2 local variables of type f64
+]</code></pre>
+</div></div>
+<div class="paragraph"><p>Each group is encoded as a repeat-count followed by the type code.
+All of the groups are then encoded as a vector.  Here&#8217;s code that
+illustrates how it works:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>parts = [ ]
+for count, type in groups:
+    parts.append(encode_unsigned(count) + type)
+
+enc_locals = encode_vector(parts)</code></pre>
+</div></div>
+<div class="paragraph"><p>The resulting encoding of the local variables is then prepended to the
+function code that you created earlier to create the encoded function
+code:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>func = enc_locals + encoder.wcode</code></pre>
+</div></div>
+<div class="paragraph"><p>Finally, this whole byte sequence is prepended by its length in bytes. So,
+you do this to get the final function object:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>func = encode_unsigned(len(func)) + func</code></pre>
+</div></div>
+<div class="paragraph"><p>Try modifying your <code>WasmEncoder</code> class so that it looks like this:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>import itertools
+
+class WasmEncoder:
+    def __init__(self):
+        # List of function objects created
+        self.functions = [ ]
+
+    def encode(self, code):
+        self.wcode = b''
+        self.vars = { }
+        self.vartypes = [ ]
+
+        for op, *opargs in code:
+            getattr(self, f'encode_{op}')(*opargs)
+        self.wcode += b'\x0b'
+
+        # Create the proper encoding of the entire function
+        groups = []
+        for ty, items in itertools.groupby(self.vartypes):
+            groups.append((len(list(items)), ty))
+
+        parts = [ encode_unsigned(count) + ty for count, ty in groups ]
+        enc_locals = encode_vector(parts)
+        func = enc_locals + self.wcode
+        self.functions.append(encode_unsigned(len(func)) + func)
+
+    def encode_GLOBALI(self, name):
+        self.vars[name] = len(self.vars)
+        self.vartypes.append(b'\x7f')
+
+    ... rest unchanged
+
+encoder = WasmEncoder()
+encoder.encode(code)
+print(encoder.functions)</code></pre>
+</div></div>
+<div class="paragraph"><p>Try running the code.  You should get this:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>bash % python3 wasm.py
+[b'\x1b\x01\x03\x7fA\x04!\x00A\x05!\x01 \x00 \x00l \x01 \x01lj!\x02 \x02\x0b']
+bash %</code></pre>
+</div></div>
+<div class="paragraph"><p>Is that enough to run the function?  No, it&#8217;s not.  We haven&#8217;t specified anything
+about the function name, its type signature, or anything else.  More work is to
+be done.</p></div>
+</div>
+<div class="sect3">
+<h4 id="_functions_names_and_type_signatures">Functions, Names, and Type Signatures</h4>
+<div class="paragraph"><p>So far, our Wasm encoder has created a low-level code object. This object has
+the raw instructions for a function, but no other information is given.  We
+need to create a type signature, function name, and exports.</p></div>
+<div class="paragraph"><p>When you define a function, there are input arguments and return values.  For
+example, in C, you might write a function like this:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>double func(int x, int y) {
+     ...
+     return result;
+}</code></pre>
+</div></div>
+<div class="paragraph"><p>The signature for this function specifies that there are two integer
+inputs and a double return type.  In Wasm, this information is
+expressed as a pair of type-vectors like this:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>[(i32, i32), (f64,)]</code></pre>
+</div></div>
+<div class="paragraph"><p>or if you fill in the type-codes:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>[(b'\x7f', b'\x7f'), (b'\x7c',)]</code></pre>
+</div></div>
+<div class="paragraph"><p>To encode a type signature, you use the following function:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>def encode_signature(argtypes, rettypes):
+    return b'\x60\ + encode_vector(argtypes) + encode_vector(rettypes)</code></pre>
+</div></div>
+<div class="paragraph"><p>The result of this encoding should be put in a table.  The index within this table
+should be recorded.  For example:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>typesigs = []
+typesigs.append(encode_signature(argstypes, rettypes))
+typeidx = len(typesigs) - 1</code></pre>
+</div></div>
+<div class="paragraph"><p>All functions in Wasm are assigned a unique numerical index.  This index points
+to the code object that you made in the last section.  However, the index also
+points to a separate list of type signatures.  You need to keep a list like this:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>functypes = [ ]
+functypes.append(encoded_unsigned(typeidx))    # Save the function type signature
+funcidx = len(functypes) - 1</code></pre>
+</div></div>
+<div class="paragraph"><p>Last, but not least, you will notice that the function still has not been
+given a name.  That needs to be encoded in the form of a function export.
+To encode an export, you encode the function name, along with the function
+index like this:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>export = encode_name(funcname) + b'\x00' + encode_unsigned(funcidx)</code></pre>
+</div></div>
+<div class="paragraph"><p>Admittedly, this is a lot to unpack, but here is a modified WasmEncoder
+class that encodes a type signature, updates a functypes list, and creates
+a function export record:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>i32 = b'\x7f'
+f64 = b'\x7c'
+
+class WasmEncoder:
+    def __init__(self):
+        # List of function objects created
+        self.functions = [ ]
+        self.typesigs = [ ]
+        self.functypes = [ ]
+        self.exports = [ ]
+
+    def encode_function(self, name, argtypes, rettypes, code):
+
+        # Create a type signature
+        typesig = b'\x60' + encode_vector(argtypes) + encode_vector(rettypes)
+        self.typesigs.append(typesig)
+        typeidx = len(self.typesigs) - 1
+
+        # Add the typeidx to the functypes list
+        self.functypes.append(encode_unsigned(typeidx))
+        funcidx = len(self.functypes) - 1
+
+        # Add the funcidx to the exports list
+        self.exports.append(encode_name(name) + b'\x00' + encode_unsigned(funcidx))
+
+        # Now make the function instructions
+        self.wcode = b''
+        self.vars = { }
+        self.vartypes = [ ]
+
+        for op, *opargs in code:
+            getattr(self, f'encode_{op}')(*opargs)
+        self.wcode += b'\x0b'
+
+        # Create the proper encoding of the entire function
+        groups = []
+        for ty, items in itertools.groupby(self.vartypes):
+            groups.append((len(list(items)), ty))
+
+        parts = [ encode_unsigned(count) + ty for count, ty in groups ]
+        enc_locals = encode_vector(parts)
+        func = enc_locals + self.wcode
+        self.functions.append(encode_unsigned(len(func)) + func)
+
+    def encode_GLOBALI(self, name):
+        self.vars[name] = len(self.vars)
+        self.vartypes.append(b'\x7f')
+
+    ... rest unchanged ...
+
+encoder = WasmEncoder()
+encoder.encode_function("main", [], [i32], code)</code></pre>
+</div></div>
+<div class="paragraph"><p>Try running this code and looking at the different pieces of the encoder:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>bash % python3 -i wasm.py
+&gt;&gt;&gt; encoder.typesigs
+[b'`\x00\x01\x7f']
+&gt;&gt;&gt; encoder.functypes
+[b'\x00']
+&gt;&gt;&gt; encoder.exports
+[b'\x04main\x00\x00']
+&gt;&gt;&gt; encoder.functions
+[b'\x1b\x01\x03\x7fA\x04!\x00A\x05!\x01 \x00 \x00l \x01 \x01lj!\x02 \x02\x0b']
+&gt;&gt;&gt;</code></pre>
+</div></div>
+<div class="paragraph"><p>You are almost in business here.  Your last task is to make a Wasm module.</p></div>
+</div>
+<div class="sect3">
+<h4 id="_encoding_a_module">Encoding a Module</h4>
+<div class="paragraph"><p>Your final step in encoding Wasm is to make an encoded module. A module
+is broken up into sections and looks like this:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>                +----------------------------+
+ Header    :    | b'\x00asm\x01\x00\x00\x00' |
+                +----------------------------+
+ Section 1 :    |    type signatures         |
+                +----------------------------+
+ Section 3 :    |    function types          |
+                +----------------------------+
+ Section 7 :    |    exports                 |
+                +----------------------------+
+ Section 10 :   |    function code           |
+                +----------------------------+</code></pre>
+</div></div>
+<div class="paragraph"><p>There are other optional sections that are not needed right now.  The encoding
+of each section is a 1-byte section number, a section length, and section contents.
+Write the following functions:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>def encode_section(sectnum, contents):
+    return bytes([sectnum]) + encode_unsigned(len(contents)) + contents</code></pre>
+</div></div>
+<div class="paragraph"><p>The contents of each section is encoded as a vector. So, to encode
+section 1 for instance, you would do this:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>encode_section(1, encode_vector(typesigs))</code></pre>
+</div></div>
+<div class="paragraph"><p>Put all of this together by writing an <code>encode_module()</code> method like
+this:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>class WasmEncoder:
+    def __init__(self):
+        # List of function objects created
+        self.functions = [ ]
+        self.typesigs = [ ]
+        self.functypes = [ ]
+        self.exports = [ ]
+
+    ...
+    def encode_module(self):
+        module = b'\x00asm\x01\x00\x00\x00'
+        module += encode_section(1, encode_vector(self.typesigs))
+        module += encode_section(3, encode_vector(self.functypes))
+        module += encode_section(7, encode_vector(self.exports))
+        module += encode_section(10, encode_vector(self.functions))
+        return module
+
+# Example use:
+encoder = WasmEncoder()
+encoder.encode_function("main", [], [i32], code)
+with open('out.wasm', 'wb') as file:
+    file.write(encoder.encode_module())</code></pre>
+</div></div>
+<div class="paragraph"><p>Put this in your file and run it.  You should get a file <code>out.wasm</code>
+written in the current directory.</p></div>
+</div>
+<div class="sect3">
+<h4 id="_loading_it_in_the_browser">Loading it in the Browser</h4>
+<div class="paragraph"><p>Wasm doesn&#8217;t run by itself.  It needs to be launched from Javascript.
+Create a file <code>hello.html</code> that contains the following HTML and
+Javascript:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>&lt;html&gt;
+&lt;body&gt;
+&lt;h3&gt;Program Output&lt;/h3&gt;
+
+&lt;pre id="myout"&gt;The output is: &lt;/pre&gt;
+
+&lt;script&gt;
+    var imports = { };
+    fetch("out.wasm").then(response =&gt;
+       response.arrayBuffer()
+    ).then(bytes =&gt;
+       WebAssembly.instantiate(bytes, imports)
+    ).then(results =&gt; {
+       window.main = results.instance.exports.main;
+       out = window.main();
+       document.getElementById("myout").innerHTML += out + "\n";
+    });
+&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+</div></div>
+<div class="paragraph"><p>In this code, the <code>out.wasm</code> file is fetched and instantiated into a WebAssembly
+instance.  The <code>main()</code> function is lifted out of the instance exports
+section. When called, it&#8217;s output is appended to the HTML in the <code>&lt;pre&gt;</code>
+section at the top.</p></div>
+<div class="paragraph"><p>To test this, go to the command line and the same directory as the <code>hello.html</code>
+and <code>out.wasm</code> file.  Run the following Python command:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>bash % python3 -m http.server</code></pre>
+</div></div>
+<div class="paragraph"><p>This launches a web server.  Now click on
+<a href="http://localhost:8000/hello.html">http://localhost:8000/hello.html</a>.  You should see an output of "41".
+If you see nothing, open the JavaScript dev console in your browser,
+reload, and look for error messages.  Even the slightest error in
+encoding your module will cause it to fail. Ask for help if stuck.</p></div>
+</div>
+<div class="sect3">
+<h4 id="_building_the_runtime">Building the Runtime</h4>
+<div class="paragraph"><p>Wasm is extremely low-level and minimal.  Keep in mind you only get integers and floats.
+There are no strings. Or even any built-in functions!  Wasm doesn&#8217;t get access to
+any part of Javascript or the browser environment all by itself.  This
+presents certain logistical problems.  For example, how do you implement the
+<code>PRINTI</code> instruction?</p></div>
+<div class="paragraph"><p>The solution here is the same as the solution in LLVM!  If you want printing,
+you implement in JavaScript, not Wasm.   Go to the <code>hello.html</code> file and
+modify the code so it looks like this:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>&lt;html&gt;
+&lt;body&gt;
+&lt;h3&gt;Program Output&lt;/h3&gt;
+
+&lt;pre id="myout"&gt;The output is: &lt;/pre&gt;
+
+&lt;script&gt;
+    var imports = {
+       runtime : {
+           _printi: (x) =&gt; { document.getElementById("myout").innerHTML += x + "\n"; },
+       }
+     };
+    fetch("out.wasm").then(response =&gt;
+       response.arrayBuffer()
+    ).then(bytes =&gt;
+       WebAssembly.instantiate(bytes, imports)
+    ).then(results =&gt; {
+       window.main = results.instance.exports.main;
+       window.main();
+    });
+&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+</div></div>
+<div class="paragraph"><p>Carefully observe that we have added a <code>_printi()</code> function to the
+<code>imports</code> variable.  The original output at the end has been
+removed.</p></div>
+<div class="paragraph"><p>To make the <code>_printi</code> function available to Wasm, it has to be explicitly
+imported.  This is done by making import records as shown in this code:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>class WasmEncoder:
+    def __init__(self):
+        # List of function objects created
+        ...
+        self.imports = [ ]
+
+        # Import built-in runtime functions
+        self._printi = self.import_function('runtime', '_printi', [i32], [])
+
+    def import_function(self, module, name, argtypes, rettypes):
+        # Make a type signature
+        typesig = b'\x60' + encode_vector(argtypes) + encode_vector(rettypes)
+        self.typesigs.append(typesig)
+        typeidx = len(self.typesigs) - 1
+
+        # Make an import record
+        enc = encode_name(module) + encode_name(name) + b'\x00' + encode_unsigned(typeidx)
+        self.imports.append(enc)
+        funcidx = len(self.imports) - 1
+        return funcidx</code></pre>
+</div></div>
+<div class="paragraph"><p>In this code, the <code>import_function()</code> operation is making a reference to externally
+defined function (in this case, a function coming from the JavaScript environment).</p></div>
+<div class="paragraph"><p>With a reference to external <code>_printi</code> function now saved, you can implement the
+<code>PRINTI</code> instruction to make a call-out:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>    def encode_PRINTI(self):
+        self.wcode += b'\x10' + encode_unsigned(self._printi)</code></pre>
+</div></div>
+<div class="paragraph"><p>There are a few additional minor changes that need to be made to the
+<code>WasmEncoder</code> class.  First, the <code>funcidx</code> value needs to take
+number of imports into account.  There is a fragment of code like
+this:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>    def encode_function(self, name, argtypes, rettypes, code):
+        ...
+
+        # Add the typeidx to the functypes list
+        self.functypes.append(encode_unsigned(typeidx))
+        funcidx = len(self.functypes) - 1</code></pre>
+</div></div>
+<div class="paragraph"><p>That needs to change to the following:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>    def encode_function(self, name, argtypes, rettypes, code):
+        ...
+
+        # Add the typeidx to the functypes list
+        self.functypes.append(encode_unsigned(typeidx))
+        funcidx = len(self.imports) + len(self.functypes) - 1   # &lt;&lt;&lt; CHANGED</code></pre>
+</div></div>
+<div class="paragraph"><p>The module encoding code also needs to add a new section:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>    def encode_module(self):
+        module = b'\x00asm\x01\x00\x00\x00'
+        module += encode_section(1, encode_vector(self.typesigs))
+        module += encode_section(2, encode_vector(self.imports))  # &lt;&lt;&lt; ADD THIS
+        module += encode_section(3, encode_vector(self.functypes))
+        module += encode_section(7, encode_vector(self.exports))
+        module += encode_section(10, encode_vector(self.functions))
+        return module</code></pre>
+</div></div>
+<div class="paragraph"><p>Finally, you may need to change the type-signature of the <code>main()</code> function.
+It is no-longer returning a value (it&#8217;s being consumed by the <code>PRINTI</code>
+instruction instead).  So, change the code at the bottom:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>encoder = WasmEncoder()
+encoder.encode_function("main", [], [], code)    # &lt;&lt;&lt; CHANGED
+with open('out.wasm', 'wb') as file:
+    file.write(encoder.encode_module())</code></pre>
+</div></div>
+<div class="paragraph"><p>Try running your code to produce another <code>out.wasm</code> file and reload the hello page
+in the browser.  You should see output being produced as before. If not, you&#8217;ll
+have to do some debugging.  Whew!  That was some work.</p></div>
+</div>
+<div class="sect3">
+<h4 id="_a_wasm_mini_reference">A Wasm Mini Reference</h4>
+<div class="paragraph"><p>This section provides a short reference of useful Wasm instructions
+and data encoding</p></div>
+<div class="paragraph"><p>Types:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>b'\x7f'     =&gt; i32
+b'\x7c'     =&gt; f64</code></pre>
+</div></div>
+<div class="paragraph"><p>It is usually easier to make aliases for the types:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>i32 = b'\x7f'
+f64 = b'\x7c'</code></pre>
+</div></div>
+<div class="paragraph"><p>To define constants corresponding to the above types, do this:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>b'\x41' &lt;value&gt;  =&gt; i32.const value
+b'\x44' &lt;value&gt;  =&gt; f64.const value</code></pre>
+</div></div>
+<div class="paragraph"><p>Here are some useful opcodes for math:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>b'\x6a'        =&gt; i32.add
+b'\x6b'        =&gt; i32.sub
+b'\x6c'        =&gt; i32.mul
+b'\x6d'        =&gt; i32.div_s
+
+b'\xa0'        =&gt; f64.add
+b'\xa1'        =&gt; f64.sub
+b'\xa2'        =&gt; f64.mul
+b'\xa3'        =&gt; f64.div</code></pre>
+</div></div>
+<div class="paragraph"><p>To access a local variable, use load and store instructions:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>b'\x20' &lt;idx&gt;  =&gt; local.get
+b'\x21' &lt;idx&gt;  =&gt; local.set</code></pre>
+</div></div>
+<div class="paragraph"><p>To call a function:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>b'\x10' &lt;idx&gt;  =&gt; call  (idx is function index)</code></pre>
+</div></div>
+<div class="paragraph"><p>More instructions can be found in the Wasm official specification.</p></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="footnotes"><hr /></div>
+<div id="footer">
+<div id="footer-text">
+Last updated
+ 2019-06-09 21:05:54 CDT
+</div>
+</div>
+</body>
+</html>

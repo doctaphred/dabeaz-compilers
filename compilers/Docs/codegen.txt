@@ -1,0 +1,1687 @@
+== The Mechanics of Execution - An Overview of Code Generation
+
+This is an extended tutorial on how to generate backend code from
+intermediate code.   Don't start this until instructed. At
+the very least, you should have intermediate code generation
+working in your compiler first.
+
+With that out of the way, this document introduces
+introduces the basic mechanics of writing an interpreter, a
+transpiler, and generation of machine code using LLVM and WebAssembly.
+In general, none of this is "hard" except that there often a lot of
+fiddly bits concerning tooling and data formats.
+
+For this tutorial, we're going to consider the following code fragment:
+
+----
+var x int = 4;
+var y int = 5;
+var d int = x * x + y * y;
+print d;
+----
+
+When compiled by your compiler, this should generate the following 
+intermediate code:
+
+----
+code = [
+   ('GLOBALI', 'x'),
+   ('CONSTI', 4),
+   ('STORE', 'x'),
+   ('GLOBALI', 'y'),
+   ('CONSTI', 5),
+   ('STORE', 'y'),
+   ('GLOBALI', 'd'),
+   ('LOAD', 'x'),
+   ('LOAD', 'x'),
+   ('MULI',),
+   ('LOAD', 'y'),
+   ('LOAD', 'y'),
+   ('MULI',),
+   ('ADDI',),
+   ('STORE', 'd'),
+   ('LOAD', 'd'),
+   ('PRINTI',)
+]
+----
+
+Copy the above `code` variable to a Python file where you can use it 
+in some code examples. 
+
+=== Part (a) - Writing an Interpreter
+
+One possible target for your compiler is to write an interpreter.  An
+interpreter directly runs the instructions on a kind of simulated
+machine. The simulated machine has memory, a stack, and a program
+counter just like a real CPU.  Define the following class and try it
+with the above code:
+
+----
+class Interpreter:
+    def __init__(self):
+        self.store = { }
+        self.stack = [ ]
+        self.pc = 0
+
+    def run(self, code):
+        self.pc = 0
+        while self.pc < len(code):
+            op, *opargs = code[self.pc]
+            getattr(self, f'run_{op}')(*opargs)
+            self.pc += 1
+
+    def push(self, item):
+        self.stack.append(item)
+
+    def pop(self):
+        return self.stack.pop()
+
+    def run_GLOBALI(self, name):
+        self.store[name] = None
+
+    def run_CONSTI(self, value):
+        self.push(value)
+
+    def run_STORE(self, name):
+        self.store[name] = self.pop()
+
+    def run_LOAD(self, name):
+        self.push(self.store[name])
+
+    def run_ADDI(self):
+        self.push(self.pop() + self.pop())
+
+    def run_MULI(self):
+        self.push(self.pop() * self.pop())
+
+    def run_PRINTI(self):
+        print(self.pop())
+
+# Run it!
+interp = Interpreter()
+interp.run(code)
+----
+
+Modify your interpreter by giving it a new instruction `SUBI` and
+running it on this program which should produce an output of "1":
+
+----
+code = [
+    ('CONSTI', 5),
+    ('CONSTI', 4),
+    ('SUBI',)
+    ('PRINTI',)
+]
+----
+
+Direct interpretation of simulated instructions on a simulated machine
+is how various scripting languages such as Python, Ruby, PHP, and so
+forth work.  This "simulation" is a big part of dynamic typing.  It's
+also why these languages run substantially slower than compiled languages
+like C.
+
+=== Part (b) - Writing a Transpiler
+
+Instead of directly running intermediate code, another option is to
+turn the code into source code for another programming language such
+as Python or C.  This is how early versions of C++ worked. It's also
+the basis of modern languages such as TypeScript (transpiled to JavaScript).
+A common target of transpiling is C.   Here is a transpiler that produces
+Python:
+
+----
+class Transpiler:
+    def __init__(self):
+        self.outcode = 'def main():\n'
+        self.stack = [ ]
+
+    def translate(self, code):
+        for op, *opargs in code:
+            getattr(self, f'translate_{op}')(*opargs)
+        self.outcode += '\nmain()\n'
+        return self.outcode
+
+    def push(self, item):
+        self.stack.append(item)
+
+    def pop(self):
+        return self.stack.pop()
+
+    def translate_GLOBALI(self, name):
+        pass
+
+    def translate_CONSTI(self, value):
+        self.push(repr(value))
+
+    def translate_STORE(self, name):
+        self.outcode += f'    {name} = {self.pop()}\n'
+
+    def translate_LOAD(self, name):
+        self.push(name)
+
+    def translate_ADDI(self):
+        self.push(f'({self.pop()} + {self.pop()})')
+
+    def translate_MULI(self):
+        self.push(f'({self.pop()} * {self.pop()})')
+
+    def translate_PRINTI(self):
+        self.outcode += f'    print({self.pop()})\n'
+
+trans = Transpiler()
+print(trans.translate(code))
+----
+
+In this implementation, you still maintain an internal stack to manage
+the construction of expressions (e.g., certain methods still push and pop
+things from the stack).  However, instead of actually performing an
+operation as with the interpreter, you're now producing source code to 
+perform the operation.
+
+If you run the program, you should get this:
+
+----
+bash % python3 transpile.py
+def main():
+    x = 4
+    y = 5
+    d = ((y * y) + (x * x))
+    print(d)
+
+main()
+bash %
+----
+
+Try redirecting the output to a file and running it:
+
+----
+bash % python3 transpile.py > out.py
+bash % python3 out.py
+41
+bash %
+----
+
+See if you can modify the program so that it produces C instead, creating the following
+output code:
+
+----
+#include <stdio.h>
+int main() {
+    int x;
+    int y;
+    int d;
+    x = 4;
+    y = 5;
+    d = ((y * y) + (x * x));
+    printf("%i\n", (d));
+}
+----
+
+If you're making a new language, transpiling is often a easy approach for getting
+things to work.  Take your language, transpile it to C, combine with a few
+library functions and you're running. 
+
+=== Part (c) - Generating Assembly Code with LLVM
+
+With transpiling, you're taking a high-level language and producing
+output in a different high-level language.  Instead of that, you could
+compile down to a low-level machine language that is either the actual
+hardware or a very close approximation to it.  One such tool for doing
+that is LLVM.  LLVM is used in a number of major projects such as the
+clang C/C++ compiler.  It's also used to implement various so-called
+JIT (Just in Time) compilation features.
+
+LLVM is an extremely large project that can be daunting to jump into.
+However, using it in a simple manner is not so bad. To explore the
+basics, we're going to use the `llvmlite` package.  This is available
+in the Anaconda Python distribution so if you're using that, you
+should already have it.
+
+==== LLVM Preliminaries
+
+Your first task is to make sure Anaconda Python and the clang C/C++
+compiler have been installed on your machine. Please review the README
+file for the compilers project regarding installation notes.
+
+==== Hello World
+
+The first step in using LLVM is to make a LLVM module which contains
+all of the code you will be generating.  Create a file
+`hellollvm.py` and put this code into it:
+
+----
+# hellollvm.py
+from llvmlite.ir import Module
+
+mod = Module('hello')
+print(mod)
+----
+
+Run the program and you should get some output like this:
+
+----
+bash % python3 hellollvm.py
+; ModuleID = "hello"
+target triple = "unknown-unknown-unknown"
+target datalayout = ""
+
+bash %
+----
+
+The output you're using is LLVM low-level code--a kind of architecture
+independent assembly language. At this point, it's not too
+interesting.  However, let's declare a function to put in the module.
+Change the program to the following to declare a function with the C
+prototype `int hello()`:
+
+----
+# hellollvm.py
+
+from llvmlite.ir import (
+    Module, Function, FunctionType, IntType
+    )
+
+mod = Module('hello')
+int_type = IntType(32)
+hello_func = Function(mod, FunctionType(int_type, []), name='hello')
+print(mod)
+----
+
+Running the program, you should now get the following:
+
+----
+bash % python3 hellollvm.py
+; ModuleID = "hello"
+target triple = "unknown-unknown-unknown"
+target datalayout = ""
+
+declare i32 @"hello"() 
+
+bash %
+----
+
+Again, it's not too interesting at this point.  However, you can see
+how a function declaration was placed in the module output. The LLVM
+statement `declare i32 @"hello"()` is declaring a function that
+returns a 32-bit integer and takes no arguments.
+
+Let's add some code to the function.  To do this, you first need to
+create a basic block. A basic block is a container that holds
+low-level instructions.  Add the following to the program:
+
+----
+# hellollvm.py
+
+from llvmlite.ir import (
+    Module, Function, FunctionType, IntType, IRBuilder
+    )
+
+mod = Module('hello')
+int_type = IntType(32)
+hello_func = Function(mod, FunctionType(int_type, []), name='hello')
+block = hello_func.append_basic_block('entry')
+builder = IRBuilder(block)
+builder.ret(Constant(IntType(32), 37))
+print(mod)
+----
+
+Running the program should now produce this:
+
+----
+; ModuleID = "hello"
+target triple = "unknown-unknown-unknown"
+target datalayout = ""
+    
+define i32 @"hello"() 
+{
+entry:
+  ret i32 37
+}
+----
+
+There you are---a complete LLVM function that does nothing but return
+the value 37. Now, a question arises: How do you go about getting it to run?
+
+==== Compilation to a Standalone Executable
+
+If you want to run your LLVM generated code, one approach is to feed it
+to a LLVM-based compiler such as `clang`.  Save your generated
+code to a file `hello.ll`:
+
+----
+bash % python3 hellollvm.py > hello.ll
+bash % 
+----
+
+Now, write a short C program to bootstrap the function:
+
+----
+/* main.c */
+#include <stdio.h>
+
+extern int hello(); 
+
+int main() {
+    printf("hello() returned %i\n", hello());
+}
+----
+
+Compile this program together with `hello.ll` to make an executable:
+
+----
+bash % clang main.c hello.ll
+bash % ./a.out
+hello() returned 37
+bash %
+----
+
+This basic technique for invoking your code and creating stand-alone
+programs will be useful for testing and development.  You also get the
+advantage of being able to use C library functions such as
+`printf()`.  Without this, you'd have to figure out how to perform
+I/O directly using low-level LLVM instructions--which would not be
+fun.
+
+==== Just in Time Compilation
+
+In our example, we are creating LLVM instructions, writing them to a
+file, and using the `clang` compiler to produce an executable. 
+It's possible that this won't work due to the local setup on
+your machine (maybe you don't have clang installed correctly).
+One feature of LLVM is that it can compile it's own code to executable
+machine instructions without ever going to a file or using clang.  
+You can do this entirely in Python and have Python call the resulting
+function.
+
+This part is rather tricky and obscure, but add the following code to
+`hellollvm.py`:
+
+----
+# hellollvm.py 
+
+... keep earlier LLVM example here ...
+
+def run_jit(module):
+    import llvmlite.binding as llvm
+
+    llvm.initialize()
+    llvm.initialize_native_target()
+    llvm.initialize_native_asmprinter()
+
+    target = llvm.Target.from_default_triple()
+    target_machine = target.create_target_machine()
+    compiled_mod = llvm.parse_assembly(str(module))
+    engine = llvm.create_mcjit_compiler(compiled_mod, target_machine)
+
+    # Look up the function pointer (a Python int)
+    func_ptr = engine.get_function_address("hello")
+
+    # Turn into a Python callable using ctypes
+    from ctypes import CFUNCTYPE, c_int
+    hello = CFUNCTYPE(c_int)(func_ptr)
+
+    res = hello()
+    print('hello() returned', res)
+
+# Run it!
+run_jit(mod)
+----
+
+If you run this, you should see the program run the code, and
+produce output such as this:
+
+----
+bash % python3 hellollvm.py
+hello() returned 37
+bash %
+----
+
+This version runs entirely inside an active Python interpreter process. 
+If you can't get clang to work, you can always use this as a fallback.
+
+==== Local Variables and Math Operations
+
+To do more with LLVM, you need to use more instructions on the
+`builder` object in the example.   To declare a local variable "x",
+you use this method:
+
+----
+x = builder.alloca(int_type, name="x")
+----
+
+To load and store values, you use these instructions:
+
+----
+r = builder.load(x)        # Load a value from x into r
+builder.store(r, x)        # Store r into y
+----
+
+To perform arithmetic, you use instructions such as these:
+
+----  
+r3 = builder.add(r1, r2)   # r3 = r1 + r2
+r3 = builder.mul(r1, r2)   # r3 = r1 + r2
+----
+
+Here is an example that implements the program given at the start
+of this exercise:
+
+----
+# hellollvm.py
+from llvmlite.ir import (
+    Module, Function, FunctionType, IntType, 
+    Constant, IRBuilder
+    )
+
+mod = Module('hello')
+int_type = IntType(32)
+
+hello_func = Function(mod, FunctionType(int_type, []), name='hello')
+block = hello_func.append_basic_block('entry')
+builder = IRBuilder(block)
+
+x = builder.alloca(int_type, name='x')
+y = builder.alloca(int_type, name='y')
+builder.store(Constant(int_type, 4), x)
+builder.store(Constant(int_type, 5), y)
+r1 = builder.load(x)
+r2 = builder.mul(r1, r1)
+r3 = builder.load(y)
+r4 = builder.mul(r3, r3)
+r5 = builder.add(r2, r4)
+d = builder.alloca(int_type, name='d')
+builder.store(r5, d)
+builder.ret(builder.load(d))
+
+print(mod)
+----
+
+An important thing about LLVM is that it is NOT a stack machine. It is based
+on registers and Single Static Assignment (SSA).  Basically, every operation
+produces a new variable that can only be assigned once.  It also requires explicit
+load/store instructions to go between local variables and registers.  In the 
+above example, you can't do an instruction such as `builder.add(x, y)` between
+local variables.  You have to load the variables into registers first and
+perform the instruction on the registers.
+
+Try compiling the above program and running you code again:
+
+----
+bash % python3 hellollvm.py > hello.ll
+bash % clang main.c hello.ll
+bash % ./a.out
+hello() returned 41
+bash %
+----
+
+==== Functions with Arguments
+
+Let's make a more interesting function.  This function takes two
+arguments `x` and `y` and computes the value `x**2 + y**2`.  To
+do this, we're going to follow similar steps as above. First, declare
+the function, add a basic block, and make a new builder.  Once the
+builder is obtained, we'll create some instructions to compute and
+return the result. Add the following code to your `hellollvm.py`
+program::
+
+----
+# hellollvm.py
+...
+
+# A user-defined function
+from llvmlite.ir import DoubleType
+
+ty_double = DoubleType()
+dsquared_func = Function(mod, 
+                         FunctionType(ty_double, [ty_double, ty_double]), 
+                         name='dsquared')
+block = dsquared_func.append_basic_block('entry')
+builder = IRBuilder(block)
+
+# Get the function args
+x, y = dsquared_func.args
+
+# Compute temporary values for x*x and y*y
+xsquared = builder.fmul(x, x)
+ysquared = builder.fmul(y, y)
+
+# Sum the values and return the result
+d2 = builder.fadd(xsquared, ysquared)
+builder.ret(d2)
+
+# Output the final module
+print(mod)
+----
+
+One thing to notice is that you use the builder to carry out the steps
+needed to perform the calculation that you're trying to perform. Python
+variables such as `x`, `xsquared`, and `d2` are being used to
+hold intermediate results.
+
+If you run this program, you should output similar to the following::
+
+----
+; ModuleID = "hello"
+...
+
+define double @"dsquared"(double %".1", double %".2") 
+{
+entry:
+  %".4" = fmul double %".1", %".1"
+  %".5" = fmul double %".2", %".2"
+  %".6" = fadd double %".4", %".5"
+  ret double %".6"
+}
+----
+
+To test it, modify the C bootstrap code as follows::
+
+----
+/* main.c */
+#include <stdio.h>
+
+extern int hello();
+extern double dsquared(double, double);
+
+int main() {
+  printf("Hello returned: %i\n", hello());
+  printf("dsquared(3, 4) = %f\n", dsquared(3.0, 4.0));
+}
+----
+
+Compile as follows::
+
+----  
+bash % python3 hellollvm.py > hello.ll
+bash % clang main.c hello.ll
+bash % ./a.out
+Hello returned: 41
+dsquared(3, 4) = 25.000000
+bash %
+----
+
+==== Calling an external function
+
+Even though you're emitting low-level assembly code, there's no need
+to completely reinvent the wheel from scratch.  One problem concerns
+printing.  In our IR code, there is an instruction to print a value
+to the screen.  How do you do that in LLVM?  The short answer is that
+you don't (well, unless you're some kind of masochist).  You do printing
+in C.  Make a new file `runtime.c` and put a
+a `_print_int()` function in it like this:
+
+----
+/* runtime.c */
+#include <stdio.h>
+
+void _print_int(int x) {
+    printf("out: %i\n", x);
+}
+----
+
+Now, suppose you wanted to call that function from LLVM.  To do it,
+you need to declare it:
+
+----
+# hellollvm.py
+...
+from llvmlite.ir import VoidType, IntType
+
+void_type = VoidType()
+int_type = IntType(32)
+
+_print_int = Function(mod, 
+                     FunctionType(void_type, [int_type]), 
+                     name='_print_int')
+----
+
+To call the function, you use the `builder.call()` instruction:
+
+----
+r2 = builder.call(_print_int, [r1])
+----
+
+Change your `hellollvm.py` program so that it looks like this:
+
+----
+# hellollvm.py
+
+from llvmlite.ir import (
+    Module, Function, FunctionType, IntType, VoidType,
+    Constant, IRBuilder
+    )
+
+mod = Module('hello')
+
+int_type = IntType(32)
+void_type = VoidType()
+
+_print_int = Function(mod, 
+                      FunctionType(void_type, [int_type]), 
+                      name='_print_int')
+
+hello_func = Function(mod, FunctionType(int_type, []), name='hello')
+block = hello_func.append_basic_block('entry')
+builder = IRBuilder(block)
+
+x = builder.alloca(int_type, name='x')
+y = builder.alloca(int_type, name='y')
+builder.store(Constant(int_type, 4), x)
+builder.store(Constant(int_type, 5), y)
+t1 = builder.load(x)
+t2 = builder.load(x)
+t3 = builder.mul(t1, t2)
+t4 = builder.load(y)
+t5 = builder.load(y)
+t6 = builder.mul(t4, t5)
+t7 = builder.add(t3, t6)
+d = builder.alloca(int_type, name='d')
+builder.store(t7, d)
+builder.call(_print_int, [builder.load(d)])     # Call _print_int()
+builder.ret(Constant(int_type, 37))             # Return 37
+print(mod)
+----
+
+Compile and run (note inclusion of `runtime.c`):
+
+----
+bash % python3 hellollvm.py > hello.ll
+bash % clang main.c runtime.c hello.ll
+bash % ./a.out
+out: 41
+hello() returned 41
+bash %
+----
+
+Notice that there is output from the `_print_int()` function as well as
+the return value from the `hello()` function itself.  
+
+As an aside, you can implement almost anything that you want in C and
+link it as library code into your output assembly code.  Printing,
+memory access, and all sorts of other things could potentially be
+written in this way.  You'll have to do some of this in the project.
+
+==== Global Variables and State
+
+You might want to define a variable that keeps its state.  Let's make
+a global variable `x`::
+
+----
+# hellollvm.py
+...
+from llvmlite.ir import GlobalVariable
+x_var = GlobalVariable(mod, ty_double, 'x')
+x_var.initializer = Constant(ty_double, 0.0)
+----
+
+Now, let's write a function that increments the variable and 
+prints its new value.  To do this, you use `load` and `store`
+instructions to manipulate the variable state::
+
+----
+# hellollvm.py
+...
+
+from llvmlite.ir import VoidType
+
+incr_func = Function(mod, 
+                     FunctionType(VoidType(), []), 
+                     name='incr')
+block = incr_func.append_basic_block('entry')
+builder = IRBuilder(block)
+tmp1 = builder.load(x_var)
+tmp2 = builder.fadd(tmp1, Constant(ty_double, 1.0))
+builder.store(tmp2, x_var)
+builder.ret_void()
+----
+
+Modify the `main.c` file as follows::
+
+----
+/* main.c */
+#include <stdio.h>
+
+extern int hello();
+extern double dsquared(double, double);
+extern double x;
+extern void incr();
+
+int main() {
+  printf("Hello returned: %i\n", hello());
+  printf("dsquared(3, 4) = %f\n", dsquared(3.0, 4.0));
+  printf("x is %f\n", x);
+  incr();
+  printf("x is now %f\n", x);
+}
+----
+
+Compile and run the program again::
+
+----
+bash % python3 hellollvm.py > hello.ll
+bash % clang main.c hello.ll -lm
+bash % ./a.out
+out: 41
+Hello returned: 41
+dsquared(3, 4) = 25.000000
+x is 0.000000
+x is now 1.000000
+bash %
+----
+
+==== Compiling to LLVM
+
+In building your compiler, you'll need to figure out how to translate
+IR code into the appropriate low-level LLVM operations.  This part
+is left to the project, but the mechanics of it are going to be almost
+identical to the interpreter/transpiler exercises you did earlier. 
+You need to keep track of variables. You need a stack to keep track of
+LLVM values. Most of the code generation will involve operations on this
+stack.
+
+==== A LLVM Mini-Reference
+
+This section aims to provide a mini-reference for using LLVM in the
+next part of the project.   It summarizes some of the critical bits.
+
+For creating LLVM code, use the following import:
+
+----
+from llvmlite.ir import (
+     Module, Function, FunctionType, IRBuilder, 
+     IntType, DoubleType, VoidType, Constant
+)
+----
+
+All LLVM code is placed in a module.  You create one like this:
+
+----
+mod = Module("modname")
+----
+
+You declare functions like this:
+
+----
+func = Function(mod, 
+                FunctionType(rettype, [argtypes]),
+                name="funcname")
+----
+
+The following basic datatypes are used heavily in declarations:
+
+---- 
+IntType(32)             # A 32-bit integer
+DoubleType()            # A double-precision float
+----
+
+It is usually easier to make aliases for the types:
+
+----
+int_type = IntType(32)
+float_type = DoubleType()
+----
+
+To define constants corresponding to the above types, do this:
+
+----  
+c = Constant(int_type, value)
+d = Constant(float_type, value)
+----
+
+To start adding code to a function, you must add a basic block
+and create a builder.  For example:
+
+----
+block = func.append_basic_block('entry')
+builder = IRBuilder(block)
+----
+
+Builder objects have a variety of useful methods for adding
+instructions.  These include:
+
+----
+# Returning values
+builder.ret(value)            
+builder.ret_void()            
+
+# Integer math
+result = builder.add(left, right)
+result = builder.sub(left, right)
+result = builder.mul(left, right)
+result = builder.sdiv(left, right)    
+
+# Floating math
+result = builder.fadd(left, right)
+result = builder.fsub(left, right)
+result = builder.fmul(left, right)
+result = builder.fdiv(left, right)
+
+# Function call
+result = builder.call(func, args)
+----
+
+When using the builder, it is important to emphasize that you must
+save the results of the above operations and use them in subsequent
+calls.  For example:
+
+----
+t1 = builder.fmul(a, b)
+t2 = builder.fmul(c, d)
+t3 = builder.fadd(t1, t2)
+...
+----
+
+To declare a local variable do something like this:
+
+----
+name_var = builder.alloca(int_type, name='varname')
+----
+
+To declare a global variabel do something like this:
+
+----
+x_var = GlobalVariable(mod, ty_double, 'x')
+x_var.initializer = Constant(ty_double, 0.0)
+----
+
+To access either kind of variable, use load and store instructions:
+
+----
+tmp = builder.load(name_var)
+builder.store(tmp, name_var)
+----
+
+=== Part (d) - Taking it to the Web (Assembly)
+
+As our final target, we're going to compile our code to Web Assembly
+(Wasm).  Wasm is a relatively new technology that is usually
+introduced with a fairly complicated toolchain.  For example, it is
+possible to compile C, C++, Rust, and other languages to Wasm and to
+have that code run (somehow) in the browser.  You can even find demos
+of game engines and other interesting things.  However, it can be a
+bit tough to wrap your brain around what's happening.  In this last
+part, we're going to look at raw low-level Wasm without any assistive
+tooling.  This is not the way that you'd likely work with it for real,
+but for the purposes of a compilers course, it's instructive.
+
+At a high-level, Wasm is a small "machine code" that is not too unlike
+the IR Code for our compiler.  It simulates a stack machine and it
+only understands 4 datatypes--integers and floats in both 32-bit and
+64-bit encodings.  The main difference is that Wasm is encoded in a
+compact binary encoding---not a list of tuples as we have done.
+Much of our effort to make Wasm work concerns details of the binary
+encoding.
+
+==== Low-level Encoding of Values
+
+To start out, there are some basic encodings of integers, floats, and
+text strings that need to take place.
+
+Integers are encoded into a LEB-128, a variable length encoding. The
+following functions can be used for this purpose:
+
+----
+def encode_unsigned(value):
+    '''
+    Produce an LEB128 encoded unsigned integer.
+    '''
+    parts = []
+    while value:
+        parts.append((value & 0x7f) | 0x80)
+        value >>= 7
+    if not parts:
+        parts.append(0)
+    parts[-1] &= 0x7f
+    return bytes(parts)
+
+def encode_signed(value):
+    '''
+    Produce a LEB128 encoded signed integer.
+    '''
+    parts = [ ]
+    if value < 0:
+        # Sign extend the value up to a multiple of 7 bits
+        value = (1 << (value.bit_length() + (7 - value.bit_length() % 7))) + value
+        negative = True
+    else:
+        negative = False
+    while value:
+        parts.append((value & 0x7f) | 0x80)
+        value >>= 7
+    if not parts or (not negative and parts[-1] & 0x40):
+        parts.append(0)
+    parts[-1] &= 0x7f
+    return bytes(parts)
+
+assert encode_unsigned(624485) == bytes([0xe5, 0x8e, 0x26])
+assert encode_unsigned(127) == bytes([0x7f])
+assert encode_signed(-624485) == bytes([0x9b, 0xf1, 0x59])
+assert encode_signed(127) == bytes([0xff, 0x00])
+----
+
+Floating point numbers are encoded directly as a little-endian 8-byte double precision
+value using this function:
+
+----
+def encode_f64(value):
+    '''
+    Encode a 64-bit float point as little endian
+    '''
+    return struct.pack('<d', value)
+----
+
+Wasm sometimes involves the encoding of a so-called "vector".  A vector is
+list of identically typed items. For example, you could have a vector of 
+integers, a vector of floats, a vector of bytes, and so forth.  Vectors are
+encoded as an unsigned length followed by the raw encoding of whatever items
+it contains.  So, write the following function:
+
+----
+def encode_vector(items):
+    '''
+    A size-prefixed collection of objects.  If items is already
+    bytes, it is prepended by a length and returned.  If items
+    is a list of byte-strings, the length of the list is prepended
+    to byte-string formed by concatenating all of the items.
+    '''
+    if isinstance(items, bytes):
+        return encode_unsigned(len(items)) + items
+    else:
+        return encode_unsigned(len(items)) + b''.join(items)
+----
+
+Names are represented as a UTF-8 encoded vector of bytes.  The following
+function will encoded a name:
+
+----
+def encode_name(name):
+    '''
+    Encode a text name as a UTF-8 vector
+    '''
+    return encode_vector(name.encode('utf-8'))
+----
+
+The first rule of Wasm is that ALL literal values (integers, floats, names, etc.) must
+be encoded by the functions. So, put these in a file `wasm.py` and use it as a starting
+point.
+
+Try a few examples to see what the encodings look like:
+
+----
+>>> encode_unsigned(1234)
+b'\xd2\t'
+>>> encode_signed(-1234)
+b'\xae\xf6\x00'
+>>> encode_f64(123.45)
+b'\xcd\xcc\xcc\xcc\xcc\xdc^@'
+>>> encode_name('spam')
+b'\x04spam'
+>>> 
+----
+
+Reminder: You must use these functions.
+
+==== Some Basic Instructions
+
+Wasm defines a set of instructions similar to our own IR code.  Wasm
+is also a stack machine just like our IR code. The following table 
+shows a few basic instruction encodings:
+
+----
+b'\x20' <idx>  => local.get (idx is local-variable index. unsigned int)
+b'\x21' <idx>  => local.set (idx is local-variable index. unsigned int)
+b'\x41' <val>  => i32.const (val is signed integer)
+b'\x6a'        => i32.add
+b'\x6b'        => i32.sub
+b'\x6c'        => i32.mul
+b'\x6d'        => i32.div_s
+b'\x0f'        => return
+b'\x10' <idx>  => call (idx is function index. unsigned int)
+b'\x0b'        => end block
+----
+
+One tricky thing in the instruction encoding is that there are no text strings or
+names.  Everything is referenced by numeric indices.  For local variables,
+you (as in the compiler) need to keep a table mapping names to local variable
+indices. For example:
+
+----
+vars = {
+   'x': 0,
+   'y': 1,
+   'd': 2
+}
+----
+
+An instruction such as `('LOAD', 'x')` is going to map to a byte sequence
+like `b'\x20' + encode_unsigned(vars['x'])` where the name gets replaced
+by a numeric index.
+
+Using this, we can write a basic Wasm instruction encoder for our example
+code. This is surprising easy---since Wasm is also a stack machine, we
+don't need to maintain a stack or do much of anything other than translate
+the tuples of IR code into the binary coded version in Wasm:
+
+----
+class WasmEncoder:
+    def encode(self, code):
+        self.wcode = b''
+        self.vars = { }
+        for op, *opargs in code:
+            getattr(self, f'encode_{op}')(*opargs)
+
+        # Put a block terminator on the code
+        self.wcode += b'\x0b'
+
+    def encode_GLOBALI(self, name):
+        self.vars[name] = len(self.vars)
+
+    def encode_CONSTI(self, value):
+        self.wcode += b'\x41' + encode_signed(value)
+
+    def encode_STORE(self, name):
+        self.wcode += b'\x21' + encode_unsigned(self.vars[name])
+
+    def encode_LOAD(self, name):
+        self.wcode += b'\x20' + encode_unsigned(self.vars[name])
+
+    def encode_ADDI(self):
+        self.wcode += b'\x6a'
+
+    def encode_MULI(self):
+        self.wcode += b'\x6c'
+
+    def encode_PRINTI(self):
+        # Not sure what to do here yet
+        pass
+
+encoder = WasmEncoder()
+encoder.encode(code)
+print(encoder.wcode)
+----
+
+Try running this example. You should get some low-level output that looks like this:
+
+----
+bash % python3 wasm.py
+b'A\x04!\x00A\x05!\x01 \x00 \x00l \x01 \x01lj!\x02 \x02\x0b'
+bash %
+----
+
+It's not meant to be easily human readable.
+
+==== Types and Function Code Encoding
+
+The low-level instruction stream you just generated is not enough to make Wasm
+work.  For one thing, Wasm expects all code to be packaged up inside a proper 
+function object.  We haven't done anything like that.  We also didn't address anything
+related to the declaration of local variables or types (yes, the code included 
+the indices of local variables, but had no proper declaration of those variables).
+
+Wasm only has a few core datatypes. Instead of being referenced by nice names
+like "int" or "float", they are identified by specific byte codes:
+
+----
+b'\x7f'   => i32 (32-bit int)
+b'\x7e'   => i64 (64-bit int)
+b'\x7d'   => f32 (32-bit float)
+b'\x7c'   => f64 (64-bit float)
+----
+
+Remember our local variables?  In our code, we created a mapping of names
+to indices:
+
+----
+vars = {
+   'x': 0,
+   'y': 1,
+   'd': 2
+}
+----
+
+This is not enough--you also need to keep a record of their types:
+
+----
+vartypes = [ b'\x7f', b'\x7f', b'\x7f' ]
+----
+
+Think of this as a kind of "type-signature" for all of the
+locals. When encoding Wasm, the code for a function need to be encoded
+with information about the locals. Now, unfortunately, this next bit
+is a bit gnarly.  Basically, the locals are grouped by type and
+represented as a list of length/type combinations.  Like this:
+
+----
+group = [ 
+     (3, b'\x7f'),      # 3 local variables of type i32
+     (2, b'\x7c'),      # 2 local variables of type f64
+]
+----
+
+Each group is encoded as a repeat-count followed by the type code.
+All of the groups are then encoded as a vector.  Here's code that
+illustrates how it works:
+
+----
+parts = [ ]
+for count, type in groups:
+    parts.append(encode_unsigned(count) + type)
+
+enc_locals = encode_vector(parts)
+----
+
+The resulting encoding of the local variables is then prepended to the
+function code that you created earlier to create the encoded function
+code:
+
+----
+func = enc_locals + encoder.wcode
+----
+
+Finally, this whole byte sequence is prepended by its length in bytes. So,
+you do this to get the final function object:
+
+----
+func = encode_unsigned(len(func)) + func
+----
+
+Try modifying your `WasmEncoder` class so that it looks like this:
+
+----
+import itertools
+
+class WasmEncoder:
+    def __init__(self):
+        # List of function objects created
+        self.functions = [ ]
+
+    def encode(self, code):
+        self.wcode = b''
+        self.vars = { }
+        self.vartypes = [ ]
+
+        for op, *opargs in code:
+            getattr(self, f'encode_{op}')(*opargs)
+        self.wcode += b'\x0b'
+
+        # Create the proper encoding of the entire function
+        groups = []
+        for ty, items in itertools.groupby(self.vartypes):
+            groups.append((len(list(items)), ty))
+
+        parts = [ encode_unsigned(count) + ty for count, ty in groups ]
+        enc_locals = encode_vector(parts)
+        func = enc_locals + self.wcode
+        self.functions.append(encode_unsigned(len(func)) + func)
+
+    def encode_GLOBALI(self, name):
+        self.vars[name] = len(self.vars)
+        self.vartypes.append(b'\x7f')
+
+    ... rest unchanged
+
+encoder = WasmEncoder()
+encoder.encode(code)
+print(encoder.functions)
+----
+
+Try running the code.  You should get this:
+
+----
+bash % python3 wasm.py
+[b'\x1b\x01\x03\x7fA\x04!\x00A\x05!\x01 \x00 \x00l \x01 \x01lj!\x02 \x02\x0b']
+bash %
+----
+
+Is that enough to run the function?  No, it's not.  We haven't specified anything
+about the function name, its type signature, or anything else.  More work is to
+be done.
+
+==== Functions, Names, and Type Signatures
+
+So far, our Wasm encoder has created a low-level code object. This object has
+the raw instructions for a function, but no other information is given.  We
+need to create a type signature, function name, and exports.
+
+When you define a function, there are input arguments and return values.  For
+example, in C, you might write a function like this:
+
+----
+double func(int x, int y) {
+     ...
+     return result;
+}
+----
+
+The signature for this function specifies that there are two integer
+inputs and a double return type.  In Wasm, this information is
+expressed as a pair of type-vectors like this:
+
+----
+[(i32, i32), (f64,)]
+----
+
+or if you fill in the type-codes:
+
+----
+[(b'\x7f', b'\x7f'), (b'\x7c',)]
+----
+
+To encode a type signature, you use the following function:
+
+----
+def encode_signature(argtypes, rettypes):
+    return b'\x60\ + encode_vector(argtypes) + encode_vector(rettypes)
+----
+
+The result of this encoding should be put in a table.  The index within this table
+should be recorded.  For example:
+
+----
+typesigs = []
+typesigs.append(encode_signature(argstypes, rettypes))
+typeidx = len(typesigs) - 1
+----
+
+All functions in Wasm are assigned a unique numerical index.  This index points
+to the code object that you made in the last section.  However, the index also
+points to a separate list of type signatures.  You need to keep a list like this:
+
+----
+functypes = [ ]
+functypes.append(encoded_unsigned(typeidx))    # Save the function type signature
+funcidx = len(functypes) - 1
+----
+
+Last, but not least, you will notice that the function still has not been
+given a name.  That needs to be encoded in the form of a function export.
+To encode an export, you encode the function name, along with the function
+index like this:
+
+----  
+export = encode_name(funcname) + b'\x00' + encode_unsigned(funcidx)
+----
+
+Admittedly, this is a lot to unpack, but here is a modified WasmEncoder 
+class that encodes a type signature, updates a functypes list, and creates
+a function export record:
+
+----
+i32 = b'\x7f'
+f64 = b'\x7c'
+
+class WasmEncoder:
+    def __init__(self):
+        # List of function objects created
+        self.functions = [ ]
+        self.typesigs = [ ]
+        self.functypes = [ ] 
+        self.exports = [ ]
+
+    def encode_function(self, name, argtypes, rettypes, code):
+
+        # Create a type signature
+        typesig = b'\x60' + encode_vector(argtypes) + encode_vector(rettypes)
+        self.typesigs.append(typesig)
+        typeidx = len(self.typesigs) - 1
+
+        # Add the typeidx to the functypes list
+        self.functypes.append(encode_unsigned(typeidx))
+        funcidx = len(self.functypes) - 1
+
+        # Add the funcidx to the exports list
+        self.exports.append(encode_name(name) + b'\x00' + encode_unsigned(funcidx))
+
+        # Now make the function instructions
+        self.wcode = b''
+        self.vars = { }
+        self.vartypes = [ ]
+
+        for op, *opargs in code:
+            getattr(self, f'encode_{op}')(*opargs)
+        self.wcode += b'\x0b'
+
+        # Create the proper encoding of the entire function
+        groups = []
+        for ty, items in itertools.groupby(self.vartypes):
+            groups.append((len(list(items)), ty))
+
+        parts = [ encode_unsigned(count) + ty for count, ty in groups ]
+        enc_locals = encode_vector(parts)
+        func = enc_locals + self.wcode
+        self.functions.append(encode_unsigned(len(func)) + func)
+
+    def encode_GLOBALI(self, name):
+        self.vars[name] = len(self.vars)
+        self.vartypes.append(b'\x7f')
+
+    ... rest unchanged ...
+
+encoder = WasmEncoder()
+encoder.encode_function("main", [], [i32], code)
+----
+
+Try running this code and looking at the different pieces of the encoder:
+
+----
+bash % python3 -i wasm.py
+>>> encoder.typesigs
+[b'`\x00\x01\x7f']
+>>> encoder.functypes
+[b'\x00']
+>>> encoder.exports
+[b'\x04main\x00\x00']
+>>> encoder.functions
+[b'\x1b\x01\x03\x7fA\x04!\x00A\x05!\x01 \x00 \x00l \x01 \x01lj!\x02 \x02\x0b']
+>>> 
+----
+
+You are almost in business here.  Your last task is to make a Wasm module.
+
+==== Encoding a Module
+
+Your final step in encoding Wasm is to make an encoded module. A module
+is broken up into sections and looks like this:
+
+----
+
+                +----------------------------+
+ Header    :    | b'\x00asm\x01\x00\x00\x00' |
+                +----------------------------+
+ Section 1 :    |    type signatures         |
+                +----------------------------+    
+ Section 3 :    |    function types          |
+                +----------------------------+    
+ Section 7 :    |    exports                 |
+                +----------------------------+          
+ Section 10 :   |    function code           |
+                +----------------------------+          
+----
+
+There are other optional sections that are not needed right now.  The encoding
+of each section is a 1-byte section number, a section length, and section contents.
+Write the following functions:
+
+----
+def encode_section(sectnum, contents):
+    return bytes([sectnum]) + encode_unsigned(len(contents)) + contents
+----
+
+The contents of each section is encoded as a vector. So, to encode
+section 1 for instance, you would do this:
+
+----
+encode_section(1, encode_vector(typesigs))
+----
+
+Put all of this together by writing an `encode_module()` method like
+this:
+
+----
+class WasmEncoder:
+    def __init__(self):
+        # List of function objects created
+        self.functions = [ ]
+        self.typesigs = [ ]
+        self.functypes = [ ] 
+        self.exports = [ ]
+
+    ...
+    def encode_module(self):
+        module = b'\x00asm\x01\x00\x00\x00'
+        module += encode_section(1, encode_vector(self.typesigs))
+        module += encode_section(3, encode_vector(self.functypes))
+        module += encode_section(7, encode_vector(self.exports))
+        module += encode_section(10, encode_vector(self.functions))
+        return module
+
+# Example use:
+encoder = WasmEncoder()
+encoder.encode_function("main", [], [i32], code)
+with open('out.wasm', 'wb') as file:
+    file.write(encoder.encode_module())
+----
+
+Put this in your file and run it.  You should get a file `out.wasm`
+written in the current directory.
+
+==== Loading it in the Browser
+
+Wasm doesn't run by itself.  It needs to be launched from Javascript.
+Create a file `hello.html` that contains the following HTML and
+Javascript:
+
+----
+<html>
+<body>
+<h3>Program Output</h3>
+
+<pre id="myout">The output is: </pre>
+
+<script>
+    var imports = { };
+    fetch("out.wasm").then(response =>
+       response.arrayBuffer()
+    ).then(bytes =>
+       WebAssembly.instantiate(bytes, imports)
+    ).then(results => {
+       window.main = results.instance.exports.main;
+       out = window.main();
+       document.getElementById("myout").innerHTML += out + "\n";
+    });
+</script>
+</body>
+</html>
+----
+
+In this code, the `out.wasm` file is fetched and instantiated into a WebAssembly
+instance.  The `main()` function is lifted out of the instance exports
+section. When called, it's output is appended to the HTML in the `<pre>` 
+section at the top.
+
+To test this, go to the command line and the same directory as the `hello.html`
+and `out.wasm` file.  Run the following Python command:
+
+----
+bash % python3 -m http.server
+----
+
+This launches a web server.  Now click on
+http://localhost:8000/hello.html.  You should see an output of "41".
+If you see nothing, open the JavaScript dev console in your browser,
+reload, and look for error messages.  Even the slightest error in
+encoding your module will cause it to fail. Ask for help if stuck.
+
+==== Building the Runtime
+
+Wasm is extremely low-level and minimal.  Keep in mind you only get integers and floats.
+There are no strings. Or even any built-in functions!  Wasm doesn't get access to
+any part of Javascript or the browser environment all by itself.  This 
+presents certain logistical problems.  For example, how do you implement the
+`PRINTI` instruction?  
+
+The solution here is the same as the solution in LLVM!  If you want printing,
+you implement in JavaScript, not Wasm.   Go to the `hello.html` file and
+modify the code so it looks like this:
+
+----
+<html>
+<body>
+<h3>Program Output</h3>
+
+<pre id="myout">The output is: </pre>
+
+<script>
+    var imports = { 
+       runtime : {
+           _printi: (x) => { document.getElementById("myout").innerHTML += x + "\n"; },
+       }	   
+     };
+    fetch("out.wasm").then(response =>
+       response.arrayBuffer()
+    ).then(bytes =>
+       WebAssembly.instantiate(bytes, imports)
+    ).then(results => {
+       window.main = results.instance.exports.main;
+       window.main();
+    });
+</script>
+</body>
+</html>
+----
+
+Carefully observe that we have added a `_printi()` function to the
+`imports` variable.  The original output at the end has been
+removed.
+
+To make the `_printi` function available to Wasm, it has to be explicitly
+imported.  This is done by making import records as shown in this code:
+
+----
+class WasmEncoder:
+    def __init__(self):
+        # List of function objects created
+        ...
+        self.imports = [ ]
+
+        # Import built-in runtime functions
+        self._printi = self.import_function('runtime', '_printi', [i32], [])
+
+    def import_function(self, module, name, argtypes, rettypes):
+        # Make a type signature
+        typesig = b'\x60' + encode_vector(argtypes) + encode_vector(rettypes)
+        self.typesigs.append(typesig)
+        typeidx = len(self.typesigs) - 1
+
+        # Make an import record
+        enc = encode_name(module) + encode_name(name) + b'\x00' + encode_unsigned(typeidx)
+        self.imports.append(enc)
+        funcidx = len(self.imports) - 1
+        return funcidx
+----
+
+In this code, the `import_function()` operation is making a reference to externally
+defined function (in this case, a function coming from the JavaScript environment). 
+
+With a reference to external `_printi` function now saved, you can implement the
+`PRINTI` instruction to make a call-out:
+
+----
+    def encode_PRINTI(self):
+        self.wcode += b'\x10' + encode_unsigned(self._printi)
+----
+
+There are a few additional minor changes that need to be made to the
+`WasmEncoder` class.  First, the `funcidx` value needs to take
+number of imports into account.  There is a fragment of code like
+this:
+
+----
+    def encode_function(self, name, argtypes, rettypes, code):
+        ...
+
+        # Add the typeidx to the functypes list
+        self.functypes.append(encode_unsigned(typeidx))
+        funcidx = len(self.functypes) - 1                      
+----
+
+That needs to change to the following:
+
+----
+    def encode_function(self, name, argtypes, rettypes, code):
+        ...
+
+        # Add the typeidx to the functypes list
+        self.functypes.append(encode_unsigned(typeidx))
+        funcidx = len(self.imports) + len(self.functypes) - 1   # <<< CHANGED
+----
+
+The module encoding code also needs to add a new section:
+
+----
+    def encode_module(self):
+        module = b'\x00asm\x01\x00\x00\x00'
+        module += encode_section(1, encode_vector(self.typesigs))
+        module += encode_section(2, encode_vector(self.imports))  # <<< ADD THIS
+        module += encode_section(3, encode_vector(self.functypes))
+        module += encode_section(7, encode_vector(self.exports))
+        module += encode_section(10, encode_vector(self.functions))
+        return module
+----
+
+Finally, you may need to change the type-signature of the `main()` function.
+It is no-longer returning a value (it's being consumed by the `PRINTI`
+instruction instead).  So, change the code at the bottom:
+
+----
+encoder = WasmEncoder()
+encoder.encode_function("main", [], [], code)    # <<< CHANGED
+with open('out.wasm', 'wb') as file:
+    file.write(encoder.encode_module())
+----
+
+Try running your code to produce another `out.wasm` file and reload the hello page
+in the browser.  You should see output being produced as before. If not, you'll
+have to do some debugging.  Whew!  That was some work.
+
+==== A Wasm Mini Reference
+
+This section provides a short reference of useful Wasm instructions
+and data encoding
+
+Types:
+
+---- 
+b'\x7f'     => i32
+b'\x7c'     => f64
+----
+
+It is usually easier to make aliases for the types:
+
+----
+i32 = b'\x7f'
+f64 = b'\x7c'
+----
+
+To define constants corresponding to the above types, do this:
+
+----  
+b'\x41' <value>  => i32.const value
+b'\x44' <value>  => f64.const value
+----
+
+Here are some useful opcodes for math:
+
+----
+b'\x6a'        => i32.add
+b'\x6b'        => i32.sub
+b'\x6c'        => i32.mul
+b'\x6d'        => i32.div_s
+
+b'\xa0'        => f64.add
+b'\xa1'        => f64.sub
+b'\xa2'        => f64.mul
+b'\xa3'        => f64.div
+----
+
+To access a local variable, use load and store instructions:
+
+----
+b'\x20' <idx>  => local.get
+b'\x21' <idx>  => local.set
+----
+
+To call a function:
+
+----
+b'\x10' <idx>  => call  (idx is function index)
+----
+
+More instructions can be found in the Wasm official specification.
+
+
+
+
+
+    
+    

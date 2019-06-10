@@ -1,0 +1,1157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+    "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />
+<meta name="generator" content="AsciiDoc 8.6.10" />
+<title></title>
+<style type="text/css">
+/* Shared CSS for AsciiDoc xhtml11 and html5 backends */
+
+/* Default font. */
+body {
+  font-family: Georgia,serif;
+}
+
+/* Title font. */
+h1, h2, h3, h4, h5, h6,
+div.title, caption.title,
+thead, p.table.header,
+#toctitle,
+#author, #revnumber, #revdate, #revremark,
+#footer {
+  font-family: Arial,Helvetica,sans-serif;
+}
+
+body {
+  margin: 1em 5% 1em 5%;
+}
+
+a {
+  color: blue;
+  text-decoration: underline;
+}
+a:visited {
+  color: fuchsia;
+}
+
+em {
+  font-style: italic;
+  color: navy;
+}
+
+strong {
+  font-weight: bold;
+  color: #083194;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: #527bbd;
+  margin-top: 1.2em;
+  margin-bottom: 0.5em;
+  line-height: 1.3;
+}
+
+h1, h2, h3 {
+  border-bottom: 2px solid silver;
+}
+h2 {
+  padding-top: 0.5em;
+}
+h3 {
+  float: left;
+}
+h3 + * {
+  clear: left;
+}
+h5 {
+  font-size: 1.0em;
+}
+
+div.sectionbody {
+  margin-left: 0;
+}
+
+hr {
+  border: 1px solid silver;
+}
+
+p {
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+}
+
+ul, ol, li > p {
+  margin-top: 0;
+}
+ul > li     { color: #aaa; }
+ul > li > * { color: black; }
+
+.monospaced, code, pre {
+  font-family: "Courier New", Courier, monospace;
+  font-size: inherit;
+  color: navy;
+  padding: 0;
+  margin: 0;
+}
+pre {
+  white-space: pre-wrap;
+}
+
+#author {
+  color: #527bbd;
+  font-weight: bold;
+  font-size: 1.1em;
+}
+#email {
+}
+#revnumber, #revdate, #revremark {
+}
+
+#footer {
+  font-size: small;
+  border-top: 2px solid silver;
+  padding-top: 0.5em;
+  margin-top: 4.0em;
+}
+#footer-text {
+  float: left;
+  padding-bottom: 0.5em;
+}
+#footer-badges {
+  float: right;
+  padding-bottom: 0.5em;
+}
+
+#preamble {
+  margin-top: 1.5em;
+  margin-bottom: 1.5em;
+}
+div.imageblock, div.exampleblock, div.verseblock,
+div.quoteblock, div.literalblock, div.listingblock, div.sidebarblock,
+div.admonitionblock {
+  margin-top: 1.0em;
+  margin-bottom: 1.5em;
+}
+div.admonitionblock {
+  margin-top: 2.0em;
+  margin-bottom: 2.0em;
+  margin-right: 10%;
+  color: #606060;
+}
+
+div.content { /* Block element content. */
+  padding: 0;
+}
+
+/* Block element titles. */
+div.title, caption.title {
+  color: #527bbd;
+  font-weight: bold;
+  text-align: left;
+  margin-top: 1.0em;
+  margin-bottom: 0.5em;
+}
+div.title + * {
+  margin-top: 0;
+}
+
+td div.title:first-child {
+  margin-top: 0.0em;
+}
+div.content div.title:first-child {
+  margin-top: 0.0em;
+}
+div.content + div.title {
+  margin-top: 0.0em;
+}
+
+div.sidebarblock > div.content {
+  background: #ffffee;
+  border: 1px solid #dddddd;
+  border-left: 4px solid #f0f0f0;
+  padding: 0.5em;
+}
+
+div.listingblock > div.content {
+  border: 1px solid #dddddd;
+  border-left: 5px solid #f0f0f0;
+  background: #f8f8f8;
+  padding: 0.5em;
+}
+
+div.quoteblock, div.verseblock {
+  padding-left: 1.0em;
+  margin-left: 1.0em;
+  margin-right: 10%;
+  border-left: 5px solid #f0f0f0;
+  color: #888;
+}
+
+div.quoteblock > div.attribution {
+  padding-top: 0.5em;
+  text-align: right;
+}
+
+div.verseblock > pre.content {
+  font-family: inherit;
+  font-size: inherit;
+}
+div.verseblock > div.attribution {
+  padding-top: 0.75em;
+  text-align: left;
+}
+/* DEPRECATED: Pre version 8.2.7 verse style literal block. */
+div.verseblock + div.attribution {
+  text-align: left;
+}
+
+div.admonitionblock .icon {
+  vertical-align: top;
+  font-size: 1.1em;
+  font-weight: bold;
+  text-decoration: underline;
+  color: #527bbd;
+  padding-right: 0.5em;
+}
+div.admonitionblock td.content {
+  padding-left: 0.5em;
+  border-left: 3px solid #dddddd;
+}
+
+div.exampleblock > div.content {
+  border-left: 3px solid #dddddd;
+  padding-left: 0.5em;
+}
+
+div.imageblock div.content { padding-left: 0; }
+span.image img { border-style: none; vertical-align: text-bottom; }
+a.image:visited { color: white; }
+
+dl {
+  margin-top: 0.8em;
+  margin-bottom: 0.8em;
+}
+dt {
+  margin-top: 0.5em;
+  margin-bottom: 0;
+  font-style: normal;
+  color: navy;
+}
+dd > *:first-child {
+  margin-top: 0.1em;
+}
+
+ul, ol {
+    list-style-position: outside;
+}
+ol.arabic {
+  list-style-type: decimal;
+}
+ol.loweralpha {
+  list-style-type: lower-alpha;
+}
+ol.upperalpha {
+  list-style-type: upper-alpha;
+}
+ol.lowerroman {
+  list-style-type: lower-roman;
+}
+ol.upperroman {
+  list-style-type: upper-roman;
+}
+
+div.compact ul, div.compact ol,
+div.compact p, div.compact p,
+div.compact div, div.compact div {
+  margin-top: 0.1em;
+  margin-bottom: 0.1em;
+}
+
+tfoot {
+  font-weight: bold;
+}
+td > div.verse {
+  white-space: pre;
+}
+
+div.hdlist {
+  margin-top: 0.8em;
+  margin-bottom: 0.8em;
+}
+div.hdlist tr {
+  padding-bottom: 15px;
+}
+dt.hdlist1.strong, td.hdlist1.strong {
+  font-weight: bold;
+}
+td.hdlist1 {
+  vertical-align: top;
+  font-style: normal;
+  padding-right: 0.8em;
+  color: navy;
+}
+td.hdlist2 {
+  vertical-align: top;
+}
+div.hdlist.compact tr {
+  margin: 0;
+  padding-bottom: 0;
+}
+
+.comment {
+  background: yellow;
+}
+
+.footnote, .footnoteref {
+  font-size: 0.8em;
+}
+
+span.footnote, span.footnoteref {
+  vertical-align: super;
+}
+
+#footnotes {
+  margin: 20px 0 20px 0;
+  padding: 7px 0 0 0;
+}
+
+#footnotes div.footnote {
+  margin: 0 0 5px 0;
+}
+
+#footnotes hr {
+  border: none;
+  border-top: 1px solid silver;
+  height: 1px;
+  text-align: left;
+  margin-left: 0;
+  width: 20%;
+  min-width: 100px;
+}
+
+div.colist td {
+  padding-right: 0.5em;
+  padding-bottom: 0.3em;
+  vertical-align: top;
+}
+div.colist td img {
+  margin-top: 0.3em;
+}
+
+@media print {
+  #footer-badges { display: none; }
+}
+
+#toc {
+  margin-bottom: 2.5em;
+}
+
+#toctitle {
+  color: #527bbd;
+  font-size: 1.1em;
+  font-weight: bold;
+  margin-top: 1.0em;
+  margin-bottom: 0.1em;
+}
+
+div.toclevel0, div.toclevel1, div.toclevel2, div.toclevel3, div.toclevel4 {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+div.toclevel2 {
+  margin-left: 2em;
+  font-size: 0.9em;
+}
+div.toclevel3 {
+  margin-left: 4em;
+  font-size: 0.9em;
+}
+div.toclevel4 {
+  margin-left: 6em;
+  font-size: 0.9em;
+}
+
+span.aqua { color: aqua; }
+span.black { color: black; }
+span.blue { color: blue; }
+span.fuchsia { color: fuchsia; }
+span.gray { color: gray; }
+span.green { color: green; }
+span.lime { color: lime; }
+span.maroon { color: maroon; }
+span.navy { color: navy; }
+span.olive { color: olive; }
+span.purple { color: purple; }
+span.red { color: red; }
+span.silver { color: silver; }
+span.teal { color: teal; }
+span.white { color: white; }
+span.yellow { color: yellow; }
+
+span.aqua-background { background: aqua; }
+span.black-background { background: black; }
+span.blue-background { background: blue; }
+span.fuchsia-background { background: fuchsia; }
+span.gray-background { background: gray; }
+span.green-background { background: green; }
+span.lime-background { background: lime; }
+span.maroon-background { background: maroon; }
+span.navy-background { background: navy; }
+span.olive-background { background: olive; }
+span.purple-background { background: purple; }
+span.red-background { background: red; }
+span.silver-background { background: silver; }
+span.teal-background { background: teal; }
+span.white-background { background: white; }
+span.yellow-background { background: yellow; }
+
+span.big { font-size: 2em; }
+span.small { font-size: 0.6em; }
+
+span.underline { text-decoration: underline; }
+span.overline { text-decoration: overline; }
+span.line-through { text-decoration: line-through; }
+
+div.unbreakable { page-break-inside: avoid; }
+
+
+/*
+ * xhtml11 specific
+ *
+ * */
+
+div.tableblock {
+  margin-top: 1.0em;
+  margin-bottom: 1.5em;
+}
+div.tableblock > table {
+  border: 3px solid #527bbd;
+}
+thead, p.table.header {
+  font-weight: bold;
+  color: #527bbd;
+}
+p.table {
+  margin-top: 0;
+}
+/* Because the table frame attribute is overriden by CSS in most browsers. */
+div.tableblock > table[frame="void"] {
+  border-style: none;
+}
+div.tableblock > table[frame="hsides"] {
+  border-left-style: none;
+  border-right-style: none;
+}
+div.tableblock > table[frame="vsides"] {
+  border-top-style: none;
+  border-bottom-style: none;
+}
+
+
+/*
+ * html5 specific
+ *
+ * */
+
+table.tableblock {
+  margin-top: 1.0em;
+  margin-bottom: 1.5em;
+}
+thead, p.tableblock.header {
+  font-weight: bold;
+  color: #527bbd;
+}
+p.tableblock {
+  margin-top: 0;
+}
+table.tableblock {
+  border-width: 3px;
+  border-spacing: 0px;
+  border-style: solid;
+  border-color: #527bbd;
+  border-collapse: collapse;
+}
+th.tableblock, td.tableblock {
+  border-width: 1px;
+  padding: 4px;
+  border-style: solid;
+  border-color: #527bbd;
+}
+
+table.tableblock.frame-topbot {
+  border-left-style: hidden;
+  border-right-style: hidden;
+}
+table.tableblock.frame-sides {
+  border-top-style: hidden;
+  border-bottom-style: hidden;
+}
+table.tableblock.frame-none {
+  border-style: hidden;
+}
+
+th.tableblock.halign-left, td.tableblock.halign-left {
+  text-align: left;
+}
+th.tableblock.halign-center, td.tableblock.halign-center {
+  text-align: center;
+}
+th.tableblock.halign-right, td.tableblock.halign-right {
+  text-align: right;
+}
+
+th.tableblock.valign-top, td.tableblock.valign-top {
+  vertical-align: top;
+}
+th.tableblock.valign-middle, td.tableblock.valign-middle {
+  vertical-align: middle;
+}
+th.tableblock.valign-bottom, td.tableblock.valign-bottom {
+  vertical-align: bottom;
+}
+
+
+/*
+ * manpage specific
+ *
+ * */
+
+body.manpage h1 {
+  padding-top: 0.5em;
+  padding-bottom: 0.5em;
+  border-top: 2px solid silver;
+  border-bottom: 2px solid silver;
+}
+body.manpage h2 {
+  border-style: none;
+}
+body.manpage div.sectionbody {
+  margin-left: 3em;
+}
+
+@media print {
+  body.manpage div#toc { display: none; }
+}
+
+
+</style>
+<script type="text/javascript">
+/*<![CDATA[*/
+var asciidoc = {  // Namespace.
+
+/////////////////////////////////////////////////////////////////////
+// Table Of Contents generator
+/////////////////////////////////////////////////////////////////////
+
+/* Author: Mihai Bazon, September 2002
+ * http://students.infoiasi.ro/~mishoo
+ *
+ * Table Of Content generator
+ * Version: 0.4
+ *
+ * Feel free to use this script under the terms of the GNU General Public
+ * License, as long as you do not remove or alter this notice.
+ */
+
+ /* modified by Troy D. Hanson, September 2006. License: GPL */
+ /* modified by Stuart Rackham, 2006, 2009. License: GPL */
+
+// toclevels = 1..4.
+toc: function (toclevels) {
+
+  function getText(el) {
+    var text = "";
+    for (var i = el.firstChild; i != null; i = i.nextSibling) {
+      if (i.nodeType == 3 /* Node.TEXT_NODE */) // IE doesn't speak constants.
+        text += i.data;
+      else if (i.firstChild != null)
+        text += getText(i);
+    }
+    return text;
+  }
+
+  function TocEntry(el, text, toclevel) {
+    this.element = el;
+    this.text = text;
+    this.toclevel = toclevel;
+  }
+
+  function tocEntries(el, toclevels) {
+    var result = new Array;
+    var re = new RegExp('[hH]([1-'+(toclevels+1)+'])');
+    // Function that scans the DOM tree for header elements (the DOM2
+    // nodeIterator API would be a better technique but not supported by all
+    // browsers).
+    var iterate = function (el) {
+      for (var i = el.firstChild; i != null; i = i.nextSibling) {
+        if (i.nodeType == 1 /* Node.ELEMENT_NODE */) {
+          var mo = re.exec(i.tagName);
+          if (mo && (i.getAttribute("class") || i.getAttribute("className")) != "float") {
+            result[result.length] = new TocEntry(i, getText(i), mo[1]-1);
+          }
+          iterate(i);
+        }
+      }
+    }
+    iterate(el);
+    return result;
+  }
+
+  var toc = document.getElementById("toc");
+  if (!toc) {
+    return;
+  }
+
+  // Delete existing TOC entries in case we're reloading the TOC.
+  var tocEntriesToRemove = [];
+  var i;
+  for (i = 0; i < toc.childNodes.length; i++) {
+    var entry = toc.childNodes[i];
+    if (entry.nodeName.toLowerCase() == 'div'
+     && entry.getAttribute("class")
+     && entry.getAttribute("class").match(/^toclevel/))
+      tocEntriesToRemove.push(entry);
+  }
+  for (i = 0; i < tocEntriesToRemove.length; i++) {
+    toc.removeChild(tocEntriesToRemove[i]);
+  }
+
+  // Rebuild TOC entries.
+  var entries = tocEntries(document.getElementById("content"), toclevels);
+  for (var i = 0; i < entries.length; ++i) {
+    var entry = entries[i];
+    if (entry.element.id == "")
+      entry.element.id = "_toc_" + i;
+    var a = document.createElement("a");
+    a.href = "#" + entry.element.id;
+    a.appendChild(document.createTextNode(entry.text));
+    var div = document.createElement("div");
+    div.appendChild(a);
+    div.className = "toclevel" + entry.toclevel;
+    toc.appendChild(div);
+  }
+  if (entries.length == 0)
+    toc.parentNode.removeChild(toc);
+},
+
+
+/////////////////////////////////////////////////////////////////////
+// Footnotes generator
+/////////////////////////////////////////////////////////////////////
+
+/* Based on footnote generation code from:
+ * http://www.brandspankingnew.net/archive/2005/07/format_footnote.html
+ */
+
+footnotes: function () {
+  // Delete existing footnote entries in case we're reloading the footnodes.
+  var i;
+  var noteholder = document.getElementById("footnotes");
+  if (!noteholder) {
+    return;
+  }
+  var entriesToRemove = [];
+  for (i = 0; i < noteholder.childNodes.length; i++) {
+    var entry = noteholder.childNodes[i];
+    if (entry.nodeName.toLowerCase() == 'div' && entry.getAttribute("class") == "footnote")
+      entriesToRemove.push(entry);
+  }
+  for (i = 0; i < entriesToRemove.length; i++) {
+    noteholder.removeChild(entriesToRemove[i]);
+  }
+
+  // Rebuild footnote entries.
+  var cont = document.getElementById("content");
+  var spans = cont.getElementsByTagName("span");
+  var refs = {};
+  var n = 0;
+  for (i=0; i<spans.length; i++) {
+    if (spans[i].className == "footnote") {
+      n++;
+      var note = spans[i].getAttribute("data-note");
+      if (!note) {
+        // Use [\s\S] in place of . so multi-line matches work.
+        // Because JavaScript has no s (dotall) regex flag.
+        note = spans[i].innerHTML.match(/\s*\[([\s\S]*)]\s*/)[1];
+        spans[i].innerHTML =
+          "[<a id='_footnoteref_" + n + "' href='#_footnote_" + n +
+          "' title='View footnote' class='footnote'>" + n + "</a>]";
+        spans[i].setAttribute("data-note", note);
+      }
+      noteholder.innerHTML +=
+        "<div class='footnote' id='_footnote_" + n + "'>" +
+        "<a href='#_footnoteref_" + n + "' title='Return to text'>" +
+        n + "</a>. " + note + "</div>";
+      var id =spans[i].getAttribute("id");
+      if (id != null) refs["#"+id] = n;
+    }
+  }
+  if (n == 0)
+    noteholder.parentNode.removeChild(noteholder);
+  else {
+    // Process footnoterefs.
+    for (i=0; i<spans.length; i++) {
+      if (spans[i].className == "footnoteref") {
+        var href = spans[i].getElementsByTagName("a")[0].getAttribute("href");
+        href = href.match(/#.*/)[0];  // Because IE return full URL.
+        n = refs[href];
+        spans[i].innerHTML =
+          "[<a href='#_footnote_" + n +
+          "' title='View footnote' class='footnote'>" + n + "</a>]";
+      }
+    }
+  }
+},
+
+install: function(toclevels) {
+  var timerId;
+
+  function reinstall() {
+    asciidoc.footnotes();
+    if (toclevels) {
+      asciidoc.toc(toclevels);
+    }
+  }
+
+  function reinstallAndRemoveTimer() {
+    clearInterval(timerId);
+    reinstall();
+  }
+
+  timerId = setInterval(reinstall, 500);
+  if (document.addEventListener)
+    document.addEventListener("DOMContentLoaded", reinstallAndRemoveTimer, false);
+  else
+    window.onload = reinstallAndRemoveTimer;
+}
+
+}
+asciidoc.install();
+/*]]>*/
+</script>
+</head>
+<body class="article">
+<div id="header">
+</div>
+<div id="content">
+<div class="sect1">
+<h2 id="_a_guide_to_control_flow">A Guide to Control Flow</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>A sequence of simple operations where there is a single entry and
+exit point with no changes in control flow is known as a basic block.
+For example:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>// Example of a basic block
+a = 2;
+b = 3;
+c = a + b;</code></pre>
+</div></div>
+<div class="paragraph"><p>Programs tend to consist of many basic blocks joined together
+by various control-flow statements such as conditions and loops.
+For example:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>a = 2;
+b = 3;
+if a &lt; b {
+    c = a + b;
+} else {
+    c = a - b;
+}
+print c;</code></pre>
+</div></div>
+<div class="paragraph"><p>In this code, there are four basic blocks:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>b1:    a = 2;
+       b = 3;
+       a &lt; b;
+
+b2:    c = a + b;
+
+b3:    c = a - b;
+
+b4:    print(c);</code></pre>
+</div></div>
+<div class="paragraph"><p>The condition causes the code to branch to either block b2 or block b3.
+One way to view this is as a control-flow graph:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>                 |--------------|
+                 |  b1:  a = 2; |
+                 |       b = 3; |
+                 |       a &lt; b; |
+                 |--------------|
+               /                 \
+              / True         False\
+             /                     \
+    |------------------|       |-----------------|
+    |  b2:  c = a + b; |       |  b3: c = a - b; |
+    |------------------|       |-----------------|
+                 \              /
+                  \            /
+                  |--------------|
+                  | b4: print(c);|
+                  |--------------|</code></pre>
+</div></div>
+<div class="paragraph"><p>The nodes of the graph represent basic blocks&#8212;which are just simple
+instruction sequences.  Edges of the graph represent jumps to to a
+different basic block.  Sometimes an edge depends on the result
+of a condition or relation.   An edge might also be an unconditional
+jump.</p></div>
+<div class="paragraph"><p>Internally, a compiler might construct a control flow graph in order
+to further analyze the structure of the program (e.g., detecting when
+variables are no longer needed, finding dead code, performing certain
+optimizations, etc.).</p></div>
+<div class="sect2">
+<h3 id="_expressing_control_flow_with_jump_instructions">Expressing Control Flow with Jump Instructions</h3>
+<div class="paragraph"><p>When generating code, there are different ways to express the
+control flow graph.  One approach is to serialize the instruction
+stream and to insert explicit jump instructions that link the blocks.
+For example, like this:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>         |--------------|
+         |  b1:  a = 2  |
+         |       b = 3  |
+         |       a &lt; b  |
+         |--------------|
+         | JMP_FALSE b3 |
+         |--------------|
+         | b2: c = a +b |
+         |--------------|
+         | JMP b4       |
+         |--------------|
+         | b3: c = a-b  |
+         |--------------|
+         | b4: print(c) |
+         |--------------|</code></pre>
+</div></div>
+<div class="paragraph"><p>This is how Python generates control-flow for its low-level instructions.
+Take a look at this:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>&gt;&gt;&gt; def foo(a,b):
+         if a &lt; b:
+             print("yes")
+         else:
+             print("no")
+
+&gt;&gt;&gt; import dis
+&gt;&gt;&gt; dis.dis(foo)
+       2           0 LOAD_FAST                0 (a)
+                   3 LOAD_FAST                1 (b)
+                   6 COMPARE_OP               0 (&lt;)
+                   9 POP_JUMP_IF_FALSE       25
+
+       3          12 LOAD_GLOBAL              0 (print)
+                  15 LOAD_CONST               1 ('yes')
+                  18 CALL_FUNCTION            1
+                  21 POP_TOP
+                  22 JUMP_FORWARD            10 (to 35)
+
+       5     &gt;&gt;   25 LOAD_GLOBAL              0 (print)
+                  28 LOAD_CONST               2 ('no')
+                  31 CALL_FUNCTION            1
+                  34 POP_TOP
+             &gt;&gt;   35 LOAD_CONST               0 (None)
+                  38 RETURN_VALUE
+&gt;&gt;&gt;</code></pre>
+</div></div>
+<div class="paragraph"><p>Carefully study the code.  Can you identify the basic blocks?
+How does control flow of the if-statement pass from block to block?</p></div>
+<div class="paragraph"><p>Try disassembling a while-loop:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>&gt;&gt;&gt; def countdown(n):
+        while n &gt; 0:
+            print("T-minus",n)
+            n -= 1
+
+&gt;&gt;&gt; dis.dis(countdown)
+      2           0 SETUP_LOOP              39 (to 42)
+            &gt;&gt;    3 LOAD_FAST                0 (n)
+                  6 LOAD_CONST               1 (0)
+                  9 COMPARE_OP               4 (&gt;)
+                 12 POP_JUMP_IF_FALSE       41
+
+      3          15 LOAD_GLOBAL              0 (print)
+                 18 LOAD_CONST               2 ('T-minus')
+                 21 LOAD_FAST                0 (n)
+                 24 CALL_FUNCTION            2
+                 27 POP_TOP
+
+      4          28 LOAD_FAST                0 (n)
+                 31 LOAD_CONST               3 (1)
+                 34 INPLACE_SUBTRACT
+                 35 STORE_FAST               0 (n)
+                 38 JUMP_ABSOLUTE            3
+            &gt;&gt;   41 POP_BLOCK
+            &gt;&gt;   42 LOAD_CONST               0 (None)
+                 45 RETURN_VALUE
+&gt;&gt;&gt;</code></pre>
+</div></div>
+<div class="paragraph"><p>Again, study the disassembly.  Can you identify the basic blocks?
+What is the control flow between blocks?</p></div>
+</div>
+<div class="sect2">
+<h3 id="_structured_control_flow">Structured Control Flow</h3>
+<div class="paragraph"><p>Instead of using jump instructions, an alternative approach is to use
+what&#8217;s known as structured control flow.  This is basically the
+same approach as expressed in high-level languages like Python.
+It&#8217;s what you are doing by indenting blocks of code.</p></div>
+<div class="paragraph"><p>IR code with structured-control flow might look like this:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>         |--------------|
+         |  a = 2       |
+         |  b = 3       |
+         |  a &lt; b       |
+         |--------------|
+         | IF           |
+         |--------------|
+         | c = a +b     |
+         |--------------|
+         | ELSE         |
+         |--------------|
+         | c = a-b      |
+         |--------------|
+         | ENDIF        |
+         |--------------|
+         | print(c)     |
+         |--------------|</code></pre>
+</div></div>
+<div class="paragraph"><p>Notice, instead of emitting labels, you emit <code>IF</code>, <code>ELSE</code>, and
+<code>ENDIF</code> instructions to mark blocks.</p></div>
+<div class="paragraph"><p>For looping constructs, structured control flow is often a bit counter-intuitive.
+Suppose you have a while loop like this:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>while n &gt; 0 {
+     print(n);
+     n = n - 1;
+}
+print("Done")</code></pre>
+</div></div>
+<div class="paragraph"><p>This can be translated into the following code which is equivalent. Notice
+the use of an infinite-loop and <code>break</code> statement.</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>while true {
+    if n &gt; 0:
+        break;
+    print(n)
+    n = n - 1
+}
+print("Done")</code></pre>
+</div></div>
+<div class="paragraph"><p>The low-level instruction stream would then look like this:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>         |--------------|
+         | LOOP         |
+         |--------------|
+         | not n &gt; 0    |
+         |--------------|
+         | CBREAK       |   (Conditional Break)
+         |--------------|
+         | print(n)     |
+         | n = n - 1    |
+         |--------------|
+         | ENDLOOP      |
+         |--------------|
+         | print("Done")|
+         |--------------|</code></pre>
+</div></div>
+<div class="paragraph"><p>The idea here is that the loop cycles endlessly until a conditional
+break instruction makes it stop.  The placement of the <code>CBREAK</code>
+allows different kinds of looping constructs (e.g., do-while loops and
+other variants).</p></div>
+</div>
+<div class="sect2">
+<h3 id="_control_flow_in_wabbit">Control flow in Wabbit</h3>
+<div class="paragraph"><p>Wabbit supports an <code>if-else</code> statement:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>if relation {
+    statements
+} else {
+    statements
+}</code></pre>
+</div></div>
+<div class="paragraph"><p>and a <code>while</code>-loop:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>while relation {
+    statements
+}</code></pre>
+</div></div>
+<div class="paragraph"><p>For loops, the <code>break</code> statement exits a loop early.  The <code>continue</code> statement
+skips to the next iteration (jumps back to the top of the loop).</p></div>
+</div>
+<div class="sect2">
+<h3 id="_structured_control_flow_2">Structured Control Flow</h3>
+<div class="paragraph"><p>For generating IRCode, use structured control flow as described above.
+For example, suppose you have the following conditional:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>if test {
+    consequence
+} else {
+    alternative
+}</code></pre>
+</div></div>
+<div class="paragraph"><p>The IR code will look like this:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>... test ...
+('IF',)
+... consequent ...
+('ELSE',)
+... alternative ...
+('ENDIF',)</code></pre>
+</div></div>
+<div class="paragraph"><p>The <code>IF</code> instruction takes the top element of the stack and uses it
+to take one of two code branches.</p></div>
+<div class="paragraph"><p>For loops, you&#8217;re going to use <code>LOOP</code>, <code>CBREAK</code>, and <code>ENDLOOP</code> like this:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>('LOOP',)
+... evaluate loop test ...
+('CBREAK',)            # Go to instruction after ENDLOOP
+... loop body ...
+('ENDLOOP,)            # Jump back to top of loop</code></pre>
+</div></div>
+<div class="paragraph"><p>Here are some samples of IR-code:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code># Example of if-statement
+# if a &lt; b {
+#    minval = a;
+# } else {
+#    minval = b;
+# }
+    ('LOADI', 'a')
+    ('LOADI', 'b')
+    ('LTI',)
+    ('IF',)
+    ('LOADI', 'a')
+    ('STOREI', 'minval')
+    ('ELSE',)
+    ('LOADI', 'b'))
+    ('STOREI', 'minval')
+    ('ENDIF',)
+
+# Example of while-loop
+# while n &gt; 0 {
+#    print n;
+#    n = n - 1;
+# }
+    ('LOOP',)
+    ('LOADI', 'n')
+    ('CONSTI', 0)
+    ('LEI',)         # Note: Test is inverted (true breaks out)
+    ('CBREAK',)
+    ('LOADI', 'n')
+    ('PRINTI',)
+    ('LOADI', 'n')
+    ('CONSTI', 1)
+    ('SUBI',)
+    ('STOREI', 'n')
+    ('ENDLOOP',)</code></pre>
+</div></div>
+<div class="paragraph"><p>Structured control-flow very closely follows the control flow model
+of the original Wabbit source code.  Generating the above code
+should be fairly straightforward&#8212;mainly you need to place the various
+<code>IF</code>, <code>ELSE</code>, <code>ENDIF</code>, <code>LOOP</code>, and <code>ENDLOOP</code> instructions in the right place
+when emitting instructions.</p></div>
+<div class="paragraph"><p>Structured control-flow does not rely on goto statements or labels.
+Thus, if you&#8217;ve written low-level machine language before, it&#8217;s going
+to look a little weird.</p></div>
+</div>
+<div class="sect2">
+<h3 id="_wasm_code_generation">Wasm Code Generation</h3>
+<div class="paragraph"><p>Generating Wasm code for structured control flow is
+straightforward because Wasm itself uses structured control flow.  The
+<code>IF</code>, <code>ELSE</code>, and <code>ENDIF</code> instructions should translate almost
+directly to the Wasm <code>if</code> instruction.</p></div>
+<div class="paragraph"><p>Loops in Wasm are slightly more tricky.  For this, you
+need to enclose the loop both in an outer block and by an inner loop
+instruction.  In pseudocode, it looks like this:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>block {
+  loop {
+      # Evaluate the loop test
+      ...
+      br_if 1     # Break to enclosing block if eval stack is true
+      # Evaluate the loop body
+      ...
+      br 0        # Go back to top of loop
+  }
+  # The br_if 1 targets this position
+  ...
+}</code></pre>
+</div></div>
+<div class="paragraph"><p>All of these elements (<code>block</code>, <code>loop</code>, <code>br_if</code>, and <code>br</code>) are
+Wasm instructions.  See pg. 90 of the WebAssembly Specification, v1.0
+for the precise encoding.</p></div>
+</div>
+<div class="sect2">
+<h3 id="_generating_llvm">Generating LLVM</h3>
+<div class="paragraph"><p>One challenge will involve translating structured control to LLVM&#8217;s
+block structure.  To do this, you should create a series of
+basic blocks immediately upon encountering the <code>IF</code> instruction.
+For example, something like this:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>def emit_IF(self):
+    then_block = self.function.append_basic_block()
+    else_block = self.function.append_basic_block()
+    cont_block = self.function.append_basic_block()
+    self.builder.cbranch(self.pop(), then_block, else_block)
+    self.builder.position_at_end(then_block)
+    self.block_stack.append((then_block, else_block, cont_block))</code></pre>
+</div></div>
+<div class="paragraph"><p>You&#8217;ll need to save these blocks on some kind of stack for later use.
+In the <code>ELSE</code> instruction, you&#8217;ll refer back to the block stack like
+this:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>def emit_ELSE(self):
+    self.builder.branch(self.block_stack[-1][2])           # cont_block
+    self.builder.position_at_end(self.block_stack[-1][1])  # else_block</code></pre>
+</div></div>
+<div class="paragraph"><p>Finally, in the <code>ENDIF</code> instruction, you&#8217;ll pop the stack:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>def emit_ENDIF(self):
+    self.builder.branch(self.block_stack[-1][2])
+    self.builder.position_at_end(self.block_stack[-1][2])
+    self.block_stack.pop()</code></pre>
+</div></div>
+<div class="paragraph"><p>It is critical that every LLVM block be terminated by a branch. So,
+when generating code, you need to make sure approach branch
+instructions are generated to get control flow to jump.  If you forget
+this, you&#8217;ll get crazy error messages. You&#8217;ll also get an error if you
+attempt to put more than one branch in the same block or if you put
+instructions after a branch.</p></div>
+<div class="paragraph"><p>Generating the <code>LOOP</code> code is similar to <code>IF</code>. Create the basic
+blocks when you see the <code>LOOP</code> instruction and save them on a stack
+for later use in <code>CBREAK</code> and <code>ENDLOOP</code> instructions.</p></div>
+</div>
+</div>
+</div>
+</div>
+<div id="footnotes"><hr /></div>
+<div id="footer">
+<div id="footer-text">
+Last updated
+ 2019-06-09 21:05:54 CDT
+</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<body bgcolor="#d0d0d0">
+
+  <h3>Program Output</h3>
+
+<pre id="wabbitout">
+</pre>
+
+<br>top<br>
+<canvas id="wabbitplot" width="800" height="800"></canvas>
+<br>bottom<br>
+
+  <script>
+    var imports = {
+        wabbit: { 
+             _printi: (x) => { document.getElementById("wabbitout").innerHTML += x + "\n"; },
+             _printf: (x) => { document.getElementById("wabbitout").innerHTML += x + "\n"; },
+             _printb: (x) => { document.getElementById("wabbitout").innerHTML += String.fromCharCode(x); },
+             put_image: (base, width, height) => {
+                   let canvas = document.getElementById('wabbitplot');
+                   let ctx = canvas.getContext('2d');
+                   let arr = new Uint8ClampedArray(window.memory.buffer.slice(base,base+width*height*4));
+                   ctx.putImageData(new ImageData(arr, width), 0, 0);
+             }
+          },
+      };
+    fetch("out.wasm").then(response =>
+      response.arrayBuffer()
+    ).then(bytes =>
+           WebAssembly.instantiate(bytes, imports)
+    ).then(results => {
+      window.wabbit = results;
+      window.main = results.instance.exports.main;
+      window.memory = results.instance.exports.memory;
+      window.main(800,800);
+    });
+  </script>
+
+</body>
+</html>

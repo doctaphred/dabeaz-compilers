@@ -1,0 +1,450 @@
+== Function Implementation Note
+
+This document has a few implementation notes on functions.
+
+=== Functions in Wabbit
+
+Wabbit supports user-defined functions as shown in this example:
+
+----
+// External function definition
+import func sin(x float) float;
+
+// Function definition
+func add(x int, y int) int {
+    return x+y;
+}
+
+// Function definition
+func fibonacci(n int) int {
+    if n > 1 {
+        return fibonacci(n-1) + fibonacci(n-2);     // Return
+    } else {
+        return 1;    // Return
+    }
+    return 0;   // Might need this (depends on how smart compiler is)
+}
+
+const MAXFIB = 20;       // Global
+
+// Function definition (entry point)    
+func main() int {
+     print add(2,3);            // Function call
+     print sin(3);              // External call
+     var n int;
+     while n < MAXFIB {
+         print fibonacci(n);    // Function call
+     }
+     return 0;
+}
+----
+
+=== IR Code Generation
+
+For IR code, each function should be packaged in a separate object.
+You'll probably want to define some kind of class:
+
+----
+class IRFunction:
+    def __init__(self, name, args, rettype):
+        self.name = name
+        self.args = args
+        self.rettype = rettype
+        self.code = []
+
+    def append(self, instruction):
+        self.code.append(instruction)
+
+    def __iter__(self):
+        return iter(self.code)
+----
+
+To generate code with this object, you'll do something like this:
+
+----
+# Sample function:
+#
+#   func add(x int, y int) int {
+#       return x + y;
+#   }
+#
+
+f = Function('add', [('x','I'),('y', 'I')], ['I'])
+f.append(('LOAD', 'x'))
+f.append(('LOAD', 'y'))
+f.append(('ADDI',))
+f.append(('RET',))
+----
+
+Note: The intermediate code only really has two types of data, integers
+and floats.  If you need to express types (e.g., for function arguments),
+use short codes like "I" or "F" to indicate the type.
+
+In the IR Code you need to make a distinction between local and global
+variables.  There are two different instructions used. For example,
+`LOCALI` defines a local variable, `GLOBALI` defines a global
+variable.
+
+To call a function, you should evaluate each argument first, in order.  
+When you're done, use the `CALL` instruction to invoke a function.  Here's
+an example:
+
+----
+# Sample of IR code for a function call:
+#
+#    func add(x int, y int) int {
+#       return x + y;
+#    }
+#
+#    print(add(2+3, 4));
+#
+code = [
+    ('CONSTI', 2),    # arg0: 2 + 3
+    ('CONSTI', 3),
+    ('ADDI',),
+    ('CONSTI', 4),    # arg1: 4
+    ('CALL', 'add'),
+    ('PRINTI',)       # Result of function call on stack
+]
+----
+
+Since the input program might contain multiple functions, you'll need
+to figure out some way to bundle all of that information up.  You
+might create a `Module` class that holds a collection of functions.
+
+=== LLVM Code Generation
+
+In LLVM, local variables are declared as follows:
+
+----
+y_var = builder.alloca(IntType(32), name='y')
+builder.store(Constant(IntType(32), 0), y_var)
+----
+
+Global variables are declared as follows:
+
+----
+x_var = GlobalVariable(mod, IntType(32), name='x')
+x_var.initializer = Constant(IntType(32), 0)
+----
+
+LLVM `load` and `store` instructions should work with either kind of
+declaration.  So, as long as you're tracking names and variables
+correctly, it should all just work work.
+
+Within a function, you're going to need to properly bind the function
+arguments to local variables.  On any function, the `args` attribute
+has the arguments.  You'll need to do something like this at the start
+of each function:
+
+----
+for n, (argname, argtype) in enumerate(zip(argnames, argtypes)):
+    self.vars[argname] = self.builder.alloca(argtype, name=argname)
+    self.builder.store(func.args[n], self.vars[argname])
+----
+
+To call a function in LLVM, you use the `builder.call()` instruction:
+
+----
+result = builder.call(func, [args])
+----
+
+As an argument, you need to supply all of the argument values in a list.
+Since we're working with a stack-based intermediate code, you're going to need
+to pull the arguments off the stack.  You'll need to know the argument count
+to do it.  Thus, the code might look like this:
+
+----
+args = [self.pop() for _ in range(len(func.args))][::-1]   # Must reverse
+self.push(builder.call(func, args))
+----
+
+=== Web Assembly Implementation Notes
+
+You will need to manage local and global variables in separate spaces.
+Global variables are encoded into a dedicated section 6 in the Wasm
+module structure.  This is a new section of the encoding not seen before.
+You'll have to figure out the encoding for it.  Like with functions and types,
+globals are assigned a numeric index.  Any reference to a global variable
+uses the numeric index.   There are dedicated instructions `global.get`
+and `global.set` for accessing globals.
+
+When encoding, all functions get a unique numerical index (`funcidx`).  All
+imported functions always get listed first, starting at zero.  Functions
+defined within the Wasm module itself get indices that start after all
+imports have been declared.   When putting together the Wasm module, you'll
+need to make sure all imported functions always get processed first.
+
+All local variables in Wasm also get assigned a numeric index.  However,
+function parameters always go first.   Thus, function parameters are
+local variables starting with index 0.  After all parameters, then the local
+variables get added.   So, if you had this function:
+
+----
+func spam(x int, y int) int {
+    var a int = x + y;
+    var b int = 2 * a;
+    return b;
+}
+----
+
+The local variables and their indices would be this:
+
+----
+'x':   index=0
+'y':   index=1
+'a':   index=2
+'b':   index=3
+----
+
+Function arguments are NOT incuded in the function body encoding
+(the data in section 10 of the Wasm module). 
+Only the local variables appear.  The function parameters are already
+known because they're part of the function type signature (which is
+encoded separately). 
+
+If you're getting a lot of validation errors about bad types, there's
+a good chance you've got your function/local/global index values set wrong.
+
+=== Interpreter Implementation
+
+If you are trying to make an interpreter, you need to worry about stack
+frames and the execution environment.  A look at how Python works
+might help:
+
+==== Scoping Rules
+
+Variables defined inside a function are local to that
+function.  For example, if you define:
+
+----
+def foo():
+    a = 2
+    b = 3
+----
+
+Then the variables `a` and `b` are local to that 
+function.  If there are global variables with the same name,
+there are no conflicts.  Moreover, calling the function
+won't overwrite the global values:
+
+----
+>>> a = 10
+>>> b = 20
+>>> foo()
+>>> a
+10
+>>> b
+----
+
+On the other hand, functions can access the value of globals.
+For example:
+
+----
+>>> def bar():
+        print(x)
+
+>>> x = 42
+>>> bar()
+42
+>>>
+----
+
+In general, all code in Python executes in two scopes--a local scope
+which is the enclosing function and a global scope which is the
+containing module.    This two-scoping rule is at the very heart of
+the interpreter itself.  You can control it explicitly if you use the
+`exec` function.
+
+----
+>>> gvars = {'x': 10}    # Global scope
+>>> lvars = {'n': 5}     # Local scope
+>>> exec("for i in range(n): print(i+x)", gvars, lvars)
+10
+11
+12
+13
+14
+>>> 
+----
+
+Under the covers, Python generates different instructions for local/global
+manipulation of variables.  For example:
+
+----
+>>> def foo(a):							   
+        global b						   
+        a = 2*a							   
+        b = 2*b							   
+
+>>> dis.dis(foo)						   
+  3           0 LOAD_CONST               1 (2) 			   
+              3 LOAD_FAST                0 (a)           # Local   
+              6 BINARY_MULTIPLY      				   
+              7 STORE_FAST               0 (a)           # Local   
+
+  4          10 LOAD_CONST               1 (2) 			   
+             13 LOAD_GLOBAL              0 (b)           # Global  
+             16 BINARY_MULTIPLY      				   
+             17 STORE_GLOBAL             0 (b)           # Global  
+             20 LOAD_CONST               0 (None) 		   
+             23 RETURN_VALUE         				   
+>>>                                                                
+----
+
+In this code, local variables are accessed using `LOAD_FAST` and
+`STORE_FAST` instructions whereas global variables are accessed
+using `LOAD_GLOBAL` and `STORE_GLOBAL`.   When you define a function,
+Python compiles it and is able to determine the scope of each variable
+in advance (all variables assigned in a function are local unless
+explicitly overridden with the `global` declaration).
+
+==== Activation Frames
+
+Every time you call a function, a new stack frame (or activation
+frame) gets created.  The stack frame is a storage area for all of the
+local variables defined inside the function.  For example, suppose you
+had this code:
+
+----
+def foo(x):
+    y = 10
+    z = 20
+
+def bar(a,b):
+   c = 30
+   foo(a)
+
+def spam(a):
+   bar(0,a)
+
+x = 100
+spam(x)
+----
+
+Under the covers the execution stack looks like this:
+
+----
+     |----------------|
+     |__main__:       |
+     |   x = 100      |
+     |----------------|
+     |spam:           |
+     |   a = 100      |
+     |----------------|
+     |bar:            |
+     |   a = 0        |
+     |   b = 100      |
+     |   c = 30       |
+     |----------------|
+     |foo:            |
+     |   x = 0        |
+     |   y = 10       |
+     |   z = 20       |
+     |----------------|
+----
+
+You can directly see Python's stack structure whenever an exception occurs:
+
+----
+ >>> spam(100)
+ Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+  File "<stdin>", line 2, in spam
+  File "<stdin>", line 2, in bar
+  File "<stdin>", line 2, in foo
+ RuntimeError: An error occurred
+----
+
+A little known fact about Python is that you can manually get a hook
+for walking up and down the call stack if you call
+`sys._getframe()`.  Try it:
+
+----
+>>> import sys
+>>> def printstack():
+        frame = sys._getframe()      # Get current stack frame
+        while frame:
+                print("[%s]" % frame.f_code.co_name)
+                print("   Locals: %s" % list(frame.f_locals))
+                frame = frame.f_back  # Go to next frame
+
+>>> def foo():
+        a = 10
+        b = 20
+        printstack()
+
+>>> foo()
+[printstack]
+   Locals: ['frame']
+[foo]
+   Locals: ['a', 'b']
+[<module>]
+   Locals: ['__builtins__', 'printstack', '__package__', 'sys', '__name__', 'foo', '__doc__']
+>>>
+
+>>> def bar():
+        x = 1
+        y = 2
+        foo()
+>>> bar()
+[printstack]
+   Locals: ['frame']
+[foo]
+   Locals: ['a', 'b']
+[bar]
+   Locals: ['y', 'x']
+[<module>]
+  Locals: ['bar', '__builtins__', 'printstack', '__package__', 'sys', '__name__', 'foo', '__doc__']
+
+>>>
+----
+
+For portability, you probably wouldn't want to write too much Python
+code that relied on this.  However, sometimes programmers will get into
+various "frame hacking" tricks that make use of it.
+
+One important aspect of stack frames is that a function gets a unique 
+stack frame each time it is called.  This is especially important
+for recursive functions.  For example, try this:
+
+----
+>>> def recursive(n):
+        if n > 0:
+             recursive(n-1)
+        else:
+             printstack()
+
+>>> recursive(10)
+[printstack]													
+   Locals: ['frame']												
+[recursive]													
+   Locals: ['n']												
+[recursive]													
+   Locals: ['n']												
+[recursive]													
+   Locals: ['n']												
+[recursive]													
+   Locals: ['n']												
+[recursive]													
+   Locals: ['n']												
+[recursive]													
+   Locals: ['n']												
+[recursive]													
+   Locals: ['n']												
+[recursive]													
+   Locals: ['n']												
+[recursive]													
+   Locals: ['n']												
+[recursive]													
+   Locals: ['n']												
+[recursive]													
+   Locals: ['n']												
+[<module>]													
+   Locals: ['bar', 'recursive','__builtins__', 'printstack', '__package__', 'sys', '__name__', 'foo', '__doc__']
+>>>
+----
+
+Should you choose to implement an interpreter, you'll need to think a
+lot about scoping and stack frames.
+
