@@ -111,10 +111,10 @@ if __name__ == '__main__':
 
     prog2 = [ # Instructions here
               # ...
-              ('CONST', 1, 'R1'),
-              ('CONST', 7, 'R2'),
-              ('CONST', 3, 'R3'),
-              ('CONST', 1, 'R4'),
+              ('CONST', 1, 'R1'),  # R1: constant 1
+              ('CONST', 7, 'R2'),  # R2: exponent (will be decremented)
+              ('CONST', 3, 'R3'),  # R3: base
+              ('CONST', 1, 'R4'),  # R4: result (starts at 1)
               ('MUL', 'R3', 'R4', 'R4'),
               ('SUB', 'R2', 'R1', 'R2'),
               ('BZ', 'R2', 1),
@@ -141,9 +141,9 @@ if __name__ == '__main__':
         prog = [ # Instructions here
                  # ...
                  ('CONST', 1, 'R1'),  # R1: constant 1
-                 ('LOAD', 'R7', 'R2', -1),  # R2: y
-                 ('LOAD', 'R7', 'R3', -2),  # R3: x
-                 ('CONST', 1, 'R4'),  # R4: result
+                 ('LOAD', 'R7', 'R2', -1),  # R2: y (exponent)
+                 ('LOAD', 'R7', 'R3', -2),  # R3: x (base)
+                 ('CONST', 1, 'R4'),  # R4: result (starts at 1)
                  ('MUL', 'R3', 'R4', 'R4'),
                  ('SUB', 'R2', 'R1', 'R2'),
                  ('BZ', 'R2', 1),
