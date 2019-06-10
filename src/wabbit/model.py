@@ -152,6 +152,12 @@ class Expression:
 
 
 class Literal(Expression):
+    # 1.1 Literals
+    #        23            (Integer literal)
+    #        4.5           (Float literal)
+    #        true,false    (Bool literal)
+    #        'c'           (Character literal - A single character)
+    #
 
     def __init__(self, value):
         super().__init__(value=value)
@@ -198,6 +204,12 @@ class Character(Literal):
 
 
 class UnaryOp(Expression):
+    # 1.3 Unary Operators
+    #        +operand       (Positive)
+    #        -operand       (Negation)
+    #        !operand       (logical not)
+    #        ^operand       (Grow memory)
+
     def __init__(self, operand):
         super().__init__(operand=operand)
 
@@ -238,6 +250,20 @@ class Hat(UnaryOp):
 
 
 class BinaryOp(Expression):
+    # 1.2 Binary Operators
+    #        left + right        (Addition)
+    #        left - right        (Subtraction)
+    #        left * right        (Multiplication)
+    #        left / right        (Division)
+    #        left < right        (Less than)
+    #        left <= right       (Less than or equal)
+    #        left > right        (Greater than)
+    #        left >= right       (Greater than or equal)
+    #        left == right       (Equal to)
+    #        left != right       (Not equal)
+    #        left && right       (Logical and)
+    #        left || right       (Logical or)
+
     def __init__(self, left, right):
         super().__init__(left=left, right=right)
 
