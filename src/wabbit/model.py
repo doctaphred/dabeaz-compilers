@@ -143,7 +143,7 @@ class Expression:
     __repr__ = vars_repr
 
 
-class Value(Expression):
+class Literal(Expression):
     types = {}
 
     def __init_subclass__(cls, **kwargs):
@@ -159,7 +159,7 @@ class Value(Expression):
         return repr(self.value)
 
 
-class Integer(Value):
+class Integer(Literal):
     """
     >>> Integer(0)
     Integer(value=0)
@@ -168,7 +168,7 @@ class Integer(Value):
         assert isinstance(self.value, int)
 
 
-class Float(Value):
+class Float(Literal):
     """
     >>> Float(0.0)
     Float(value=0.0)
@@ -177,7 +177,7 @@ class Float(Value):
         assert isinstance(self.value, float)
 
 
-class Bool(Value):
+class Bool(Literal):
     """
     >>> Bool(False)
     Bool(value=False)
@@ -186,7 +186,7 @@ class Bool(Value):
         assert isinstance(self.value, bool)
 
 
-class Character(Value):
+class Character(Literal):
     """
     >>> Character('a')
     Character(value='a')
