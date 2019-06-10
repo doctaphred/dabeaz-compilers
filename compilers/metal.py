@@ -100,6 +100,7 @@ if __name__ == '__main__':
 
     machine.run(prog1)
     print('Program 1 Result:', prog1[-1], '(Should be 1)')
+    assert prog1[-1] == 1, prog1
 
     # ----------------------------------------------------------------------
     # Problem 2: Computation
