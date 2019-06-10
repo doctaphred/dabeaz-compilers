@@ -353,3 +353,34 @@ class And(BinaryOp):
 
 class Or(BinaryOp):
     symbol = '||'
+
+
+class LoadVariable(Expression):
+    # 1.4 Loading from a location
+    #        xyz           (The value of variable xyz)
+    #        `expr         (The contents of memory location expr)
+    def __init__(self, name):
+        super().__init__(name=name)
+
+
+class LoadMemory(Expression):
+    # 1.4 Loading from a location
+    #        xyz           (The value of variable xyz)
+    #        `expr         (The contents of memory location expr)
+    def __init__(self, expr):
+        super().__init__(expr=expr)
+
+
+class TypeCast(Expression):
+    # 1.5 Type-casts
+    #         int(expr)
+    #         float(expr)
+    def __init__(self, type, expr):
+        super().__init__(type=type, expr=expr)
+
+
+class Call(Expression):
+    # 1.6 Function/Procedure Call
+    #        func(arg1, arg2, ..., argn)
+    def __init__(self, func, args):
+        super().__init__(func=func, args=args)
