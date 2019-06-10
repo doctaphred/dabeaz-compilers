@@ -323,7 +323,7 @@ class VarDecl(Expression):
     #    const name = value;
     #    var name type [= value];
     #    var name [type] = value;
-    def __init__(self, name, type, const):
+    def __init__(self, name, type):
         super().__init__(name=name, type=type)
 
 
