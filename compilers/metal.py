@@ -89,9 +89,11 @@ if __name__ == '__main__':
               ('CONST', 3, 'R2'),
               # More instructions here
               # ...
-
+              ('ADD', 'R1', 'R2', 'R1'),
+              ('CONST', -4, 'R2'),
+              ('ADD', 'R1', 'R2', 'R1'),
               # Save the result. Replace 'R0' with whatever register holds the result.
-              ('STORE', 'R0', 'R7', 0),
+              ('STORE', 'R1', 'R7', 0),
               ('HALT',),
               0            # Store the result here (note: R7 points here)
               ]
