@@ -144,13 +144,13 @@ class Expression:
 
 
 class Literal(Expression):
-    types = {}
+    kinds = {}
 
     def __init_subclass__(cls, **kwargs):
-        assert cls.__name__ not in cls.types, (
-            f"{cls.__name__} is already {cls.types[cls.__name__]}"
-        )
-        cls.types[cls.__name__] = cls
+        key = cls.__name__
+        if key in cls.kinds:
+            raise ValueError(f"{key} is already {cls.kinds[key]}")
+        cls.kinds[key] = cls
 
     def __init__(self, value):
         super().__init__(value=value)
