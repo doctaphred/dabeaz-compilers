@@ -315,3 +315,57 @@ class Call(Expression):
     #        func(arg1, arg2, ..., argn)
     def __init__(self, func, args):
         super().__init__(func=func, args=args)
+
+
+class VarDecl(Expression):
+    # 2.1 Variables.  Variables can be declared in a few different forms.
+    #
+    #    const name = value;
+    #    var name type [= value];
+    #    var name [type] = value;
+    def __init__(self, name, type, const):
+        super().__init__(name=name, type=type)
+
+
+class VarDef(Expression):
+    def __init__(self, name, value):
+        super().__init__(name=name, value=value)
+
+
+class VarDeclDef(Expression):
+    def __init__(self, name, type, value, const):
+        super().__init__(name=name, type=type, value=value, const=const)
+
+
+class FuncParam(Expression):
+    # 2.2 Function Parameters
+    #
+    #       func square(x int) int { return x*x; }
+    #
+    # A function parameter is a special kind of local variable.  It
+    # has a name and a type like a local variable.  However, it
+    # is declared as part of the function definition itself, not as
+    # a separate "var" declaration.
+    def __init__(self, name, type):
+        super().__init__(name=name, type=type)
+
+
+class FuncDef(Expression):
+    # 2.3 Function definitions.
+    #
+    #    func name(parameters) return_type { statements }
+    def __init__(self, name, params, return_type):
+        super().__init__(
+            self,
+            name=name,
+            params=params,
+            return_type=return_type,
+        )
+
+
+class Import(FuncDef):
+    # Functions can be imported from external libraries using
+    # the special statement
+    #
+    #    import func name(parms) type;
+    pass
