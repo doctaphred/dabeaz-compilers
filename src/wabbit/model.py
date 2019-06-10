@@ -219,7 +219,7 @@ class Character(Literal):
 class PrefixOp(Expression):
     """
     >>> PrefixOp('+', 0)
-    PrefixOp(symbol='+', expr=0)
+    PrefixOp(symbol='+', operand=0)
     >>> str(PrefixOp('+', 0))
     '+0'
     """
@@ -230,14 +230,14 @@ class PrefixOp(Expression):
     #        ^operand       (Grow memory)
     symbols = set('+-!^')
 
-    def __init__(self, symbol, expr):
-        super().__init__(symbol=symbol, expr=expr)
+    def __init__(self, symbol, operand: Expression):
+        super().__init__(symbol=symbol, operand=operand)
 
     def validate(self):
         assert self.symbol in self.symbols, self.symbol
 
     def __str__(self):
-        return f"{self.symbol}{self.expr}"
+        return f"{self.symbol}{self.operand}"
 
 
 class InfixOp(Expression):
@@ -276,7 +276,7 @@ class InfixOp(Expression):
         '||',
     }
 
-    def __init__(self, symbol, left, right):
+    def __init__(self, symbol, left: Expression, right: Expression):
         super().__init__(symbol=symbol, left=left, right=right)
 
     def validate(self):
@@ -286,7 +286,7 @@ class InfixOp(Expression):
         return f"{self.left} {self.symbol} {self.right}"
 
 
-class LoadVariable(Expression):
+class LoadVar(Expression):
     # 1.4 Loading from a location
     #        xyz           (The value of variable xyz)
     #        `expr         (The contents of memory location expr)
@@ -294,20 +294,20 @@ class LoadVariable(Expression):
         super().__init__(name=name)
 
 
-class LoadMemory(Expression):
+class LoadMem(Expression):
     # 1.4 Loading from a location
     #        xyz           (The value of variable xyz)
     #        `expr         (The contents of memory location expr)
-    def __init__(self, expr):
-        super().__init__(expr=expr)
+    def __init__(self, loc: Expression):
+        super().__init__(loc=loc)
 
 
 class TypeCast(Expression):
     # 1.5 Type-casts
     #         int(expr)
     #         float(expr)
-    def __init__(self, type, expr):
-        super().__init__(type=type, expr=expr)
+    def __init__(self, type, value: Expression):
+        super().__init__(type=type, value=value)
 
 
 class Call(Expression):
