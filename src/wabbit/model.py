@@ -128,7 +128,22 @@
 # Does it need a reference to its enclosing function?
 
 
-class Value:
+from .utils.reprs import vars_repr
+
+
+class Expression:
+    def __init__(self, **kwargs):
+        vars(self).update(kwargs)
+        self.validate()
+
+    @classmethod
+    def validate(self, *args, **kwargs):
+        assert False, f"{self.__class__.__name__} cannot be instantiated"
+
+    __repr__ = vars_repr
+
+
+class Value(Expression):
     types = {}
 
     def __init_subclass__(cls, **kwargs):
@@ -138,53 +153,44 @@ class Value:
         cls.types[cls.__name__] = cls
 
     def __init__(self, value):
-        self.validate(value)
-        self.value = value
+        super().__init__(value=value)
 
-    @classmethod
-    def validate(cls, value):
-        pass
-
-    def __repr__(self):
-        return f"{self.__class__.__name__}({self.value!r})"
+    def literal(self):
+        return repr(self.value)
 
 
 class Integer(Value):
     """
     >>> Integer(0)
-    Integer(0)
+    Integer(value=0)
     """
-    @classmethod
-    def validate(cls, value):
-        assert isinstance(value, int)
+    def validate(self):
+        assert isinstance(self.value, int)
 
 
 class Float(Value):
     """
     >>> Float(0.0)
-    Float(0.0)
+    Float(value=0.0)
     """
-    @classmethod
-    def validate(cls, value):
-        assert isinstance(value, float)
+    def validate(self):
+        assert isinstance(self.value, float)
 
 
 class Bool(Value):
     """
     >>> Bool(False)
-    Bool(False)
+    Bool(value=False)
     """
-    @classmethod
-    def validate(cls, value):
-        assert isinstance(value, bool)
+    def validate(self):
+        assert isinstance(self.value, bool)
 
 
 class Character(Value):
     """
     >>> Character('a')
-    Character('a')
+    Character(value='a')
     """
-    @classmethod
-    def validate(cls, value):
-        assert isinstance(value, str)
-        assert len(value) == 1
+    def validate(self):
+        assert isinstance(self.value, str)
+        assert len(self.value) == 1
