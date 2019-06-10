@@ -195,3 +195,135 @@ class Character(Literal):
     def validate(self):
         assert isinstance(self.value, str)
         assert len(self.value) == 1
+
+
+class UnaryOp(Expression):
+    def __init__(self, operand):
+        super().__init__(operand=operand)
+
+    def validate(self):
+        pass  # TODO
+
+
+class Positive(UnaryOp):
+    """
+    >>> Positive(0)
+    Positive(operand=0)
+    """
+    symbol = '+'
+
+
+class Negative(UnaryOp):
+    """
+    >>> Negative(0)
+    Negative(operand=0)
+    """
+    symbol = '-'
+
+
+class Bang(UnaryOp):
+    """
+    >>> Bang(0)
+    Bang(operand=0)
+    """
+    symbol = '!'
+
+
+class Hat(UnaryOp):
+    """
+    >>> Hat(0)
+    Hat(operand=0)
+    """
+    symbol = '^'
+
+
+class BinaryOp(Expression):
+    def __init__(self, left, right):
+        super().__init__(left=left, right=right)
+
+    def literal(self):
+        return f"{self.left} {self.symbol} {self.right}"
+
+    def validate(self):
+        pass  # TODO
+
+
+# TODO: NumericOp?
+
+
+class Add(BinaryOp):
+    """
+    >>> Add(1, 2)
+    Add(left=1, right=2)
+    >>> Add(1, 2).literal()
+    '1 + 2'
+    """
+    symbol = '+'
+
+
+class Subtract(BinaryOp):
+    symbol = '-'
+
+
+class Multiply(BinaryOp):
+    symbol = '*'
+
+
+class Divide(BinaryOp):
+    symbol = '/'
+
+
+class Less(BinaryOp):
+    symbol = '<'
+
+
+class LessOrEqual(BinaryOp):
+    symbol = '<='
+
+
+class Addition(BinaryOp):
+    symbol = '+'
+
+
+class Subtraction(BinaryOp):
+    symbol = '-'
+
+
+class Multiplication(BinaryOp):
+    symbol = '*'
+
+
+class Division(BinaryOp):
+    symbol = '/'
+
+
+class LessThan(BinaryOp):
+    symbol = '<'
+
+
+class LessThanOrEqual(BinaryOp):
+    symbol = '<='
+
+
+class GreaterThan(BinaryOp):
+    symbol = '>'
+
+
+class GreaterThanOrEqual(BinaryOp):
+    symbol = '>='
+
+
+class Equal(BinaryOp):
+    symbol = '=='
+
+
+class NotEqual(BinaryOp):
+    symbol = '!='
+
+
+class And(BinaryOp):
+    symbol = '&&'
+
+
+class Or(BinaryOp):
+    symbol = '||'
