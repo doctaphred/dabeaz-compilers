@@ -132,6 +132,14 @@ from .utils.reprs import vars_repr
 
 
 class Expression:
+
+    # TODO: global registry?
+    # def __init_subclass__(cls, **kwargs):
+    #     kind = cls.kind()
+    #     if kind in cls.kinds:
+    #         raise ValueError(f"{kind} is already {cls.kinds[kind]}")
+    #     cls.kinds[kind] = cls
+
     def __init__(self, **kwargs):
         vars(self).update(kwargs)
         self.validate()
@@ -144,13 +152,6 @@ class Expression:
 
 
 class Literal(Expression):
-    kinds = {}
-
-    def __init_subclass__(cls, **kwargs):
-        key = cls.__name__
-        if key in cls.kinds:
-            raise ValueError(f"{key} is already {cls.kinds[key]}")
-        cls.kinds[key] = cls
 
     def __init__(self, value):
         super().__init__(value=value)
