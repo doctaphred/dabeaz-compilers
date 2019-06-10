@@ -203,53 +203,37 @@ class Character(Literal):
         assert len(self.value) == 1
 
 
-class UnaryOp(Expression):
+class PrefixOp(Expression):
+    """
+    >>> PrefixOp('+', 0)
+    PrefixOp(symbol='+', expr=0)
+    >>> str(PrefixOp('+', 0))
+    '+0'
+    """
     # 1.3 Unary Operators
     #        +operand       (Positive)
     #        -operand       (Negation)
     #        !operand       (logical not)
     #        ^operand       (Grow memory)
+    symbols = set('+-!^')
 
-    def __init__(self, operand):
-        super().__init__(operand=operand)
+    def __init__(self, symbol, expr):
+        super().__init__(symbol=symbol, expr=expr)
 
     def validate(self):
-        pass  # TODO
+        assert self.symbol in self.symbols, self.symbol
+
+    def __str__(self):
+        return f"{self.symbol}{self.expr}"
 
 
-class Positive(UnaryOp):
+class InfixOp(Expression):
     """
-    >>> Positive(0)
-    Positive(operand=0)
+    >>> InfixOp('+', 1, 2)
+    InfixOp(symbol='+', left=1, right=2)
+    >>> str(InfixOp('+', 1, 2))
+    '1 + 2'
     """
-    symbol = '+'
-
-
-class Negative(UnaryOp):
-    """
-    >>> Negative(0)
-    Negative(operand=0)
-    """
-    symbol = '-'
-
-
-class Bang(UnaryOp):
-    """
-    >>> Bang(0)
-    Bang(operand=0)
-    """
-    symbol = '!'
-
-
-class Hat(UnaryOp):
-    """
-    >>> Hat(0)
-    Hat(operand=0)
-    """
-    symbol = '^'
-
-
-class BinaryOp(Expression):
     # 1.2 Binary Operators
     #        left + right        (Addition)
     #        left - right        (Subtraction)
@@ -264,95 +248,29 @@ class BinaryOp(Expression):
     #        left && right       (Logical and)
     #        left || right       (Logical or)
 
-    def __init__(self, left, right):
-        super().__init__(left=left, right=right)
+    symbols = {
+        '+',
+        '-',
+        '*',
+        '/',
+        '<',
+        '<=',
+        '> ',
+        '>=',
+        '==',
+        '!=',
+        '&&',
+        '||',
+    }
 
-    def literal(self):
-        return f"{self.left} {self.symbol} {self.right}"
+    def __init__(self, symbol, left, right):
+        super().__init__(symbol=symbol, left=left, right=right)
 
     def validate(self):
-        pass  # TODO
+        assert self.symbol in self.symbols, self.symbol
 
-
-# TODO: NumericOp?
-
-
-class Add(BinaryOp):
-    """
-    >>> Add(1, 2)
-    Add(left=1, right=2)
-    >>> Add(1, 2).literal()
-    '1 + 2'
-    """
-    symbol = '+'
-
-
-class Subtract(BinaryOp):
-    symbol = '-'
-
-
-class Multiply(BinaryOp):
-    symbol = '*'
-
-
-class Divide(BinaryOp):
-    symbol = '/'
-
-
-class Less(BinaryOp):
-    symbol = '<'
-
-
-class LessOrEqual(BinaryOp):
-    symbol = '<='
-
-
-class Addition(BinaryOp):
-    symbol = '+'
-
-
-class Subtraction(BinaryOp):
-    symbol = '-'
-
-
-class Multiplication(BinaryOp):
-    symbol = '*'
-
-
-class Division(BinaryOp):
-    symbol = '/'
-
-
-class LessThan(BinaryOp):
-    symbol = '<'
-
-
-class LessThanOrEqual(BinaryOp):
-    symbol = '<='
-
-
-class GreaterThan(BinaryOp):
-    symbol = '>'
-
-
-class GreaterThanOrEqual(BinaryOp):
-    symbol = '>='
-
-
-class Equal(BinaryOp):
-    symbol = '=='
-
-
-class NotEqual(BinaryOp):
-    symbol = '!='
-
-
-class And(BinaryOp):
-    symbol = '&&'
-
-
-class Or(BinaryOp):
-    symbol = '||'
+    def __str__(self):
+        return f"{self.left} {self.symbol} {self.right}"
 
 
 class LoadVariable(Expression):

@@ -33,8 +33,6 @@ def attr_repr(obj, attr_names=None):
 def argstr(*args, **kwargs):
     """Return a string representation of the given signature.
 
-    Lists kwargs in sorted order.
-
     >>> argstr(1, 2, 3)
     '(1, 2, 3)'
     >>> argstr()
@@ -44,14 +42,14 @@ def argstr(*args, **kwargs):
     >>> argstr(1, 2, c=3)
     '(1, 2, c=3)'
     >>> argstr(a=1, c=3, b=2)
-    '(a=1, b=2, c=3)'
+    '(a=1, c=3, b=2)'
     """
     if not args and not kwargs:
         return '()'
 
     args_str = ', '.join(repr(arg) for arg in args)
     kwargs_str = ', '.join('{}={!r}'.format(k, v)
-                           for k, v in sorted(kwargs.items()))
+                           for k, v in kwargs.items())
 
     if not args:
         return f'({kwargs_str})'
