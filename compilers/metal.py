@@ -140,6 +140,15 @@ if __name__ == '__main__':
     def pow(x, y):
         prog = [ # Instructions here
                  # ...
+                 ('CONST', 1, 'R1'),  # R1: constant 1
+                 ('LOAD', 'R7', 'R2', -1),  # R2: y
+                 ('LOAD', 'R7', 'R3', -2),  # R3: x
+                 ('CONST', 1, 'R4'),  # R4: result
+                 ('MUL', 'R3', 'R4', 'R4'),
+                 ('SUB', 'R2', 'R1', 'R2'),
+                 ('BZ', 'R2', 1),
+                 ('JMP', 'R0', 4),
+                 ('STORE', 'R4', 'R7', 0),
                  ('HALT',),
                  x,      # Input value
                  y,      # Input value
@@ -149,6 +158,8 @@ if __name__ == '__main__':
         return prog[-1] 
 
     print(f'Problem 3: 3 ** 9 = {pow(3, 9)}. (Should be {3**9})')
+    result = pow(3, 9)
+    assert result == 3 ** 9, result
 
     # ----------------------------------------------------------------------
     # Optional challenge:
