@@ -369,3 +369,74 @@ class Import(FuncDef):
     #
     #    import func name(parms) type;
     pass
+
+
+class AssignVar(Expression):
+    # 3.1 Assignment
+    #
+    #     location = expression ;
+    def __init__(self, name, value: Expression):
+        super().__init__(name=name, value=value)
+
+
+class AssignMem(Expression):
+    # `location = expression ;
+    def __init__(self, loc: Expression, value: Expression):
+        super().__init__(loc=loc, value=value)
+
+
+class Print(Expression):
+    # 3.2 Printing
+    #
+    #     print expression ;
+    def __init__(self, value: Expression):
+        super().__init__(value=value)
+
+
+class Conditional(Expression):
+    #
+    # 3.3 Conditional
+    #
+    #     if test { consequence} else { alternative }
+    def __init__(self, test: Expression, then, otherwise):
+        # TODO: what are `then` and `otherwise`??
+        super().__init__(test=test, then=then, otherwise=otherwise)
+
+
+class Loop(Expression):
+    # 3.4 Loop
+    #
+    #  while test { body }
+    def __init__(self, test: Expression, body):
+        # TODO: what is body??
+        super().__init__(test=test, body=body)
+
+
+class Break(Expression):
+    # 3.5 Break and Continue
+    #
+    #   while test {
+    #       ...
+    #       break;
+    #   }
+    def __init__(self):
+        pass
+
+
+class Continue(Expression):
+    #   while test {
+    #       ...
+    #       continue;
+    #   }
+    def __init__(self):
+        pass
+
+
+class Return(Expression):
+    # 3.6 Function Return
+    #
+    #  return expression ;
+    #
+    # Does it need a reference to its enclosing function?
+    def __init__(self, value: Expression):
+        super().__init__(value=value)
