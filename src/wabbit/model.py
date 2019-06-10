@@ -137,7 +137,7 @@ class Expression:
     # def __init_subclass__(cls, **kwargs):
     #     kind = cls.kind()
     #     if kind in cls.kinds:
-    #         raise ValueError(f"{kind} is already {cls.kinds[kind]}")
+    #         raise TypeError(f"{kind} is already {cls.kinds[kind]}")
     #     cls.kinds[kind] = cls
 
     def __init__(self, **kwargs):
@@ -146,7 +146,7 @@ class Expression:
 
     @classmethod
     def validate(self, *args, **kwargs):
-        assert False, f"{self.__class__.__name__} cannot be instantiated"
+        raise TypeError(f"{self.__class__.__name__} cannot be instantiated")
 
     __repr__ = vars_repr
 
