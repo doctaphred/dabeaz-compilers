@@ -9,10 +9,10 @@
 # highest valid memory address.   The machine understands
 # the following 10 instructions--which are encoded as tuples:
 #
-#   ('ADD', 'Ra', 'Rb', 'Rd')     -> Rc = Ra + Rb
-#   ('SUB', 'Ra', 'Rb', 'Rd')     -> Rc = Ra - Rb
-#   ('MUL', 'Ra', 'Rb', 'Rd')     -> Rc = Ra * Rb
-#   ('DIV', 'Ra', 'Rb', 'Rd')     -> Rc = Ra // Rb  (integer)
+#   ('ADD', 'Ra', 'Rb', 'Rd')     -> Rd = Ra + Rb
+#   ('SUB', 'Ra', 'Rb', 'Rd')     -> Rd = Ra - Rb
+#   ('MUL', 'Ra', 'Rb', 'Rd')     -> Rd = Ra * Rb
+#   ('DIV', 'Ra', 'Rb', 'Rd')     -> Rd = Ra // Rb  (integer)
 #   ('CONST', value, 'Rd')        -> Rd = value
 #   ('LOAD', 'Rs', 'Rd', offset)  -> Rd = MEMORY[Rs + offset]
 #   ('STORE', 'Rs', 'Rd', offset) -> MEMORY[Rd + offset] = Rs
