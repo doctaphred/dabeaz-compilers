@@ -107,7 +107,7 @@ program2 = [
         name='pi',
         type=WabbitType.float,
         value=Float(
-            value=3.14159
+            value=3.14159,
         ),
         const=True,
     ),
