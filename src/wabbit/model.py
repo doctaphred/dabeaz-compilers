@@ -396,7 +396,7 @@ class FuncParam(Expression):
     # has a name and a type like a local variable.  However, it
     # is declared as part of the function definition itself, not as
     # a separate "var" declaration.
-    def __init__(self, name, type):
+    def __init__(self, name, type: WabbitType):
         super().__init__(name=name, type=type)
 
     def __str__(self):
