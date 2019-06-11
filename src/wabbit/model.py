@@ -369,6 +369,11 @@ class Call(Expression):
     def __init__(self, func, args):
         super().__init__(func=func, args=args)
 
+    def validate(self):
+        super().validate()
+        for arg in self.args:
+            assert isinstance(arg, Expression)
+
 
 class FuncParam(Expression):
     # 2.2 Function Parameters
