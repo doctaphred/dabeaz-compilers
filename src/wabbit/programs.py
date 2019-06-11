@@ -28,7 +28,14 @@ from wabbit.model import (
     Integer,
     PrefixOp,
     Print,
+    DeclareAssignVar,
+    DeclareVar,
+    AssignVar,
+    LoadVar,
 )
+
+from .typesys import WabbitType
+
 
 # ----------------------------------------------------------------------
 # Simple Expressions:
@@ -95,7 +102,37 @@ program1 = [
 #    tau = 2.0 * pi;
 #    print(tau);
 
-program2 = []
+program2 = [
+    DeclareAssignVar(
+        name='pi',
+        type=WabbitType.float,
+        value=Float(
+            value=3.14159
+        ),
+        const=True,
+    ),
+    DeclareVar(
+        name='tau',
+        type=WabbitType.float,
+    ),
+    AssignVar(
+        name='tau',
+        value=InfixOp(
+            symbol='*',
+            left=Float(
+                value=2.0,
+            ),
+            right=LoadVar(
+                name='pi',
+            ),
+        ),
+    ),
+    Print(
+        LoadVar(
+            name='tau',
+        ),
+    ),
+]
 
 # ----------------------------------------------------------------------
 # Program 3: Conditionals.  This program prints out the minimum of

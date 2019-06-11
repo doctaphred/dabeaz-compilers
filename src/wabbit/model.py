@@ -128,6 +128,7 @@
 # Does it need a reference to its enclosing function?
 
 
+from .typesys import WabbitType
 from .utils.reprs import vars_repr
 
 
@@ -388,8 +389,8 @@ class Statement(AttrValidator):
 
 class DeclareVar(Statement):
     """
-    >>> DeclareVar('x', 'int')
-    DeclareVar(name='x', type='int')
+    >>> DeclareVar('x', WabbitType.int)
+    DeclareVar(name='x', type=WabbitType('int'))
 
     >>> DeclareVar(1, Integer(2))
     Traceback (most recent call last):
@@ -405,7 +406,7 @@ class DeclareVar(Statement):
     #
     #    var name type [= value];
     #    var name [type] = value;
-    def __init__(self, name: str, type: str):
+    def __init__(self, name: str, type: WabbitType):
         super().__init__(name=name, type=type)
 
 
@@ -434,7 +435,13 @@ class AssignVar(Statement):
 class DeclareAssignVar(Statement):
     #    var name type [= value];
     #    const name = value;
-    def __init__(self, name: str, type, value, const):
+    def __init__(
+        self,
+        name: str,
+        type: WabbitType,
+        value: Expression,
+        const: bool,
+    ):
         super().__init__(name=name, type=type, value=value, const=const)
 
 
