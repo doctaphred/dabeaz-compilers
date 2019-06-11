@@ -18,7 +18,7 @@ lint: venv
 	venv/bin/flake8 *.py src tests
 
 test: venv
-	venv/bin/pytest --doctest-modules src tests
+	venv/bin/pytest --doctest-modules src tests --doctest-glob='*.md'
 
 # Open an IPython shell and import all top-level attributes.
 shell: venv/bin/ipython
