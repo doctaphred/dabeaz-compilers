@@ -355,6 +355,7 @@ class LoadMem(Expression):
     # 1.4 Loading from a location
     #        xyz           (The value of variable xyz)
     #        `expr         (The contents of memory location expr)
+    # TODO: is this just a PrefixOp?
     def __init__(self, loc: Expression):
         super().__init__(loc=loc)
 
