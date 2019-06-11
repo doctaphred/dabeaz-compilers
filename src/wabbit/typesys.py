@@ -20,6 +20,10 @@ from .utils.reprs import vars_repr
 
 
 class WabbitType:
+    """
+    >>> WabbitType['int']
+    WabbitType(name='int')
+    """
     names = {}
 
     def __init__(self, name):
@@ -33,6 +37,10 @@ class WabbitType:
         return self.name == other.name
 
     __repr__ = vars_repr
+
+    def __class_getitem__(cls, name):
+        return cls.names[name]
+
 
 IntType = WabbitType('int')
 FloatType = WabbitType('float')
