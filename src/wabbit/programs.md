@@ -47,3 +47,12 @@
         print fact;
         x = x + 1;
     }
+
+
+    >>> for stmt in program5:
+    ...     print(stmt)
+    func square(x int) int {
+        return x * x;
+    }
+    print square(4);
+    print square(10);

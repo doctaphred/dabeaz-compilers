@@ -367,16 +367,21 @@ class TypeCast(Expression):
         super().__init__(type=type, value=value)
 
 
-class Call(Expression):
+
+class CallFunc(Expression):
     # 1.6 Function/Procedure Call
     #        func(arg1, arg2, ..., argn)
-    def __init__(self, func, args):
-        super().__init__(func=func, args=args)
+    def __init__(self, name: str, args):
+        super().__init__(name=name, args=args)
 
     def validate(self):
         super().validate()
         for arg in self.args:
             assert isinstance(arg, Expression)
+
+    def __str__(self):
+        args = ', '.join(str(arg) for arg in self.args)
+        return f"{self.name}({args})"
 
 
 class FuncParam(Expression):
@@ -390,6 +395,9 @@ class FuncParam(Expression):
     # a separate "var" declaration.
     def __init__(self, name, type):
         super().__init__(name=name, type=type)
+
+    def __str__(self):
+        return f"{self.name} {self.type}"
 
 
 class Statement(AttrValidator):
@@ -492,13 +500,26 @@ class DefineFunc(Statement):
     # 2.3 Function definitions.
     #
     #    func name(parameters) return_type { statements }
-    def __init__(self, name, params, return_type, block: Block):
+    def __init__(self, name, params, return_type, body: Block):
         super().__init__(
-            self,
             name=name,
             params=params,
             return_type=return_type,
-            block=block,
+            body=body,
+        )
+
+    def validate(self):
+        super().validate()
+        for param in self.params:
+            assert isinstance(param, FuncParam), param
+
+    def __str__(self):
+        params = ', '.join(str(param) for param in self.params)
+        return "func {}({}) {} {}".format(
+            self.name,
+            params,
+            self.return_type,
+            self.body,
         )
 
 
@@ -572,3 +593,6 @@ class Return(Statement):
     # Does it need a reference to its enclosing function?
     def __init__(self, value: Expression):
         super().__init__(value=value)
+
+    def __str__(self):
+        return f"return {self.value};"

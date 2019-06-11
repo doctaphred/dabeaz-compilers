@@ -35,6 +35,10 @@ from wabbit.model import (
     Conditional,
     Block,
     Loop,
+    DefineFunc,
+    Return,
+    CallFunc,
+    FuncParam,
 )
 
 from .typesys import WabbitType
@@ -264,7 +268,33 @@ program4 = [
 #    print square(10);
 #
 
-program5 = []
+program5 = [
+    DefineFunc(
+        name='square',
+        params=[
+            FuncParam(
+                name='x',
+                type=WabbitType.int,
+            ),
+        ],
+        return_type=WabbitType.int,
+        body=Block([
+            Return(InfixOp('*', LoadVar('x'), LoadVar('x'))),
+        ]),
+    ),
+    Print(
+        CallFunc(
+            name='square',
+            args=[Integer(4)],
+        ),
+    ),
+    Print(
+        CallFunc(
+            name='square',
+            args=[Integer(10)],
+        ),
+    ),
+]
 
 # ----------------------------------------------------------------------
 # Program 6: Functions (complex)
