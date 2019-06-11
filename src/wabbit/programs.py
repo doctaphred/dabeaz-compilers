@@ -26,6 +26,8 @@ from wabbit.model import (
     InfixOp,
     Float,
     Integer,
+    PrefixOp,
+    Print,
 )
 
 # ----------------------------------------------------------------------
@@ -51,7 +53,36 @@ float_expr = InfixOp('+', Float(2.0),
 #    print 2.0 - 3.0 / -4.0;
 #
 
-program1 = []
+program1 = [
+    Print(
+        InfixOp(
+            '+',
+            Integer(2),
+            InfixOp(
+                '*',
+                Integer(3),
+                PrefixOp(
+                    '-',
+                    Integer(4),
+                ),
+            ),
+        ),
+    ),
+    Print(
+        InfixOp(
+            '-',
+            Float(2.0),
+            InfixOp(
+                '/',
+                Float(3.0),
+                PrefixOp(
+                    '-',
+                    Float(4.0),
+                ),
+            ),
+        ),
+    ),
+]
 
 # ----------------------------------------------------------------------
 # Program 2: Variable and constant declarations.

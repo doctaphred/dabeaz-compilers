@@ -481,6 +481,9 @@ class Print(Statement):
     def __init__(self, value: Expression):
         super().__init__(value=value)
 
+    def __str__(self):
+        return f"print {self.value};"
+
 
 class Conditional(Statement):
     #
