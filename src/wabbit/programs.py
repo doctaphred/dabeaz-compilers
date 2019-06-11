@@ -39,6 +39,8 @@ from wabbit.model import (
     Return,
     CallFunc,
     FuncParam,
+    LoadMem,
+    AssignMem,
 )
 
 from .typesys import WabbitType
@@ -322,4 +324,25 @@ program6 = []
 #    print(`addr + 10000);  // Reads 1234 from memory address addr
 #
 
-program7 = []
+program7 = [
+    DeclareAssignVar(
+        'memsize',
+        WabbitType.int,
+        PrefixOp('^', Integer(1000)),
+        const=False,
+    ),
+    DeclareAssignVar(
+        'addr',
+        WabbitType.int,
+        Integer(500),
+        const=True,
+    ),
+    AssignMem(LoadVar('addr'), Integer(1234)),
+    Print(
+        InfixOp(
+            '+',
+            LoadMem(LoadVar('addr')),
+            Integer(10000),
+        ),
+    ),
+]

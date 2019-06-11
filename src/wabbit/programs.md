@@ -56,3 +56,14 @@
     }
     print square(4);
     print square(10);
+
+    TODO:
+        - 'const addr int' -> 'const addr'
+        - add parens to print
+
+    >>> for stmt in program7:
+    ...     print(stmt)
+    var memsize int = ^1000;
+    const addr int = 500;
+    `addr = 1234;
+    print `addr + 10000;

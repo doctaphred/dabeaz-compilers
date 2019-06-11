@@ -358,6 +358,9 @@ class LoadMem(Expression):
     def __init__(self, loc: Expression):
         super().__init__(loc=loc)
 
+    def __str__(self):
+        return f"`{self.loc}"
+
 
 class TypeCast(Expression):
     # 1.5 Type-casts
@@ -479,6 +482,9 @@ class AssignMem(Statement):
     # `location = expression ;
     def __init__(self, loc: Expression, value: Expression):
         super().__init__(loc=loc, value=value)
+
+    def __str__(self):
+        return f"`{self.loc} = {self.value};"
 
 
 class Block:
