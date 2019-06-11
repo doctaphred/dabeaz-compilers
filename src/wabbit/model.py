@@ -540,6 +540,9 @@ class Loop(Statement):
     def __init__(self, test: Expression, body: Block):
         super().__init__(test=test, body=body)
 
+    def __str__(self):
+        return f"while {self.test} {self.body}"
+
 
 class Break(Statement):
     # 3.5 Break and Continue

@@ -34,6 +34,7 @@ from wabbit.model import (
     LoadVar,
     Conditional,
     Block,
+    Loop,
 )
 
 from .typesys import WabbitType
@@ -203,7 +204,54 @@ program3 = [
 #    }
 #
 
-program4 = []
+program4 = [
+    DeclareAssignVar(
+        name='n',
+        type=WabbitType.int,
+        value=Integer(10),
+        const=True,
+    ),
+    DeclareAssignVar(
+        name='x',
+        type=WabbitType.int,
+        value=Integer(1),
+        const=False,
+    ),
+    DeclareAssignVar(
+        name='fact',
+        type=WabbitType.int,
+        value=Integer(1),
+        const=False,
+    ),
+    Loop(
+        test=InfixOp(
+            symbol='<',
+            left=LoadVar(name='x'),
+            right=LoadVar(name='n'),
+        ),
+        body=Block(
+            statements=(
+                AssignVar(
+                    name='fact',
+                    value=InfixOp(
+                        symbol='*',
+                        left=LoadVar(name='fact'),
+                        right=LoadVar(name='x'),
+                    ),
+                ),
+                Print(LoadVar(name='fact')),
+                AssignVar(
+                    name='x',
+                    value=InfixOp(
+                        symbol='+',
+                        left=LoadVar(name='x'),
+                        right=Integer(1),
+                    ),
+                ),
+            ),
+        ),
+    ),
+]
 
 # ----------------------------------------------------------------------
 # Program 5: Functions (simple)

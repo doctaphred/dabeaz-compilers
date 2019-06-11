@@ -33,3 +33,17 @@
     } else {
         print b;
     }
+
+    TODO: 
+        - 'const n int' -> 'const n'
+
+    >>> for stmt in program4:
+    ...     print(stmt)
+    const n int = 10;
+    var x int = 1;
+    var fact int = 1;
+    while x < n {
+        fact = fact * x;
+        print fact;
+        x = x + 1;
+    }
