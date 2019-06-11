@@ -16,6 +16,7 @@ of table-driven approach.  It's not the most sophisticated thing, but
 it will work as a starting point.  You can come back and refactor the
 type system later.
 '''
+from .utils.reprs import vars_repr
 
 
 class WabbitType:
@@ -31,6 +32,7 @@ class WabbitType:
             return NotImplemented
         return self.name == other.name
 
+    __repr__ = vars_repr
 
 IntType = WabbitType('int')
 FloatType = WabbitType('float')
