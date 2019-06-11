@@ -13,3 +13,13 @@
     ...     print(stmt)
     print 2 + 3 * -4;
     print 2.0 - 3.0 / -4.0;
+
+    - TODO: change 'const pi float' to 'const pi'
+    - TODO: add parens to print statement
+
+    >>> for stmt in program2:
+    ...     print(stmt)
+    const pi float = 3.14159;
+    var tau float;
+    tau = 2.0 * pi;
+    print tau;

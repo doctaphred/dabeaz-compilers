@@ -331,6 +331,9 @@ class LoadVar(Expression):
     def __init__(self, name: str):
         super().__init__(name=name)
 
+    def __str__(self):
+        return self.name
+
 
 class LoadMem(Expression):
     """
@@ -414,6 +417,9 @@ class DeclareVar(Statement):
     def __init__(self, name: str, type: WabbitType):
         super().__init__(name=name, type=type)
 
+    def __str__(self):
+        return f"var {self.name} {self.type};"
+
 
 class AssignVar(Statement):
     """
@@ -436,6 +442,9 @@ class AssignVar(Statement):
     def __init__(self, name: str, value: Expression):
         super().__init__(name=name, value=value)
 
+    def __str__(self):
+        return f"{self.name} = {self.value};"
+
 
 class DeclareAssignVar(Statement):
     #    var name type [= value];
@@ -443,11 +452,18 @@ class DeclareAssignVar(Statement):
     def __init__(
         self,
         name: str,
-        type: WabbitType,
+        type: WabbitType,  # TODO: make this optional.
         value: Expression,
         const: bool,
     ):
         super().__init__(name=name, type=type, value=value, const=const)
+
+    def __str__(self):
+        if self.const:
+            prefix = 'const '
+        else:
+            prefix = ''
+        return f"{prefix}{self.name} {self.type} = {self.value};"
 
 
 class AssignMem(Statement):
