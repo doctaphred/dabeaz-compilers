@@ -32,6 +32,8 @@ from wabbit.model import (
     DeclareVar,
     AssignVar,
     LoadVar,
+    Conditional,
+    Block,
 )
 
 from .typesys import WabbitType
@@ -147,7 +149,45 @@ program2 = [
 #    }
 #
 
-program3 = []
+program3 = [
+    DeclareAssignVar(
+        name='a',
+        type=WabbitType.int,
+        value=Integer(
+            value=2,
+        ),
+        const=False,
+    ),
+    DeclareAssignVar(
+        name='b',
+        type=WabbitType.int,
+        value=Integer(
+            value=3,
+        ),
+        const=False,
+    ),
+    Conditional(
+        test=InfixOp(
+            symbol='<',
+            left=LoadVar(
+                name='a',
+            ),
+            right=LoadVar(
+                name='b',
+            ),
+        ),
+        then=Block(
+            statements=(
+                Print(value=LoadVar(name='a')),
+            ),
+        ),
+        otherwise=Block(
+            statements=(
+                Print(value=LoadVar(name='b')),
+            ),
+        ),
+    ),
+]
 
 # ----------------------------------------------------------------------
 # Program 4: Loops.  This program prints out the first 10 factorials.

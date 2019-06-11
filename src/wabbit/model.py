@@ -127,6 +127,7 @@
 #
 # Does it need a reference to its enclosing function?
 
+from textwrap import indent
 
 from .typesys import WabbitType
 from .utils.reprs import vars_repr
@@ -460,10 +461,10 @@ class DeclareAssignVar(Statement):
 
     def __str__(self):
         if self.const:
-            prefix = 'const '
+            prefix = 'const'
         else:
-            prefix = ''
-        return f"{prefix}{self.name} {self.type} = {self.value};"
+            prefix = 'var'
+        return f"{prefix} {self.name} {self.type} = {self.value};"
 
 
 class AssignMem(Statement):
@@ -478,6 +479,13 @@ class Block:
             if not isinstance(statement, Statement):
                 raise TypeError(f"{type(statement)}: {statement}")
         self.statements = statements
+
+    def __str__(self):
+        return '\n'.join([
+            '{',
+            *[indent(str(stmt), '    ') for stmt in self.statements],
+            '}',
+        ])
 
 
 class DefineFunc(Statement):
@@ -520,6 +528,9 @@ class Conditional(Statement):
     #     if test { consequence} else { alternative }
     def __init__(self, test: Expression, then: Block, otherwise: Block):
         super().__init__(test=test, then=then, otherwise=otherwise)
+
+    def __str__(self):
+        return f"if {self.test} {self.then} else {self.otherwise}"
 
 
 class Loop(Statement):
