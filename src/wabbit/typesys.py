@@ -16,33 +16,43 @@ of table-driven approach.  It's not the most sophisticated thing, but
 it will work as a starting point.  You can come back and refactor the
 type system later.
 '''
-from .utils.reprs import vars_repr
 
 
-class WabbitType:
+class NamedSingleton(type):
+    __cache = {}
+
+    def __call__(cls, name):
+        try:
+            return cls.__cache[name]
+        except KeyError:
+            cls.__cache[name] = obj = super().__call__(name)
+            return obj
+
+    def bogus(cls, name):
+        return (
+            name == 'pytest_mock_example_attribute_that_shouldnt_exist'
+            or name.startswith('_')
+        )
+
+    def __getattr__(cls, name):
+        if cls.bogus(name):
+            raise AttributeError(name)
+        return cls(name)
+
+
+class WabbitType(metaclass=NamedSingleton):
     """
-    >>> WabbitType['int']
-    WabbitType(name='int')
-    """
-    names = {}
+    >>> WabbitType.int is WabbitType('int') is WabbitType(name='int')
+    True
 
+    >>> WabbitType('int')
+    WabbitType('int')
+
+    >>> WabbitType.int
+    WabbitType('int')
+    """
     def __init__(self, name):
-        assert name not in self.names, name
         self.name = name
-        self.names[name] = self
 
-    def __eq__(self, other):
-        if not isinstance(other, type(self)):
-            return NotImplemented
-        return self.name == other.name
-
-    __repr__ = vars_repr
-
-    def __class_getitem__(cls, name):
-        return cls.names[name]
-
-
-IntType = WabbitType('int')
-FloatType = WabbitType('float')
-BoolType = WabbitType('bool')
-CharType = WabbitType('char')
+    def __repr__(self):
+        return f"{self.__class__.__name__}({self.name!r})"
