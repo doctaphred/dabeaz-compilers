@@ -18,8 +18,7 @@ lint: venv
 	venv/bin/flake8 *.py src tests
 
 test: venv
-	venv/bin/pytest tests
-	venv/bin/pytest --doctest-modules src
+	venv/bin/pytest --doctest-modules src tests
 
 # Open an IPython shell and import all top-level attributes.
 shell: venv/bin/ipython
