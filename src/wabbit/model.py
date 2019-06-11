@@ -137,9 +137,13 @@ class AttrValidator:
         vars(self).update(kwargs)
         self.validate()
 
-    @classmethod
-    def validate(self, *args, **kwargs):
-        raise TypeError(f"{self.__class__.__name__} cannot be instantiated")
+    def validate(self):
+        for name, ann in self.__init__.__annotations__.items():
+            value = getattr(self, name)
+            if not isinstance(value, ann):
+                raise TypeError(
+                    f"expected {ann.__name__}, got {value.__class__.__name__}"
+                )
 
     __repr__ = vars_repr
 
@@ -170,6 +174,7 @@ class Literal(Expression):
         return repr(self.value)
 
     def validate(self):
+        super().validate()
         if type(self.value) != self.python_type:
             raise TypeError(
                 f"expected {self.python_type}, got {type(self.value)}"
@@ -222,10 +227,21 @@ class Character(Literal):
 
 class PrefixOp(Expression):
     """
-    >>> PrefixOp('+', 0)
-    PrefixOp(symbol='+', operand=0)
-    >>> str(PrefixOp('+', 0))
+    >>> PrefixOp('+', Integer(0))
+    PrefixOp(symbol='+', operand=Integer(value=0))
+    >>> str(PrefixOp('+', Integer(0)))
     '+0'
+
+    >>> PrefixOp('?', Integer(0))
+    Traceback (most recent call last):
+      ...
+    ValueError: invalid PrefixOp symbol: '?'
+
+    >>> stmt = AssignVar('x', Integer(2))
+    >>> PrefixOp('-', stmt)
+    Traceback (most recent call last):
+      ...
+    TypeError: expected Expression, got AssignVar
     """
     # 1.3 Unary Operators
     #        +operand       (Positive)
@@ -234,11 +250,15 @@ class PrefixOp(Expression):
     #        ^operand       (Grow memory)
     symbols = set('+-!^')
 
-    def __init__(self, symbol, operand: Expression):
+    def __init__(self, symbol: str, operand: Expression):
         super().__init__(symbol=symbol, operand=operand)
 
     def validate(self):
-        assert self.symbol in self.symbols, self.symbol
+        super().validate()
+        if self.symbol not in self.symbols:
+            raise ValueError(
+                f"invalid {self.__class__.__name__} symbol: {self.symbol!r}"
+            )
 
     def __str__(self):
         return f"{self.symbol}{self.operand}"
@@ -246,9 +266,9 @@ class PrefixOp(Expression):
 
 class InfixOp(Expression):
     """
-    >>> InfixOp('+', 1, 2)
-    InfixOp(symbol='+', left=1, right=2)
-    >>> str(InfixOp('+', 1, 2))
+    >>> InfixOp('+', Integer(1), Integer(2))
+    InfixOp(symbol='+', left=Integer(value=1), right=Integer(value=2))
+    >>> str(InfixOp('+', Integer(1), Integer(2)))
     '1 + 2'
     """
     # 1.2 Binary Operators
@@ -284,17 +304,25 @@ class InfixOp(Expression):
         super().__init__(symbol=symbol, left=left, right=right)
 
     def validate(self):
-        assert self.symbol in self.symbols, self.symbol
+        super().validate()
+        if self.symbol not in self.symbols:
+            raise ValueError(
+                f"invalid {self.__class__.__name__} symbol: {self.symbol!r}"
+            )
 
     def __str__(self):
         return f"{self.left} {self.symbol} {self.right}"
 
 
 class LoadVar(Expression):
+    """
+    >>> LoadVar('ayy')
+    LoadVar(name='ayy')
+    """
     # 1.4 Loading from a location
     #        xyz           (The value of variable xyz)
     #        `expr         (The contents of memory location expr)
-    def __init__(self, name):
+    def __init__(self, name: str):
         super().__init__(name=name)
 
 
