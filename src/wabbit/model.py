@@ -318,6 +318,11 @@ class LoadVar(Expression):
     """
     >>> LoadVar('ayy')
     LoadVar(name='ayy')
+
+    >>> LoadVar(Integer(0))
+    Traceback (most recent call last):
+      ...
+    TypeError: expected str, got Integer
     """
     # 1.4 Loading from a location
     #        xyz           (The value of variable xyz)
@@ -327,6 +332,21 @@ class LoadVar(Expression):
 
 
 class LoadMem(Expression):
+    """
+    >>> LoadMem(Integer(0))
+    LoadMem(loc=Integer(value=0))
+
+    >>> LoadMem('ayy')
+    Traceback (most recent call last):
+      ...
+    TypeError: expected Expression, got str
+
+    >>> stmt = AssignVar('x', Integer(2))
+    >>> LoadMem(stmt)
+    Traceback (most recent call last):
+      ...
+    TypeError: expected Expression, got AssignVar
+    """
     # 1.4 Loading from a location
     #        xyz           (The value of variable xyz)
     #        `expr         (The contents of memory location expr)
@@ -367,26 +387,54 @@ class Statement(AttrValidator):
 
 
 class DeclareVar(Statement):
+    """
+    >>> DeclareVar('x', 'int')
+    DeclareVar(name='x', type='int')
+
+    >>> DeclareVar(1, Integer(2))
+    Traceback (most recent call last):
+      ...
+    TypeError: expected str, got int
+
+    >>> DeclareVar(Character('x'), Integer(2))
+    Traceback (most recent call last):
+      ...
+    TypeError: expected str, got Character
+    """
     # 2.1 Variables.  Variables can be declared in a few different forms.
     #
     #    var name type [= value];
     #    var name [type] = value;
-    def __init__(self, name, type):
+    def __init__(self, name: str, type: str):
         super().__init__(name=name, type=type)
 
 
 class AssignVar(Statement):
+    """
+    >>> AssignVar('x', Integer(2))
+    AssignVar(name='x', value=Integer(value=2))
+
+    >>> AssignVar(1, Integer(2))
+    Traceback (most recent call last):
+      ...
+    TypeError: expected str, got int
+
+    >>> AssignVar(Character('x'), Integer(2))
+    Traceback (most recent call last):
+      ...
+    TypeError: expected str, got Character
+    """
     # 3.1 Assignment
     #
     #     location = expression ;
-    def __init__(self, name, value: Expression):
+    def __init__(self, name: str, value: Expression):
         super().__init__(name=name, value=value)
 
 
 class DeclareAssignVar(Statement):
     #    var name type [= value];
     #    const name = value;
-    def __init__(self, name, type, value, const):
+    def __init__(self, name: str, type, value, const):
         super().__init__(name=name, type=type, value=value, const=const)
 
 
