@@ -1,3 +1,5 @@
+import itertools
+
 from .utils import leb
 
 
@@ -151,17 +153,36 @@ class CTranspiler:
 
 
 class WasmEncoder:
+    def __init__(self):
+        # List of function objects created
+        self.functions = []
+
     def encode(self, code):
         self.wcode = bytearray()
         self.vars = {}
+        self.vartypes = []
+
         for op, *opargs in code:
             getattr(self, f'encode_{op}')(*opargs)
 
         # Put a block terminator on the code
         self.wcode.append(0x0b)
 
+        # Create the proper encoding of the entire function
+        groups = []
+        for ty, items in itertools.groupby(self.vartypes):
+            groups.append((len(list(items)), ty))
+
+        parts = [leb.unsigned(count) + ty for count, ty in groups]
+        enc_locals = leb.vector(parts)
+        func = enc_locals + self.wcode
+        self.functions.append(leb.unsigned(len(func)))
+        self.functions += func
+
     def encode_GLOBALI(self, name):
         self.vars[name] = len(self.vars)
+        # TODO: make this an int
+        self.vartypes.append(b'7f')
 
     def encode_CONSTI(self, value):
         self.wcode.append(0x41)
@@ -204,3 +225,4 @@ if __name__ == '__main__':
     encoder = WasmEncoder()
     encoder.encode(code)
     print(encoder.wcode)
+    print(encoder.wcode.hex())
