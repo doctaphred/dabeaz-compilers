@@ -62,6 +62,8 @@ float_expr = InfixOp('+', FloatLiteral(2.0),
                      InfixOp('*', FloatLiteral(3.0), FloatLiteral(4.0)))
 float_expr.check(Context())
 
+program0 = [int_expr, float_expr]
+
 # ----------------------------------------------------------------------
 # Program 1: Printing
 #
@@ -364,3 +366,12 @@ program7 = [
         ),
     ),
 ]
+
+
+for i in range(8):
+    program = globals()[f'program{i}']
+    c = Context.eval(program)
+    if c.errors:
+        import pdb
+        pdb.set_trace()
+    assert not c.errors

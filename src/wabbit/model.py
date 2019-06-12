@@ -129,7 +129,6 @@
 
 from textwrap import indent
 
-from .errors import error
 from .typesys import WabbitType
 from .utils.reprs import vars_repr
 
@@ -280,7 +279,7 @@ class PrefixOp(Expression):
         '+': {'int': 'int', 'float': 'float'},
         '-': {'int': 'int', 'float': 'float'},
         '!': {'bool': 'bool'},
-        '^': {'int': None},
+        '^': {'int': 'int'},
     }
 
     def __init__(self, symbol: str, operand: Expression):
@@ -302,7 +301,7 @@ class PrefixOp(Expression):
 
         if name not in transitions:
             self.type = WabbitType.error
-            error(f"{self!r} ({self}): unsupported type: {name}")
+            ctx.error(self, f"{self!r} ({self}): unsupported type: {name}")
             return
         else:
             self.type = WabbitType(transitions[name])
@@ -370,7 +369,7 @@ class InfixOp(Expression):
             name = t1.name
         elif t1 is not t2:
             self.type = WabbitType.error
-            error(f"{self!r} ({self}): mismatched types: {t1}, {t2}")
+            ctx.error(self, f"{self!r} ({self}): mismatched types: {t1}, {t2}")
             return
         else:
             assert t1 is t2
@@ -378,7 +377,7 @@ class InfixOp(Expression):
 
         if name not in transitions:
             self.type = WabbitType.error
-            error(f"{self!r} ({self}): unsupported type: {name}")
+            ctx.error(self, f"{self!r} ({self}): unsupported type: {name}")
         else:
             self.type = WabbitType(transitions[name])
 
@@ -408,7 +407,7 @@ class VarGet(Expression):
     def check(self, ctx):
         if self.name not in ctx.vars:
             self.type = WabbitType.error
-            error(f"undefined variable {self.name}")
+            ctx.error(self, f"undefined variable {self.name}")
         else:
             self.type = ctx.vars[self.name].type
 
@@ -443,7 +442,7 @@ class MemGet(Expression):
         self.loc.check(ctx)
         if self.loc.type is not WabbitType.int:
             self.type = WabbitType.error
-            error(f"can't access non-int memory location {self.loc}")
+            ctx.error(self, f"can't access non-int memory location {self.loc}")
         else:
             self.type = WabbitType.infer
 
@@ -467,12 +466,12 @@ class TypeCast(Expression):
         name = self.type.name
         if name not in self.casts:
             self.type = WabbitType.error
-            error(f"can't cast to type {name}")
+            ctx.error(self, f"can't cast to type {name}")
             return
 
         cast_result = self.casts[name]
         if self.value.type.name is not cast_result:
-            error(f"can't cast from {self.value.type} to {self.type}")
+            ctx.error(self, f"can't cast from {self.value.type} to {self.type}")
 
 
 class FuncCall(Expression):
@@ -491,7 +490,7 @@ class FuncCall(Expression):
             arg.check(ctx)
         if self.name not in ctx.funcs:
             self.type = WabbitType.error
-            error(f"undefined function {self.name}")
+            ctx.error(self, f"undefined function {self.name}")
         else:
             self.type = ctx.funcs[self.name].return_type
         # TODO: validate number of args?
@@ -582,11 +581,11 @@ class VarSet(Statement):
     def check(self, ctx):
         self.value.check(ctx)
         if self.name not in ctx.vars:
-            error(f"undefined variable {self.name}")
+            ctx.error(self, f"undefined variable {self.name}")
             return
         var = ctx.vars[self.name]
         if self.value.type is not var.type:
-            error(f"expected {var.type}, got {self.value.type}")
+            ctx.error(self, f"expected {var.type}, got {self.value.type}")
 
 
 class VarDefSet(Statement):
@@ -612,7 +611,7 @@ class VarDefSet(Statement):
         self.value.check(ctx)
         ctx.vars[self.name] = self
         if self.value.type is not self.type:
-            error(f"expected {self.type}, got {self.value.type}")
+            ctx.error(self, f"expected {self.type}, got {self.value.type}")
 
 
 class MemSet(Statement):
@@ -715,7 +714,7 @@ class If(Statement):
     def check(self, ctx):
         self.test.check(ctx)
         if self.test.type is not WabbitType.bool:
-            error(f"non-bool test {self.test} ({self.test.type})")
+            ctx.error(self, f"non-bool test {self.test} ({self.test.type})")
         self.then.check(ctx)
         self.otherwise.check(ctx)
 
@@ -733,7 +732,7 @@ class While(Statement):
     def check(self, ctx):
         self.test.check(ctx)
         if self.test.type is not WabbitType.bool:
-            error(f"non-bool test {self.test} ({self.test.type})")
+            ctx.error(self, f"non-bool test {self.test} ({self.test.type})")
         self.body.check(ctx)
 
 
