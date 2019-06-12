@@ -27,3 +27,4 @@ class error:
         log(msg)
         with open(self.path, 'a') as f:
             print(msg, file=f)
+        return msg
