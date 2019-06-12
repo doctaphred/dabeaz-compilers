@@ -1,7 +1,7 @@
 project := wabbit
 
 # Default action: run the full build.
-build: venv lint test
+build: venv test lint
 
 stash:
 	git stash
