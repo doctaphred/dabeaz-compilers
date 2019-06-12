@@ -129,8 +129,8 @@
 
 from textwrap import indent
 
+from .errors import error
 from .typesys import WabbitType
-from .utils import log
 from .utils.reprs import vars_repr
 from .utils.attrs import lazyattr
 
@@ -171,6 +171,9 @@ class AttrValidator:
 class Expression(AttrValidator):
     # Every expression must have a type.
     type = None
+
+    def check(self):
+        raise NotImplementedError
 
 
 class Literal(Expression):
@@ -286,17 +289,16 @@ class PrefixOp(Expression):
                 f"invalid {self.__class__.__name__} symbol: {self.symbol!r}"
             )
 
-    @lazyattr
-    def type(self):
+    def check(self):
         transitions = self.symbols[self.symbol]
 
         name = self.operand.type.name
 
         if name not in transitions:
-            log(f"{self!r} ({self}): unsupported type: {name}")
-            return WabbitType.error
+            self.type = WabbitType.error
+            yield error(f"{self!r} ({self}): unsupported type: {name}")
 
-        return WabbitType(transitions[name])
+        self.type = WabbitType(transitions[name])
 
     def __str__(self):
         return f"{self.symbol}{self.operand}"
@@ -348,8 +350,7 @@ class InfixOp(Expression):
                 f"invalid {self.__class__.__name__} symbol: {self.symbol!r}"
             )
 
-    @lazyattr
-    def type(self):
+    def check(self):
         transitions = self.symbols[self.symbol]
 
         t1, t2 = self.left.type, self.right.type
@@ -358,14 +359,14 @@ class InfixOp(Expression):
         elif t2 is WabbitType.infer:
             name = t1.name
         elif t1 != t2:
-            log(f"{self!r} ({self}): mismatched types: {t1}, {t2}")
-            return WabbitType.error
+            self.type = WabbitType.error
+            yield error(f"{self!r} ({self}): mismatched types: {t1}, {t2}")
 
         if name not in transitions:
-            log(f"{self!r} ({self}): unsupported type: {name}")
-            return WabbitType.error
+            self.type = WabbitType.error
+            yield error(f"{self!r} ({self}): unsupported type: {name}")
 
-        return WabbitType(transitions[name])
+        self.type = WabbitType(transitions[name])
 
     def __str__(self):
         return f"{self.left} {self.symbol} {self.right}"
