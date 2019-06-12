@@ -40,6 +40,7 @@ clean: pyclean refresh
 refresh:
 	-rm errors.txt
 	-rm hello.ll
+	-rm hello.out
 
 llvm:
 	python -m wabbit.hellollvm
