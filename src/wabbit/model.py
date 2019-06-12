@@ -160,7 +160,7 @@ class AttrValidator:
                 else:
                     if not constraint(value):
                         raise TypeError(
-                            f"{value} did not satisfy {constraint.__name__}"
+                            f"{value!r} did not satisfy {constraint!r}"
                         )
 
     __repr__ = vars_repr
