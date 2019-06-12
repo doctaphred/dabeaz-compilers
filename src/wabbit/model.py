@@ -565,7 +565,7 @@ class Print(Statement):
         return f"print {self.value};"
 
 
-class Conditional(Statement):
+class If(Statement):
     #
     # 3.3 Conditional
     #
@@ -577,7 +577,7 @@ class Conditional(Statement):
         return f"if {self.test} {self.then} else {self.otherwise}"
 
 
-class Loop(Statement):
+class While(Statement):
     # 3.4 Loop
     #
     #  while test { body }

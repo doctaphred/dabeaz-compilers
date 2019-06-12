@@ -24,13 +24,12 @@
 
 from wabbit.model import (
     Block,
-    Conditional,
     FloatLiteral,
     FuncCall,
     FuncDef,
+    If,
     InfixOp,
     IntLiteral,
-    Loop,
     MemGet,
     MemSet,
     Parameter,
@@ -41,6 +40,7 @@ from wabbit.model import (
     VarDefSet,
     VarGet,
     VarSet,
+    While,
 )
 
 from .typesys import WabbitType
@@ -173,26 +173,10 @@ program3 = [
         ),
         const=False,
     ),
-    Conditional(
-        test=InfixOp(
-            symbol='<',
-            left=VarGet(
-                name='a',
-            ),
-            right=VarGet(
-                name='b',
-            ),
-        ),
-        then=Block(
-            statements=(
-                Print(value=VarGet(name='a')),
-            ),
-        ),
-        otherwise=Block(
-            statements=(
-                Print(value=VarGet(name='b')),
-            ),
-        ),
+    If(
+        test=InfixOp('<', VarGet('a'), VarGet('b')),
+        then=Block([Print(VarGet('a'))]),
+        otherwise=Block([Print(VarGet('b'))]),
     ),
 ]
 
@@ -229,7 +213,7 @@ program4 = [
         value=IntLiteral(1),
         const=False,
     ),
-    Loop(
+    While(
         test=InfixOp(
             symbol='<',
             left=VarGet(name='x'),
@@ -331,7 +315,7 @@ program6 = [
                 IntLiteral(1),
                 const=False,
             ),
-            Loop(
+            While(
                 test=InfixOp('<', VarGet('x'), VarGet('n')),
                 body=Block([
                     VarSet(
