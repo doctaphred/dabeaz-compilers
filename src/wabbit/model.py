@@ -230,6 +230,9 @@ class Bool(Literal):
     """
     python_type = bool
 
+    def __str__(self):
+        return 'true' if self else 'false'
+
 
 class Character(Literal):
     """
