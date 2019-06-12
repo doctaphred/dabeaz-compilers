@@ -3,6 +3,11 @@ project := wabbit
 # Default action: run the full build.
 build: venv lint test
 
+stash:
+	git stash
+	make build
+	git stash pop
+
 # Run the project's main module.
 run: venv
 	venv/bin/python -m $(project)
