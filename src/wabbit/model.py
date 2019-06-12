@@ -127,10 +127,15 @@
 #
 # Does it need a reference to its enclosing function?
 
+import sys
 from textwrap import indent
 
 from .typesys import WabbitType
 from .utils.reprs import vars_repr
+
+
+def log(*args, **kwargs):
+    print(*args, **kwargs, file=sys.stderr)
 
 
 class AttrValidator:
