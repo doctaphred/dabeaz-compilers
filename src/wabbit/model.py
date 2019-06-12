@@ -303,8 +303,8 @@ class PrefixOp(Expression):
         if name not in transitions:
             self.type = WabbitType.error
             yield error(f"{self!r} ({self}): unsupported type: {name}")
-
-        self.type = WabbitType(transitions[name])
+        else:
+            self.type = WabbitType(transitions[name])
 
     def __str__(self):
         return f"{self.symbol}{self.operand}"
