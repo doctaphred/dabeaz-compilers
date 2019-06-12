@@ -1,4 +1,5 @@
     >>> from wabbit.programs import *
+    >>> from wabbit.utils import pprog
 
     >>> print(int_expr)
     2 + 3 * 4
@@ -6,23 +7,20 @@
     >>> print(float_expr)
     2.0 + 3.0 * 4.0
 
-    >>> for stmt in program1:
-    ...     print(stmt)
+    >>> pprog(program1)
     print 2 + 3 * -4;
     print 2.0 - 3.0 / -4.0;
 
     - TODO: change 'const pi float' to 'const pi'
     - TODO: add parens to print statement
 
-    >>> for stmt in program2:
-    ...     print(stmt)
+    >>> pprog(program2)
     const pi float = 3.14159;
     var tau float;
     tau = 2.0 * pi;
     print tau;
 
-    >>> for stmt in program3:
-    ...     print(stmt)
+    >>> pprog(program3)
     var a int = 2;
     var b int = 3;
     if a < b {
@@ -34,8 +32,7 @@
     TODO: 
         - 'const n int' -> 'const n'
 
-    >>> for stmt in program4:
-    ...     print(stmt)
+    >>> pprog(program4)
     const n int = 10;
     var x int = 1;
     var fact int = 1;
@@ -46,8 +43,7 @@
     }
 
 
-    >>> for stmt in program5:
-    ...     print(stmt)
+    >>> pprog(program5)
     func square(x int) int {
         return x * x;
     }
@@ -58,8 +54,7 @@
         - parentheses for print
         - no semicolon after print(??)
 
-    >>> for stmt in program6:
-    ...     print(stmt)
+    >>> pprog(program6)
     func fact(n int) int {
         var x int = 1;
         var result int = 1;
@@ -75,8 +70,7 @@
         - 'const addr int' -> 'const addr'
         - add parens to print
 
-    >>> for stmt in program7:
-    ...     print(stmt)
+    >>> pprog(program7)
     var memsize int = ^1000;
     const addr int = 500;
     `addr = 1234;
