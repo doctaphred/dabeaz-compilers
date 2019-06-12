@@ -199,7 +199,7 @@ class Literal(Expression):
             )
 
     def check(self, ctx):
-        yield from ()
+        pass
 
 
 class IntLiteral(Literal):
@@ -294,7 +294,7 @@ class PrefixOp(Expression):
             )
 
     def check(self, ctx):
-        yield from self.operand.check(ctx)
+        self.operand.check(ctx)
 
         transitions = self.symbols[self.symbol]
 
@@ -302,7 +302,8 @@ class PrefixOp(Expression):
 
         if name not in transitions:
             self.type = WabbitType.error
-            yield error(f"{self!r} ({self}): unsupported type: {name}")
+            error(f"{self!r} ({self}): unsupported type: {name}")
+            return
         else:
             self.type = WabbitType(transitions[name])
 
@@ -357,8 +358,8 @@ class InfixOp(Expression):
             )
 
     def check(self, ctx):
-        yield from self.left.check(ctx)
-        yield from self.right.check(ctx)
+        self.left.check(ctx)
+        self.right.check(ctx)
 
         transitions = self.symbols[self.symbol]
 
@@ -369,7 +370,7 @@ class InfixOp(Expression):
             name = t1.name
         elif t1 is not t2:
             self.type = WabbitType.error
-            yield error(f"{self!r} ({self}): mismatched types: {t1}, {t2}")
+            error(f"{self!r} ({self}): mismatched types: {t1}, {t2}")
             return
         else:
             assert t1 is t2
@@ -377,7 +378,7 @@ class InfixOp(Expression):
 
         if name not in transitions:
             self.type = WabbitType.error
-            yield error(f"{self!r} ({self}): unsupported type: {name}")
+            error(f"{self!r} ({self}): unsupported type: {name}")
         else:
             self.type = WabbitType(transitions[name])
 
@@ -407,9 +408,9 @@ class VarGet(Expression):
     def check(self, ctx):
         if self.name not in ctx.vars:
             self.type = WabbitType.error
-            yield error(f"undefined variable {self.name}")
-            return
-        self.type = ctx.vars[self.name].type
+            error(f"undefined variable {self.name}")
+        else:
+            self.type = ctx.vars[self.name].type
 
 
 class MemGet(Expression):
@@ -439,12 +440,12 @@ class MemGet(Expression):
         return f"`{self.loc}"
 
     def check(self, ctx):
-        yield from self.loc.check(ctx)
+        self.loc.check(ctx)
         if self.loc.type is not WabbitType.int:
             self.type = WabbitType.error
-            yield error(f"can't access non-int memory location {self.loc}")
-            return
-        self.type = WabbitType.infer
+            error(f"can't access non-int memory location {self.loc}")
+        else:
+            self.type = WabbitType.infer
 
 
 class TypeCast(Expression):
@@ -461,17 +462,17 @@ class TypeCast(Expression):
         super().__init__(type=type, value=value)
 
     def check(self, ctx):
-        yield from self.value.check(ctx)
+        self.value.check(ctx)
 
         name = self.type.name
         if name not in self.casts:
-            yield error(f"can't cast to type {name}")
             self.type = WabbitType.error
+            error(f"can't cast to type {name}")
             return
 
         cast_result = self.casts[name]
         if self.value.type.name is not cast_result:
-            yield error(f"can't cast from {self.value.type} to {self.type}")
+            error(f"can't cast from {self.value.type} to {self.type}")
 
 
 class FuncCall(Expression):
@@ -487,12 +488,12 @@ class FuncCall(Expression):
 
     def check(self, ctx):
         for arg in self.args:
-            yield from arg.check(ctx)
+            arg.check(ctx)
         if self.name not in ctx.funcs:
             self.type = WabbitType.error
-            yield error(f"undefined function {self.name}")
-            return
-        self.type = ctx.funcs[self.name].return_type
+            error(f"undefined function {self.name}")
+        else:
+            self.type = ctx.funcs[self.name].return_type
         # TODO: validate number of args?
 
     def __str__(self):
@@ -511,6 +512,9 @@ class Parameter(Expression):
     # a separate "var" declaration.
     def __init__(self, name, type: WabbitType):
         super().__init__(name=name, type=type)
+
+    def check(self, ctx):
+        pass
 
     def __str__(self):
         return f"{self.name} {self.type}"
@@ -576,14 +580,13 @@ class VarSet(Statement):
         return f"{self.name} = {self.value};"
 
     def check(self, ctx):
-        yield from self.value.check(ctx)
-        try:
-            var = ctx.vars[self.name]
-        except KeyError:
-            yield error(f"undefined variable {self.name}")
-
+        self.value.check(ctx)
+        if self.name not in ctx.vars:
+            error(f"undefined variable {self.name}")
+            return
+        var = ctx.vars[self.name]
         if self.value.type is not var.type:
-            yield error(f"expected {var.type}, got {self.value.type}")
+            error(f"expected {var.type}, got {self.value.type}")
 
 
 class VarDefSet(Statement):
@@ -606,10 +609,10 @@ class VarDefSet(Statement):
         return f"{prefix} {self.name} {self.type} = {self.value};"
 
     def check(self, ctx):
-        yield from self.value.check(ctx)
+        self.value.check(ctx)
         ctx.vars[self.name] = self
         if self.value.type is not self.type:
-            yield error(f"expected {self.type}, got {self.value.type}")
+            error(f"expected {self.type}, got {self.value.type}")
 
 
 class MemSet(Statement):
@@ -640,7 +643,7 @@ class Block:
 
     def check(self, ctx):
         for statement in self.statements:
-            yield from statement.check(ctx)
+            statement.check(ctx)
 
 
 class FuncDef(Statement):
@@ -662,7 +665,7 @@ class FuncDef(Statement):
 
     def check(self, ctx):
         for param in self.params:
-            yield from param.check(ctx)
+            param.check(ctx)
         assert self.name not in ctx.funcs, self.name
         ctx.funcs[self.name] = self
 
@@ -695,7 +698,7 @@ class Print(Statement):
         return f"print {self.value};"
 
     def check(self, ctx):
-        yield from self.value.check(ctx)
+        self.value.check(ctx)
 
 
 class If(Statement):
@@ -710,11 +713,11 @@ class If(Statement):
         return f"if {self.test} {self.then} else {self.otherwise}"
 
     def check(self, ctx):
-        yield from self.test.check(ctx)
+        self.test.check(ctx)
         if self.test.type is not WabbitType.bool:
-            yield error(f"non-bool test {self.test} ({self.test.type})")
-        yield from self.then.check(ctx)
-        yield from self.otherwise.check(ctx)
+            error(f"non-bool test {self.test} ({self.test.type})")
+        self.then.check(ctx)
+        self.otherwise.check(ctx)
 
 
 class While(Statement):
@@ -728,10 +731,10 @@ class While(Statement):
         return f"while {self.test} {self.body}"
 
     def check(self, ctx):
-        yield from self.test.check(ctx)
+        self.test.check(ctx)
         if self.test.type is not WabbitType.bool:
-            yield error(f"non-bool test {self.test} ({self.test.type})")
-        yield from self.body.check(ctx)
+            error(f"non-bool test {self.test} ({self.test.type})")
+        self.body.check(ctx)
 
 
 class Break(Statement):
@@ -775,4 +778,4 @@ class Return(Statement):
         return f"return {self.value};"
 
     def check(self, ctx):
-        yield from self.value.check(ctx)
+        self.value.check(ctx)

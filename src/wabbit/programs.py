@@ -56,11 +56,11 @@ from .typesys import WabbitType
 
 int_expr = InfixOp('+', IntLiteral(2),
                    InfixOp('*', IntLiteral(3), IntLiteral(4)))
-assert not list(int_expr.check(Context()))
+int_expr.check(Context())
 
 float_expr = InfixOp('+', FloatLiteral(2.0),
                      InfixOp('*', FloatLiteral(3.0), FloatLiteral(4.0)))
-assert not list(float_expr.check(Context()))
+float_expr.check(Context())
 
 # ----------------------------------------------------------------------
 # Program 1: Printing
