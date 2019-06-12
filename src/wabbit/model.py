@@ -142,10 +142,26 @@ class AttrValidator:
     def validate(self):
         for name, ann in self.__init__.__annotations__.items():
             value = getattr(self, name)
-            if not isinstance(value, ann):
-                raise TypeError(
-                    f"expected {ann.__name__}, got {value.__class__.__name__}"
-                )
+
+            try:
+                constraints = iter(ann)
+            except TypeError:
+                constraints = [ann]
+
+            for constraint in constraints:
+                if isinstance(constraint, type):
+                    if not isinstance(value, constraint):
+                        raise TypeError(
+                            "expected {}, got {}".format(
+                                constraint.__name__,
+                                value.__class__.__name__,
+                            )
+                        )
+                else:
+                    if not constraint(value):
+                        raise TypeError(
+                            f"{value} did not satisfy {constraint.__name__}"
+                        )
 
     __repr__ = vars_repr
 
