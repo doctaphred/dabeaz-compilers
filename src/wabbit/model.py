@@ -471,7 +471,10 @@ class TypeCast(Expression):
 
         cast_result = self.casts[name]
         if self.value.type.name is not cast_result:
-            ctx.error(self, f"can't cast from {self.value.type} to {self.type}")
+            ctx.error(
+                self,
+                f"can't cast from {self.value.type} to {self.type}"
+            )
 
 
 class FuncCall(Expression):
