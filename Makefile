@@ -1,4 +1,4 @@
-project := compilers
+project := wabbit
 
 # Default action: run the full build.
 build: venv lint test
@@ -36,6 +36,10 @@ pyclean:
 clean: pyclean
 	-rm -r venv
 
+# Remove cruft from runs of this project.
+refresh: pyclean
+	-rm errors.txt
+
 # Update all pinned requirements to their latest versions.
 pin-requirements: venv
 	# TODO (maybe): Figure out how to do this via make dependencies.
@@ -48,4 +52,4 @@ pin-requirements: venv
 
 # "Phony" targets do not reflect actual files. (It's not necessary to
 # list them here unless they clash with actual file paths.)
-.PHONY: build run lint test shell dev pyclean clean pin-requirements
+.PHONY: build run lint test shell dev pyclean clean refresh pin-requirements
