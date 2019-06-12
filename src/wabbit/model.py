@@ -170,13 +170,6 @@ class Expression(AttrValidator):
     # Every expression must have a type.
     type = None
 
-    # TODO: global registry?
-    # def __init_subclass__(cls, **kwargs):
-    #     kind = cls.kind()
-    #     if kind in cls.kinds:
-    #         raise TypeError(f"{kind} is already {cls.kinds[kind]}")
-    #     cls.kinds[kind] = cls
-
 
 class Literal(Expression):
     # 1.1 Literals
