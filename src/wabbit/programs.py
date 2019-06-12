@@ -22,7 +22,8 @@
 # checks that prevent the creation of a bad model.  Those assertions
 # will help you here if you screw things up.
 
-from wabbit.model import (
+from .check import Context
+from .model import (
     Block,
     FloatLiteral,
     FuncCall,
@@ -42,7 +43,6 @@ from wabbit.model import (
     VarSet,
     While,
 )
-
 from .typesys import WabbitType
 
 
@@ -56,9 +56,11 @@ from .typesys import WabbitType
 
 int_expr = InfixOp('+', IntLiteral(2),
                    InfixOp('*', IntLiteral(3), IntLiteral(4)))
+assert not list(int_expr.check(Context()))
 
 float_expr = InfixOp('+', FloatLiteral(2.0),
                      InfixOp('*', FloatLiteral(3.0), FloatLiteral(4.0)))
+assert not list(float_expr.check(Context()))
 
 # ----------------------------------------------------------------------
 # Program 1: Printing

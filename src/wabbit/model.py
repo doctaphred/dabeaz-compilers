@@ -132,7 +132,6 @@ from textwrap import indent
 from .errors import error
 from .typesys import WabbitType
 from .utils.reprs import vars_repr
-from .utils.attrs import lazyattr
 
 
 class AttrValidator:
@@ -172,7 +171,9 @@ class Expression(AttrValidator):
     # Every expression must have a type.
     type = None
 
-    def check(self):
+    def check(self, ctx):
+        import pdb
+        pdb.set_trace()
         raise NotImplementedError
 
 
@@ -196,6 +197,9 @@ class Literal(Expression):
             raise TypeError(
                 f"expected {self.python_type}, got {type(self.value)}"
             )
+
+    def check(self, ctx):
+        yield from ()
 
 
 class IntLiteral(Literal):
@@ -289,7 +293,9 @@ class PrefixOp(Expression):
                 f"invalid {self.__class__.__name__} symbol: {self.symbol!r}"
             )
 
-    def check(self):
+    def check(self, ctx):
+        yield from self.operand.check(ctx)
+
         transitions = self.symbols[self.symbol]
 
         name = self.operand.type.name
@@ -350,7 +356,10 @@ class InfixOp(Expression):
                 f"invalid {self.__class__.__name__} symbol: {self.symbol!r}"
             )
 
-    def check(self):
+    def check(self, ctx):
+        yield from self.left.check(ctx)
+        yield from self.right.check(ctx)
+
         transitions = self.symbols[self.symbol]
 
         t1, t2 = self.left.type, self.right.type
@@ -358,9 +367,13 @@ class InfixOp(Expression):
             name = t2.name
         elif t2 is WabbitType.infer:
             name = t1.name
-        elif t1 != t2:
+        elif t1 is not t2:
             self.type = WabbitType.error
             yield error(f"{self!r} ({self}): mismatched types: {t1}, {t2}")
+            return
+        else:
+            assert t1 is t2
+            name = t1.name
 
         if name not in transitions:
             self.type = WabbitType.error
@@ -391,6 +404,13 @@ class VarGet(Expression):
     def __str__(self):
         return self.name
 
+    def check(self, ctx):
+        if self.name not in ctx.vars:
+            self.type = WabbitType.error
+            yield error(f"undefined variable {self.name}")
+            return
+        self.type = ctx.vars[self.name].type
+
 
 class MemGet(Expression):
     """
@@ -418,13 +438,40 @@ class MemGet(Expression):
     def __str__(self):
         return f"`{self.loc}"
 
+    def check(self, ctx):
+        yield from self.loc.check(ctx)
+        if self.loc.type is not WabbitType.int:
+            self.type = WabbitType.error
+            yield error(f"can't access non-int memory location {self.loc}")
+            return
+        self.type = WabbitType.infer
+
 
 class TypeCast(Expression):
     # 1.5 Type-casts
     #         int(expr)
     #         float(expr)
+
+    casts = {
+        'int': 'float',
+        'float': 'int',
+    }
+
     def __init__(self, type, value: Expression):
         super().__init__(type=type, value=value)
+
+    def check(self, ctx):
+        yield from self.value.check(ctx)
+
+        name = self.type.name
+        if name not in self.casts:
+            yield error(f"can't cast to type {name}")
+            self.type = WabbitType.error
+            return
+
+        cast_result = self.casts[name]
+        if self.value.type.name is not cast_result:
+            yield error(f"can't cast from {self.value.type} to {self.type}")
 
 
 class FuncCall(Expression):
@@ -437,6 +484,16 @@ class FuncCall(Expression):
         super().validate()
         for arg in self.args:
             assert isinstance(arg, Expression)
+
+    def check(self, ctx):
+        for arg in self.args:
+            yield from arg.check(ctx)
+        if self.name not in ctx.funcs:
+            self.type = WabbitType.error
+            yield error(f"undefined function {self.name}")
+            return
+        self.type = ctx.funcs[self.name].return_type
+        # TODO: validate number of args?
 
     def __str__(self):
         args = ', '.join(str(arg) for arg in self.args)
@@ -460,7 +517,8 @@ class Parameter(Expression):
 
 
 class Statement(AttrValidator):
-    pass
+    def check(self, ctx):
+        raise NotImplementedError
 
 
 class VarDef(Statement):
@@ -488,6 +546,10 @@ class VarDef(Statement):
     def __str__(self):
         return f"var {self.name} {self.type};"
 
+    def check(self, ctx):
+        assert self.name not in ctx.vars, self.name
+        ctx.vars[self.name] = self
+
 
 class VarSet(Statement):
     """
@@ -513,6 +575,16 @@ class VarSet(Statement):
     def __str__(self):
         return f"{self.name} = {self.value};"
 
+    def check(self, ctx):
+        yield from self.value.check(ctx)
+        try:
+            var = ctx.vars[self.name]
+        except KeyError:
+            yield error(f"undefined variable {self.name}")
+
+        if self.value.type is not var.type:
+            yield error(f"expected {var.type}, got {self.value.type}")
+
 
 class VarDefSet(Statement):
     #    var name type [= value];
@@ -533,6 +605,12 @@ class VarDefSet(Statement):
             prefix = 'var'
         return f"{prefix} {self.name} {self.type} = {self.value};"
 
+    def check(self, ctx):
+        yield from self.value.check(ctx)
+        ctx.vars[self.name] = self
+        if self.value.type is not self.type:
+            yield error(f"expected {self.type}, got {self.value.type}")
+
 
 class MemSet(Statement):
     # `location = expression ;
@@ -541,6 +619,9 @@ class MemSet(Statement):
 
     def __str__(self):
         return f"`{self.loc} = {self.value};"
+
+    def check(self, ctx):
+        ctx.mem[self.loc] = self
 
 
 class Block:
@@ -556,6 +637,10 @@ class Block:
             *[indent(str(stmt), '    ') for stmt in self.statements],
             '}',
         ])
+
+    def check(self, ctx):
+        for statement in self.statements:
+            yield from statement.check(ctx)
 
 
 class FuncDef(Statement):
@@ -574,6 +659,12 @@ class FuncDef(Statement):
         super().validate()
         for param in self.params:
             assert isinstance(param, Parameter), param
+
+    def check(self, ctx):
+        for param in self.params:
+            yield from param.check(ctx)
+        assert self.name not in ctx.funcs, self.name
+        ctx.funcs[self.name] = self
 
     def __str__(self):
         params = ', '.join(str(param) for param in self.params)
@@ -603,6 +694,9 @@ class Print(Statement):
     def __str__(self):
         return f"print {self.value};"
 
+    def check(self, ctx):
+        yield from self.value.check(ctx)
+
 
 class If(Statement):
     #
@@ -615,6 +709,13 @@ class If(Statement):
     def __str__(self):
         return f"if {self.test} {self.then} else {self.otherwise}"
 
+    def check(self, ctx):
+        yield from self.test.check(ctx)
+        if self.test.type is not WabbitType.bool:
+            yield error(f"non-bool test {self.test} ({self.test.type})")
+        yield from self.then.check(ctx)
+        yield from self.otherwise.check(ctx)
+
 
 class While(Statement):
     # 3.4 Loop
@@ -625,6 +726,12 @@ class While(Statement):
 
     def __str__(self):
         return f"while {self.test} {self.body}"
+
+    def check(self, ctx):
+        yield from self.test.check(ctx)
+        if self.test.type is not WabbitType.bool:
+            yield error(f"non-bool test {self.test} ({self.test.type})")
+        yield from self.body.check(ctx)
 
 
 class Break(Statement):
@@ -637,6 +744,10 @@ class Break(Statement):
     def __init__(self):
         pass
 
+    def check(self, ctx):
+        # TODO: check if in a While Block?
+        pass
+
 
 class Continue(Statement):
     #   while test {
@@ -644,6 +755,10 @@ class Continue(Statement):
     #       continue;
     #   }
     def __init__(self):
+        pass
+
+    def check(self, ctx):
+        # TODO: check if in a While Block?
         pass
 
 
@@ -658,3 +773,6 @@ class Return(Statement):
 
     def __str__(self):
         return f"return {self.value};"
+
+    def check(self, ctx):
+        yield from self.value.check(ctx)
