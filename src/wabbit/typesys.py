@@ -50,6 +50,9 @@ class WabbitType(metaclass=NamedSingleton):
 
     >>> WabbitType.int
     WabbitType('int')
+
+    >>> str(WabbitType.int)
+    'int'
     """
     def __init__(self, name):
         self.name = name
