@@ -58,6 +58,23 @@
     print square(10);
 
     TODO:
+        - parentheses for print
+        - no semicolon after print(??)
+
+    >>> for stmt in program6:
+    ...     print(stmt)
+    func fact(n int) int {
+        var x int = 1;
+        var result int = 1;
+        while x < n {
+            result = result * x;
+            x = x + 1;
+        }
+        return result;
+    }
+    print fact(10);
+
+    TODO:
         - 'const addr int' -> 'const addr'
         - add parens to print
 

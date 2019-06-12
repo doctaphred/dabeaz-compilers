@@ -313,7 +313,39 @@ program5 = [
 #
 #    print(fact(10))
 
-program6 = []
+program6 = [
+    DefineFunc(
+        name='fact',
+        params=[FuncParam('n', WabbitType.int)],
+        return_type=WabbitType.int,
+        body=Block([
+            DeclareAssignVar(
+                'x',
+                WabbitType.int,
+                Integer(1),
+                const=False,
+            ),
+            DeclareAssignVar(
+                'result',
+                WabbitType.int,
+                Integer(1),
+                const=False,
+            ),
+            Loop(
+                test=InfixOp('<', LoadVar('x'), LoadVar('n')),
+                body=Block([
+                    AssignVar(
+                        'result',
+                        InfixOp('*', LoadVar('result'), LoadVar('x')),
+                    ),
+                    AssignVar('x', InfixOp('+', LoadVar('x'), Integer(1))),
+                ]),
+            ),
+            Return(LoadVar('result')),
+        ]),
+    ),
+    Print(CallFunc('fact', [Integer(10)])),
+]
 
 # ----------------------------------------------------------------------
 # Program 7: Memory
