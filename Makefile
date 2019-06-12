@@ -42,6 +42,7 @@ refresh:
 	-rm hello.ll
 
 llvm:
+	python -m wabbit.hellollvm
 	clang main.c hello.ll -o hello.out
 	./hello.out
 
