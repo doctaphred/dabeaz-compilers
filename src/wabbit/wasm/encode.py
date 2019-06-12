@@ -1,4 +1,4 @@
-r"""LEB128 encoding helpers.
+r"""WebAssembly encoding helpers.
 
 See https://en.wikipedia.org/wiki/LEB128
 
@@ -66,6 +66,10 @@ def vector(items):
 def name(name):
     """Encode a text name as a UTF-8 vector."""
     return vector(name.encode('utf-8'))
+
+
+def signature(argtypes, rettypes):
+    return b'\x60' + vector(argtypes) + vector(rettypes)
 
 
 assert unsigned(624485) == bytes([0xe5, 0x8e, 0x26])

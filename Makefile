@@ -47,6 +47,9 @@ llvm:
 	clang main.c hello.ll -o hello.out
 	./hello.out
 
+wasm:
+	python -m wabbit.wasm.generate
+
 # Update all pinned requirements to their latest versions.
 pin-requirements: venv
 	# TODO (maybe): Figure out how to do this via make dependencies.
