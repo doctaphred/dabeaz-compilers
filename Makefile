@@ -33,12 +33,17 @@ pyclean:
 	bin/pyclean
 
 # Remove the virtualenv and any Python cruft.
-clean: pyclean
+clean: pyclean refresh
 	-rm -r venv
 
 # Remove cruft from runs of this project.
-refresh: pyclean
+refresh:
 	-rm errors.txt
+	-rm hello.ll
+
+llvm:
+	clang main.c hello.ll -o hello.out
+	./hello.out
 
 # Update all pinned requirements to their latest versions.
 pin-requirements: venv

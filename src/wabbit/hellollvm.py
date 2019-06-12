@@ -16,3 +16,6 @@ block = hello_func.append_basic_block('entry')
 builder = IRBuilder(block)
 builder.ret(Constant(IntType(32), 37))
 print(mod)
+
+with open('hello.ll', 'w') as f:
+    print(mod, file=f)
