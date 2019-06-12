@@ -175,6 +175,11 @@ class Expression(AttrValidator):
         pdb.set_trace()
         raise NotImplementedError
 
+    def __iter__(self):
+        import pdb
+        pdb.set_trace()
+        raise NotImplementedError
+
 
 class Literal(Expression):
     # 1.1 Literals
@@ -217,6 +222,9 @@ class IntLiteral(Literal):
     python_type = int
     type = WabbitType.int
 
+    def __iter__(self):
+        yield 'consti', self.value
+
 
 class FloatLiteral(Literal):
     """
@@ -226,6 +234,9 @@ class FloatLiteral(Literal):
     python_type = float
     type = WabbitType.float
 
+    def __iter__(self):
+        yield 'constf', self.value
+
 
 class BoolLiteral(Literal):
     """
@@ -234,6 +245,9 @@ class BoolLiteral(Literal):
     """
     python_type = bool
     type = WabbitType.bool
+
+    def __iter__(self):
+        yield 'consti', int(self.value)
 
     def __str__(self):
         return 'true' if self else 'false'
@@ -250,6 +264,9 @@ class CharLiteral(Literal):
     def validate(self):
         super().validate()
         assert len(self.value) == 1
+
+    def __iter__(self):
+        yield 'consti', ord(self.value)
 
 
 class PrefixOp(Expression):
@@ -305,6 +322,10 @@ class PrefixOp(Expression):
             return
         else:
             self.type = WabbitType(transitions[name])
+
+    def __iter__(self):
+        yield from self.operand
+        # TODO: symbol
 
     def __str__(self):
         return f"{self.symbol}{self.operand}"
@@ -381,6 +402,31 @@ class InfixOp(Expression):
         else:
             self.type = WabbitType(transitions[name])
 
+    symbol_names = {
+        '+':  'add',
+        '-':  'sub',
+        '*':  'mul',
+        '/':  'div',
+        '<':  'lt',
+        '<=': 'le',
+        '>':  'gt',
+        '>=': 'ge',
+        '==': 'eq',
+        '!=': 'ne',
+        '&&': 'and',
+        '||': 'or',
+    }
+
+    def __iter__(self):
+        yield from self.left
+        yield from self.right
+        name = self.symbol_names[self.symbol]
+        if self.type is WabbitType.float:
+            yield name + 'f'
+        else:
+            # ints, chars, and bools are all implemented as ints.
+            yield name + 'i'
+
     def __str__(self):
         return f"{self.left} {self.symbol} {self.right}"
 
@@ -410,6 +456,9 @@ class VarGet(Expression):
             ctx.error(self, f"undefined variable {self.name}")
         else:
             self.type = ctx.vars[self.name].type
+
+    def __iter__(self):
+        pass  # TODO
 
 
 class MemGet(Expression):
@@ -446,6 +495,10 @@ class MemGet(Expression):
         else:
             self.type = WabbitType.infer
 
+    def __iter__(self):
+        yield from self.loc
+        # TODO: which type to load from memory?
+
 
 class TypeCast(Expression):
     # 1.5 Type-casts
@@ -476,6 +529,16 @@ class TypeCast(Expression):
                 f"can't cast from {self.value.type} to {self.type}"
             )
 
+    def __iter__(self):
+        yield from self.value
+        # If types already match, assume no conversion is needed.
+        if self.type is WabbitType.float:
+            if self.value.type is WabbitType.int:
+                yield 'itof'
+        elif self.type is WabbitType.int:
+            if self.value.type is WabbitType.float:
+                yield 'itof'
+
 
 class FuncCall(Expression):
     # 1.6 Function/Procedure Call
@@ -502,6 +565,11 @@ class FuncCall(Expression):
         args = ', '.join(str(arg) for arg in self.args)
         return f"{self.name}({args})"
 
+    def __iter__(self):
+        for arg in self.args:
+            yield from arg
+        yield 'call', self.name
+
 
 class Parameter(Expression):
     # 2.2 Function Parameters
@@ -521,9 +589,15 @@ class Parameter(Expression):
     def __str__(self):
         return f"{self.name} {self.type}"
 
+    def __iter__(self):
+        pass  # TODO
+
 
 class Statement(AttrValidator):
     def check(self, ctx):
+        raise NotImplementedError
+
+    def __iter__(self):
         raise NotImplementedError
 
 
@@ -555,6 +629,13 @@ class VarDef(Statement):
     def check(self, ctx):
         assert self.name not in ctx.vars, self.name
         ctx.vars[self.name] = self
+
+    def __iter__(self):
+        # TODO: global vars?
+        if self.type is WabbitType.float:
+            yield 'localf', self.name
+        else:
+            yield 'locali', self.name
 
 
 class VarSet(Statement):
@@ -701,6 +782,15 @@ class Print(Statement):
 
     def check(self, ctx):
         self.value.check(ctx)
+
+    def __iter__(self):
+        yield from self.value
+        if self.value.type is WabbitType.float:
+            yield 'printf'
+        elif self.value.type is WabbitType.char:
+            yield 'printb'
+        else:
+            yield 'printi'
 
 
 class If(Statement):
