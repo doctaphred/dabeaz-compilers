@@ -152,31 +152,34 @@ class CTranspiler:
 
 class WasmEncoder:
     def encode(self, code):
-        self.wcode = b''
+        self.wcode = bytearray()
         self.vars = {}
         for op, *opargs in code:
             getattr(self, f'encode_{op}')(*opargs)
 
         # Put a block terminator on the code
-        self.wcode += b'\x0b'
+        self.wcode.append(0x0b)
 
     def encode_GLOBALI(self, name):
         self.vars[name] = len(self.vars)
 
     def encode_CONSTI(self, value):
-        self.wcode += b'\x41' + leb.signed(value)
+        self.wcode.append(0x41)
+        self.wcode += leb.signed(value)
 
     def encode_STORE(self, name):
-        self.wcode += b'\x21' + leb.unsigned(self.vars[name])
+        self.wcode.append(0x21)
+        self.wcode += leb.unsigned(self.vars[name])
 
     def encode_LOAD(self, name):
-        self.wcode += b'\x20' + leb.unsigned(self.vars[name])
+        self.wcode.append(0x20)
+        self.wcode += leb.unsigned(self.vars[name])
 
     def encode_ADDI(self):
-        self.wcode += b'\x6a'
+        self.wcode.append(0x6a)
 
     def encode_MULI(self):
-        self.wcode += b'\x6c'
+        self.wcode.append(0x6c)
 
     def encode_PRINTI(self):
         # Not sure what to do here yet
