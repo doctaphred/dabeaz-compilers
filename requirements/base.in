@@ -1,2 +1,3 @@
 # Requirements for running this project.
 sly>=0.3
+llvmlite>=0.29
