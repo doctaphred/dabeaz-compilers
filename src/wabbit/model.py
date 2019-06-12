@@ -167,7 +167,8 @@ class AttrValidator:
 
 
 class Expression(AttrValidator):
-    pass
+    # Every expression must have a type.
+    type = None
 
     # TODO: global registry?
     # def __init_subclass__(cls, **kwargs):
@@ -213,6 +214,7 @@ class Integer(Literal):
     TypeError: expected <class 'int'>, got <class 'str'>
     """
     python_type = int
+    type = WabbitType.int
 
 
 class Float(Literal):
@@ -221,6 +223,7 @@ class Float(Literal):
     Float(value=0.0)
     """
     python_type = float
+    type = WabbitType.float
 
 
 class Bool(Literal):
@@ -229,6 +232,7 @@ class Bool(Literal):
     Bool(value=False)
     """
     python_type = bool
+    type = WabbitType.bool
 
     def __str__(self):
         return 'true' if self else 'false'
@@ -240,6 +244,7 @@ class Character(Literal):
     Character(value='a')
     """
     python_type = str
+    type = WabbitType.char
 
     def validate(self):
         super().validate()
