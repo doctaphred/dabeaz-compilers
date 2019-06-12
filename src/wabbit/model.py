@@ -200,15 +200,15 @@ class Literal(Expression):
             )
 
 
-class Integer(Literal):
+class IntLiteral(Literal):
     """
-    >>> Integer(0)
-    Integer(value=0)
+    >>> IntLiteral(0)
+    IntLiteral(value=0)
 
-    >>> str(Integer(0))
+    >>> str(IntLiteral(0))
     '0'
 
-    >>> Integer('a')
+    >>> IntLiteral('a')
     Traceback (most recent call last):
       ...
     TypeError: expected <class 'int'>, got <class 'str'>
@@ -217,19 +217,19 @@ class Integer(Literal):
     type = WabbitType.int
 
 
-class Float(Literal):
+class FloatLiteral(Literal):
     """
-    >>> Float(0.0)
-    Float(value=0.0)
+    >>> FloatLiteral(0.0)
+    FloatLiteral(value=0.0)
     """
     python_type = float
     type = WabbitType.float
 
 
-class Bool(Literal):
+class BoolLiteral(Literal):
     """
-    >>> Bool(False)
-    Bool(value=False)
+    >>> BoolLiteral(False)
+    BoolLiteral(value=False)
     """
     python_type = bool
     type = WabbitType.bool
@@ -238,10 +238,10 @@ class Bool(Literal):
         return 'true' if self else 'false'
 
 
-class Character(Literal):
+class CharLiteral(Literal):
     """
-    >>> Character('a')
-    Character(value='a')
+    >>> CharLiteral('a')
+    CharLiteral(value='a')
     """
     python_type = str
     type = WabbitType.char
@@ -253,21 +253,21 @@ class Character(Literal):
 
 class PrefixOp(Expression):
     """
-    >>> PrefixOp('+', Integer(0))
-    PrefixOp(symbol='+', operand=Integer(value=0))
-    >>> str(PrefixOp('+', Integer(0)))
+    >>> PrefixOp('+', IntLiteral(0))
+    PrefixOp(symbol='+', operand=IntLiteral(value=0))
+    >>> str(PrefixOp('+', IntLiteral(0)))
     '+0'
 
-    >>> PrefixOp('?', Integer(0))
+    >>> PrefixOp('?', IntLiteral(0))
     Traceback (most recent call last):
       ...
     ValueError: invalid PrefixOp symbol: '?'
 
-    >>> stmt = AssignVar('x', Integer(2))
+    >>> stmt = VarSet('x', IntLiteral(2))
     >>> PrefixOp('-', stmt)
     Traceback (most recent call last):
       ...
-    TypeError: expected Expression, got AssignVar
+    TypeError: expected Expression, got VarSet
     """
     # 1.3 Unary Operators
     #        +operand       (Positive)
@@ -292,9 +292,9 @@ class PrefixOp(Expression):
 
 class InfixOp(Expression):
     """
-    >>> InfixOp('+', Integer(1), Integer(2))
-    InfixOp(symbol='+', left=Integer(value=1), right=Integer(value=2))
-    >>> str(InfixOp('+', Integer(1), Integer(2)))
+    >>> InfixOp('+', IntLiteral(1), IntLiteral(2))
+    InfixOp(symbol='+', left=IntLiteral(value=1), right=IntLiteral(value=2))
+    >>> str(InfixOp('+', IntLiteral(1), IntLiteral(2)))
     '1 + 2'
     """
     # 1.2 Binary Operators
@@ -340,15 +340,15 @@ class InfixOp(Expression):
         return f"{self.left} {self.symbol} {self.right}"
 
 
-class LoadVar(Expression):
+class VarGet(Expression):
     """
-    >>> LoadVar('ayy')
-    LoadVar(name='ayy')
+    >>> VarGet('ayy')
+    VarGet(name='ayy')
 
-    >>> LoadVar(Integer(0))
+    >>> VarGet(IntLiteral(0))
     Traceback (most recent call last):
       ...
-    TypeError: expected str, got Integer
+    TypeError: expected str, got IntLiteral
     """
     # 1.4 Loading from a location
     #        xyz           (The value of variable xyz)
@@ -360,21 +360,21 @@ class LoadVar(Expression):
         return self.name
 
 
-class LoadMem(Expression):
+class MemGet(Expression):
     """
-    >>> LoadMem(Integer(0))
-    LoadMem(loc=Integer(value=0))
+    >>> MemGet(IntLiteral(0))
+    MemGet(loc=IntLiteral(value=0))
 
-    >>> LoadMem('ayy')
+    >>> MemGet('ayy')
     Traceback (most recent call last):
       ...
     TypeError: expected Expression, got str
 
-    >>> stmt = AssignVar('x', Integer(2))
-    >>> LoadMem(stmt)
+    >>> stmt = VarSet('x', IntLiteral(2))
+    >>> MemGet(stmt)
     Traceback (most recent call last):
       ...
-    TypeError: expected Expression, got AssignVar
+    TypeError: expected Expression, got VarSet
     """
     # 1.4 Loading from a location
     #        xyz           (The value of variable xyz)
@@ -395,8 +395,7 @@ class TypeCast(Expression):
         super().__init__(type=type, value=value)
 
 
-
-class CallFunc(Expression):
+class FuncCall(Expression):
     # 1.6 Function/Procedure Call
     #        func(arg1, arg2, ..., argn)
     def __init__(self, name: str, args):
@@ -412,7 +411,7 @@ class CallFunc(Expression):
         return f"{self.name}({args})"
 
 
-class FuncParam(Expression):
+class Parameter(Expression):
     # 2.2 Function Parameters
     #
     #       func square(x int) int { return x*x; }
@@ -432,20 +431,20 @@ class Statement(AttrValidator):
     pass
 
 
-class DeclareVar(Statement):
+class VarDef(Statement):
     """
-    >>> DeclareVar('x', WabbitType.int)
-    DeclareVar(name='x', type=WabbitType('int'))
+    >>> VarDef('x', WabbitType.int)
+    VarDef(name='x', type=WabbitType('int'))
 
-    >>> DeclareVar(1, Integer(2))
+    >>> VarDef(1, IntLiteral(2))
     Traceback (most recent call last):
       ...
     TypeError: expected str, got int
 
-    >>> DeclareVar(Character('x'), Integer(2))
+    >>> VarDef(CharLiteral('x'), IntLiteral(2))
     Traceback (most recent call last):
       ...
-    TypeError: expected str, got Character
+    TypeError: expected str, got CharLiteral
     """
     # 2.1 Variables.  Variables can be declared in a few different forms.
     #
@@ -458,20 +457,20 @@ class DeclareVar(Statement):
         return f"var {self.name} {self.type};"
 
 
-class AssignVar(Statement):
+class VarSet(Statement):
     """
-    >>> AssignVar('x', Integer(2))
-    AssignVar(name='x', value=Integer(value=2))
+    >>> VarSet('x', IntLiteral(2))
+    VarSet(name='x', value=IntLiteral(value=2))
 
-    >>> AssignVar(1, Integer(2))
+    >>> VarSet(1, IntLiteral(2))
     Traceback (most recent call last):
       ...
     TypeError: expected str, got int
 
-    >>> AssignVar(Character('x'), Integer(2))
+    >>> VarSet(CharLiteral('x'), IntLiteral(2))
     Traceback (most recent call last):
       ...
-    TypeError: expected str, got Character
+    TypeError: expected str, got CharLiteral
     """
     # 3.1 Assignment
     #
@@ -483,7 +482,7 @@ class AssignVar(Statement):
         return f"{self.name} = {self.value};"
 
 
-class DeclareAssignVar(Statement):
+class VarDefSet(Statement):
     #    var name type [= value];
     #    const name = value;
     def __init__(
@@ -503,7 +502,7 @@ class DeclareAssignVar(Statement):
         return f"{prefix} {self.name} {self.type} = {self.value};"
 
 
-class AssignMem(Statement):
+class MemSet(Statement):
     # `location = expression ;
     def __init__(self, loc: Expression, value: Expression):
         super().__init__(loc=loc, value=value)
@@ -527,7 +526,7 @@ class Block:
         ])
 
 
-class DefineFunc(Statement):
+class FuncDef(Statement):
     # 2.3 Function definitions.
     #
     #    func name(parameters) return_type { statements }
@@ -542,7 +541,7 @@ class DefineFunc(Statement):
     def validate(self):
         super().validate()
         for param in self.params:
-            assert isinstance(param, FuncParam), param
+            assert isinstance(param, Parameter), param
 
     def __str__(self):
         params = ', '.join(str(param) for param in self.params)
@@ -554,7 +553,7 @@ class DefineFunc(Statement):
         )
 
 
-class ImportFunc(DefineFunc):
+class ImportFunc(FuncDef):
     # Functions can be imported from external libraries using
     # the special statement
     #

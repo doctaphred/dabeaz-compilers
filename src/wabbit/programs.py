@@ -23,24 +23,24 @@
 # will help you here if you screw things up.
 
 from wabbit.model import (
+    Block,
+    Conditional,
+    FloatLiteral,
+    FuncCall,
+    FuncDef,
     InfixOp,
-    Float,
-    Integer,
+    IntLiteral,
+    Loop,
+    MemGet,
+    MemSet,
+    Parameter,
     PrefixOp,
     Print,
-    DeclareAssignVar,
-    DeclareVar,
-    AssignVar,
-    LoadVar,
-    Conditional,
-    Block,
-    Loop,
-    DefineFunc,
     Return,
-    CallFunc,
-    FuncParam,
-    LoadMem,
-    AssignMem,
+    VarDef,
+    VarDefSet,
+    VarGet,
+    VarSet,
 )
 
 from .typesys import WabbitType
@@ -54,11 +54,11 @@ from .typesys import WabbitType
 #
 # This one is given to you as an example.
 
-int_expr = InfixOp('+', Integer(2),
-                   InfixOp('*', Integer(3), Integer(4)))
+int_expr = InfixOp('+', IntLiteral(2),
+                   InfixOp('*', IntLiteral(3), IntLiteral(4)))
 
-float_expr = InfixOp('+', Float(2.0),
-                     InfixOp('*', Float(3.0), Float(4.0)))
+float_expr = InfixOp('+', FloatLiteral(2.0),
+                     InfixOp('*', FloatLiteral(3.0), FloatLiteral(4.0)))
 
 # ----------------------------------------------------------------------
 # Program 1: Printing
@@ -73,13 +73,13 @@ program1 = [
     Print(
         InfixOp(
             '+',
-            Integer(2),
+            IntLiteral(2),
             InfixOp(
                 '*',
-                Integer(3),
+                IntLiteral(3),
                 PrefixOp(
                     '-',
-                    Integer(4),
+                    IntLiteral(4),
                 ),
             ),
         ),
@@ -87,13 +87,13 @@ program1 = [
     Print(
         InfixOp(
             '-',
-            Float(2.0),
+            FloatLiteral(2.0),
             InfixOp(
                 '/',
-                Float(3.0),
+                FloatLiteral(3.0),
                 PrefixOp(
                     '-',
-                    Float(4.0),
+                    FloatLiteral(4.0),
                 ),
             ),
         ),
@@ -107,37 +107,37 @@ program1 = [
 # Encode the following statements.
 #
 #    const pi = 3.14159;
-#    var tau float;
+#    var tau FloatLiteral;
 #    tau = 2.0 * pi;
 #    print(tau);
 
 program2 = [
-    DeclareAssignVar(
+    VarDefSet(
         name='pi',
         type=WabbitType.float,
-        value=Float(
+        value=FloatLiteral(
             value=3.14159,
         ),
         const=True,
     ),
-    DeclareVar(
+    VarDef(
         name='tau',
         type=WabbitType.float,
     ),
-    AssignVar(
+    VarSet(
         name='tau',
         value=InfixOp(
             symbol='*',
-            left=Float(
+            left=FloatLiteral(
                 value=2.0,
             ),
-            right=LoadVar(
+            right=VarGet(
                 name='pi',
             ),
         ),
     ),
     Print(
-        LoadVar(
+        VarGet(
             name='tau',
         ),
     ),
@@ -157,18 +157,18 @@ program2 = [
 #
 
 program3 = [
-    DeclareAssignVar(
+    VarDefSet(
         name='a',
         type=WabbitType.int,
-        value=Integer(
+        value=IntLiteral(
             value=2,
         ),
         const=False,
     ),
-    DeclareAssignVar(
+    VarDefSet(
         name='b',
         type=WabbitType.int,
-        value=Integer(
+        value=IntLiteral(
             value=3,
         ),
         const=False,
@@ -176,21 +176,21 @@ program3 = [
     Conditional(
         test=InfixOp(
             symbol='<',
-            left=LoadVar(
+            left=VarGet(
                 name='a',
             ),
-            right=LoadVar(
+            right=VarGet(
                 name='b',
             ),
         ),
         then=Block(
             statements=(
-                Print(value=LoadVar(name='a')),
+                Print(value=VarGet(name='a')),
             ),
         ),
         otherwise=Block(
             statements=(
-                Print(value=LoadVar(name='b')),
+                Print(value=VarGet(name='b')),
             ),
         ),
     ),
@@ -211,47 +211,47 @@ program3 = [
 #
 
 program4 = [
-    DeclareAssignVar(
+    VarDefSet(
         name='n',
         type=WabbitType.int,
-        value=Integer(10),
+        value=IntLiteral(10),
         const=True,
     ),
-    DeclareAssignVar(
+    VarDefSet(
         name='x',
         type=WabbitType.int,
-        value=Integer(1),
+        value=IntLiteral(1),
         const=False,
     ),
-    DeclareAssignVar(
+    VarDefSet(
         name='fact',
         type=WabbitType.int,
-        value=Integer(1),
+        value=IntLiteral(1),
         const=False,
     ),
     Loop(
         test=InfixOp(
             symbol='<',
-            left=LoadVar(name='x'),
-            right=LoadVar(name='n'),
+            left=VarGet(name='x'),
+            right=VarGet(name='n'),
         ),
         body=Block(
             statements=(
-                AssignVar(
+                VarSet(
                     name='fact',
                     value=InfixOp(
                         symbol='*',
-                        left=LoadVar(name='fact'),
-                        right=LoadVar(name='x'),
+                        left=VarGet(name='fact'),
+                        right=VarGet(name='x'),
                     ),
                 ),
-                Print(LoadVar(name='fact')),
-                AssignVar(
+                Print(VarGet(name='fact')),
+                VarSet(
                     name='x',
                     value=InfixOp(
                         symbol='+',
-                        left=LoadVar(name='x'),
-                        right=Integer(1),
+                        left=VarGet(name='x'),
+                        right=IntLiteral(1),
                     ),
                 ),
             ),
@@ -271,29 +271,29 @@ program4 = [
 #
 
 program5 = [
-    DefineFunc(
+    FuncDef(
         name='square',
         params=[
-            FuncParam(
+            Parameter(
                 name='x',
                 type=WabbitType.int,
             ),
         ],
         return_type=WabbitType.int,
         body=Block([
-            Return(InfixOp('*', LoadVar('x'), LoadVar('x'))),
+            Return(InfixOp('*', VarGet('x'), VarGet('x'))),
         ]),
     ),
     Print(
-        CallFunc(
+        FuncCall(
             name='square',
-            args=[Integer(4)],
+            args=[IntLiteral(4)],
         ),
     ),
     Print(
-        CallFunc(
+        FuncCall(
             name='square',
-            args=[Integer(10)],
+            args=[IntLiteral(10)],
         ),
     ),
 ]
@@ -314,37 +314,37 @@ program5 = [
 #    print(fact(10))
 
 program6 = [
-    DefineFunc(
+    FuncDef(
         name='fact',
-        params=[FuncParam('n', WabbitType.int)],
+        params=[Parameter('n', WabbitType.int)],
         return_type=WabbitType.int,
         body=Block([
-            DeclareAssignVar(
+            VarDefSet(
                 'x',
                 WabbitType.int,
-                Integer(1),
+                IntLiteral(1),
                 const=False,
             ),
-            DeclareAssignVar(
+            VarDefSet(
                 'result',
                 WabbitType.int,
-                Integer(1),
+                IntLiteral(1),
                 const=False,
             ),
             Loop(
-                test=InfixOp('<', LoadVar('x'), LoadVar('n')),
+                test=InfixOp('<', VarGet('x'), VarGet('n')),
                 body=Block([
-                    AssignVar(
+                    VarSet(
                         'result',
-                        InfixOp('*', LoadVar('result'), LoadVar('x')),
+                        InfixOp('*', VarGet('result'), VarGet('x')),
                     ),
-                    AssignVar('x', InfixOp('+', LoadVar('x'), Integer(1))),
+                    VarSet('x', InfixOp('+', VarGet('x'), IntLiteral(1))),
                 ]),
             ),
-            Return(LoadVar('result')),
+            Return(VarGet('result')),
         ]),
     ),
-    Print(CallFunc('fact', [Integer(10)])),
+    Print(FuncCall('fact', [IntLiteral(10)])),
 ]
 
 # ----------------------------------------------------------------------
@@ -357,24 +357,24 @@ program6 = [
 #
 
 program7 = [
-    DeclareAssignVar(
+    VarDefSet(
         'memsize',
         WabbitType.int,
-        PrefixOp('^', Integer(1000)),
+        PrefixOp('^', IntLiteral(1000)),
         const=False,
     ),
-    DeclareAssignVar(
+    VarDefSet(
         'addr',
         WabbitType.int,
-        Integer(500),
+        IntLiteral(500),
         const=True,
     ),
-    AssignMem(LoadVar('addr'), Integer(1234)),
+    MemSet(VarGet('addr'), IntLiteral(1234)),
     Print(
         InfixOp(
             '+',
-            LoadMem(LoadVar('addr')),
-            Integer(10000),
+            MemGet(VarGet('addr')),
+            IntLiteral(10000),
         ),
     ),
 ]
