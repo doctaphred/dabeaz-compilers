@@ -132,6 +132,7 @@ from textwrap import indent
 
 from .typesys import WabbitType
 from .utils.reprs import vars_repr
+from .utils.attrs import lazyattr
 
 
 def log(*args, **kwargs):
@@ -272,7 +273,12 @@ class PrefixOp(Expression):
     #        -operand       (Negation)
     #        !operand       (logical not)
     #        ^operand       (Grow memory)
-    symbols = set('+-!^')
+    symbols = {
+        '+': {'int': 'int', 'float': 'float'},
+        '-': {'int': 'int', 'float': 'float'},
+        '!': {'bool': 'bool'},
+        '^': {'int': None},
+    }
 
     def __init__(self, symbol: str, operand: Expression):
         super().__init__(symbol=symbol, operand=operand)
@@ -283,6 +289,18 @@ class PrefixOp(Expression):
             raise ValueError(
                 f"invalid {self.__class__.__name__} symbol: {self.symbol!r}"
             )
+
+    @lazyattr
+    def type(self):
+        transitions = self.symbols[self.symbol]
+
+        name = self.operand.type.name
+
+        if name not in transitions:
+            log(f"{self!r} ({self}): unsupported type: {name}")
+            return WabbitType.error
+
+        return WabbitType(transitions[name])
 
     def __str__(self):
         return f"{self.symbol}{self.operand}"
@@ -310,18 +328,18 @@ class InfixOp(Expression):
     #        left || right       (Logical or)
 
     symbols = {
-        '+',
-        '-',
-        '*',
-        '/',
-        '<',
-        '<=',
-        '>',
-        '>=',
-        '==',
-        '!=',
-        '&&',
-        '||',
+        '+':  {'int': 'int', 'float': 'float'},
+        '-':  {'int': 'int', 'float': 'float'},
+        '*':  {'int': 'int', 'float': 'float'},
+        '/':  {'int': 'int', 'float': 'float'},
+        '<':  {'int': 'bool', 'float': 'bool', 'char': 'bool'},
+        '<=': {'int': 'bool', 'float': 'bool', 'char': 'bool'},
+        '>':  {'int': 'bool', 'float': 'bool', 'char': 'bool'},
+        '>=': {'int': 'bool', 'float': 'bool', 'char': 'bool'},
+        '==': {'int': 'bool', 'float': 'bool', 'char': 'bool', 'bool': 'bool'},
+        '!=': {'int': 'bool', 'float': 'bool', 'char': 'bool', 'bool': 'bool'},
+        '&&': {'bool': 'bool'},
+        '||': {'bool': 'bool'},
     }
 
     def __init__(self, symbol, left: Expression, right: Expression):
@@ -333,6 +351,25 @@ class InfixOp(Expression):
             raise ValueError(
                 f"invalid {self.__class__.__name__} symbol: {self.symbol!r}"
             )
+
+    @lazyattr
+    def type(self):
+        transitions = self.symbols[self.symbol]
+
+        t1, t2 = self.left.type, self.right.type
+        if t1 is WabbitType.infer:
+            name = t2.name
+        elif t2 is WabbitType.infer:
+            name = t1.name
+        elif t1 != t2:
+            log(f"{self!r} ({self}): mismatched types: {t1}, {t2}")
+            return WabbitType.error
+
+        if name not in transitions:
+            log(f"{self!r} ({self}): unsupported type: {name}")
+            return WabbitType.error
+
+        return WabbitType(transitions[name])
 
     def __str__(self):
         return f"{self.left} {self.symbol} {self.right}"
