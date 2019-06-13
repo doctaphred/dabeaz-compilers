@@ -171,13 +171,9 @@ class Expression(AttrValidator):
     type = None
 
     def check(self, ctx):
-        import pdb
-        pdb.set_trace()
         raise NotImplementedError(self.__class__.__name__)
 
     def __iter__(self):
-        import pdb
-        pdb.set_trace()
         raise NotImplementedError(self.__class__.__name__)
 
 
