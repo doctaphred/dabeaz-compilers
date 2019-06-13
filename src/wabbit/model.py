@@ -166,15 +166,17 @@ class AttrValidator:
     __repr__ = vars_repr
 
 
-class Expression(AttrValidator):
-    # Every expression must have a type.
-    type = None
-
+class Node(AttrValidator):
     def check(self, ctx):
         raise NotImplementedError(self.__class__.__name__)
 
     def __iter__(self):
         raise NotImplementedError(self.__class__.__name__)
+
+
+class Expression(Node):
+    # Every expression must have a type.
+    type = None
 
 
 class Literal(Expression):
@@ -589,12 +591,8 @@ class Parameter(Expression):
         pass  # TODO
 
 
-class Statement(AttrValidator):
-    def check(self, ctx):
-        raise NotImplementedError(self.__class__.__name__)
-
-    def __iter__(self):
-        raise NotImplementedError(self.__class__.__name__)
+class Statement(Node):
+    pass
 
 
 class VarDef(Statement):
