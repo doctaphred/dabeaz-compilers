@@ -36,6 +36,22 @@
     tau = 2.0 * pi;
     print tau;
 
+    >>> dis(program2)
+    const pi float = 3.14159;
+    > ('localf', 'pi')
+    > ('constf', 3.14159)
+    > ('store', 'pi')
+    var tau float;
+    > ('localf', 'tau')
+    tau = 2.0 * pi;
+    > ('constf', 2.0)
+    > ('load', 'pi')
+    > ('mulf',)
+    > ('store', 'tau')
+    print tau;
+    > ('load', 'tau')
+    > ('printf',)
+
     >>> pprog(program3)
     var a int = 2;
     var b int = 3;

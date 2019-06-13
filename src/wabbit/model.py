@@ -456,7 +456,7 @@ class VarGet(Expression):
             self.type = ctx.vars[self.name].type
 
     def __iter__(self):
-        pass  # TODO
+        yield ('load', self.name)
 
 
 class MemGet(Expression):
@@ -665,6 +665,10 @@ class VarSet(Statement):
         if self.value.type is not var.type:
             ctx.error(self, f"expected {var.type}, got {self.value.type}")
 
+    def __iter__(self):
+        yield from self.value
+        yield 'store', self.name
+
 
 class VarDefSet(Statement):
     #    var name type [= value];
@@ -690,6 +694,14 @@ class VarDefSet(Statement):
         ctx.vars[self.name] = self
         if self.value.type is not self.type:
             ctx.error(self, f"expected {self.type}, got {self.value.type}")
+
+    def __iter__(self):
+        if self.type is WabbitType.float:
+            yield 'localf', self.name
+        else:
+            yield 'locali', self.name
+        yield from self.value
+        yield 'store', self.name
 
 
 class MemSet(Statement):
