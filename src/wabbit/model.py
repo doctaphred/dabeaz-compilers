@@ -173,12 +173,12 @@ class Expression(AttrValidator):
     def check(self, ctx):
         import pdb
         pdb.set_trace()
-        raise NotImplementedError
+        raise NotImplementedError(self.__class__.__name__)
 
     def __iter__(self):
         import pdb
         pdb.set_trace()
-        raise NotImplementedError
+        raise NotImplementedError(self.__class__.__name__)
 
 
 class Literal(Expression):
@@ -595,10 +595,10 @@ class Parameter(Expression):
 
 class Statement(AttrValidator):
     def check(self, ctx):
-        raise NotImplementedError
+        raise NotImplementedError(self.__class__.__name__)
 
     def __iter__(self):
-        raise NotImplementedError
+        raise NotImplementedError(self.__class__.__name__)
 
 
 class VarDef(Statement):
