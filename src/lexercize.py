@@ -46,3 +46,97 @@ def find(text):
     for k, w in lex(text):
         if k in {'number', 'word'}:
             print(f"{k.upper()}: {w}")
+
+
+def is_digit(c):
+    return '0' <= c <= '9'
+
+
+def is_sign(c):
+    return c == '+' or c == '-'
+
+
+def is_decimal(c):
+    return c == '.'
+
+
+def is_letter(c):
+    return 'a' <= c <= 'z' or 'A' <= c <= 'Z'
+
+
+def is_separator(c):
+    return c == ' '
+
+
+def maybe_number(token, it):
+    for c in it:
+        if is_digit(c):
+            token += c
+        elif is_decimal(c):
+            yield from maybe_float(token + c, it)
+        elif is_separator(c):
+            yield 'int', token
+            yield 'separator', c
+            return
+        else:
+            yield 'error', token + c
+    yield 'int', token
+
+
+def maybe_float(token, it):
+    for c in it:
+        if is_digit(c):
+            token += c
+        elif is_separator(c):
+            yield 'float', token
+            yield 'separator', c
+            return
+        else:
+            yield 'error', token + c
+    yield 'float', token
+
+
+def maybe_identifier(token, it):
+    for c in it:
+        # Identifiers can have numbers after an initial letter.
+        if is_letter(c) or is_digit(c):
+            token += c
+        elif is_separator(c):
+            yield 'identifier', token
+            yield 'separator', c
+            return
+        else:
+            yield 'error', token + c
+    yield 'identifier', token
+
+
+def tokenize(text):
+    """
+    >>> for kind, token in tokenize("123 abc 45 + - * def 73"):
+    ...     print(f"{kind}: {token!r}")
+    int: '123'
+    separator: ' '
+    identifier: 'abc'
+    separator: ' '
+    int: '45'
+    separator: ' '
+    int: '+'
+    separator: ' '
+    int: '-'
+    separator: ' '
+    other: '*'
+    other: ' '
+    identifier: 'def'
+    separator: ' '
+    int: '73'
+    """
+    it = iter(text)
+    for c in it:
+        if is_digit(c) or is_sign(c):
+            yield from maybe_number(c, it)
+        elif is_decimal(c):
+            yield from maybe_float(c, it)
+        elif is_letter(c):
+            yield from maybe_identifier(c, it)
+        else:
+            yield 'other', c
