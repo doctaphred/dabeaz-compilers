@@ -140,3 +140,79 @@ def tokenize(text):
             yield from maybe_identifier(c, it)
         else:
             yield 'other', c
+
+
+test_cases = [
+    "123 abc 45 + - * def 73",
+    "123 abc23 4.5 /* Comment 67 */ 'x' '\\n' '\\'' + - * def 73",
+]
+
+
+def test_tokenize():
+    r"""
+    >>> test_tokenize()
+    Case #1:
+    int: '123'
+    separator: ' '
+    identifier: 'abc'
+    separator: ' '
+    int: '45'
+    separator: ' '
+    int: '+'
+    separator: ' '
+    int: '-'
+    separator: ' '
+    other: '*'
+    other: ' '
+    identifier: 'def'
+    separator: ' '
+    int: '73'
+    ---
+    Case #2:
+    int: '123'
+    separator: ' '
+    identifier: 'abc23'
+    separator: ' '
+    float: '4.5'
+    separator: ' '
+    error: '4/'
+    error: '4*'
+    int: '4'
+    separator: ' '
+    identifier: 'Comment'
+    separator: ' '
+    int: '67'
+    separator: ' '
+    other: '*'
+    other: '/'
+    other: ' '
+    other: "'"
+    error: "x'"
+    identifier: 'x'
+    separator: ' '
+    other: "'"
+    other: '\\'
+    error: "n'"
+    identifier: 'n'
+    separator: ' '
+    other: "'"
+    other: '\\'
+    other: "'"
+    other: "'"
+    other: ' '
+    int: '+'
+    separator: ' '
+    int: '-'
+    separator: ' '
+    other: '*'
+    other: ' '
+    identifier: 'def'
+    separator: ' '
+    int: '73'
+    ---
+    """
+    for i, case in enumerate(test_cases, start=1):
+        print(f"Case #{i}:")
+        for kind, token in tokenize(case):
+            print(f"{kind}: {token!r}")
+        print("---")
