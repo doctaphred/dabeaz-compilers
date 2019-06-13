@@ -25,6 +25,9 @@ lint: venv
 test: venv
 	venv/bin/pytest --doctest-modules src tests --doctest-glob='*.md' $(args)
 
+pdbtest:
+	make test args=--pdb
+
 # Open an IPython shell and import all top-level attributes.
 shell: venv/bin/ipython
 	venv/bin/ipython -i -c 'from $(project) import *'
