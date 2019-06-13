@@ -55,6 +55,12 @@ llvm:
 wasm:
 	python -m wabbit.wasm.generate
 
+wasm-server: wasm
+	open 'http://localhost:8000/hello.html'
+	# By the time the browser actually requests the page, the server is
+	# (usually) up and running! (And if not, just reload the page.)
+	python3 -m http.server --bind localhost
+
 # Update all pinned requirements to their latest versions.
 pin-requirements: venv
 	# TODO (maybe): Figure out how to do this via make dependencies.

@@ -53,6 +53,14 @@ class WasmEncoder:
         func = enc_locals + self.wcode
         self.functions.append(encode.unsigned(len(func)) + func)
 
+    def encode_module(self):
+        module = b'\x00asm\x01\x00\x00\x00'
+        module += encode.section(1, encode.vector(self.typesigs))
+        module += encode.section(3, encode.vector(self.functypes))
+        module += encode.section(7, encode.vector(self.exports))
+        module += encode.section(10, encode.vector(self.functions))
+        return module
+
     def encode_GLOBALI(self, name):
         self.vars[name] = len(self.vars)
         self.vartypes.append(b'\x7f')
@@ -112,3 +120,8 @@ if __name__ == '__main__':
     assert encoder.functypes == [b'\x00']
     assert encoder.exports == [b'\x04main\x00\x00']
     assert encoder.functions == [b'\x1b\x01\x03\x7fA\x04!\x00A\x05!\x01 \x00 \x00l \x01 \x01lj!\x02 \x02\x0b']  # noqa
+
+    module = encoder.encode_module()
+    print('module:', module)
+    with open('out.wasm', 'wb') as file:
+        file.write(module)

@@ -72,6 +72,10 @@ def signature(argtypes, rettypes):
     return b'\x60' + vector(argtypes) + vector(rettypes)
 
 
+def section(sectnum, contents):
+    return bytes([sectnum]) + unsigned(len(contents)) + contents
+
+
 assert unsigned(624485) == bytes([0xe5, 0x8e, 0x26])
 assert unsigned(127) == bytes([0x7f])
 assert signed(-624485) == bytes([0x9b, 0xf1, 0x59])

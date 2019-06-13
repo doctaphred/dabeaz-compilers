@@ -1,0 +1,20 @@
+<html>
+<body>
+<h3>Program Output</h3>
+
+<pre id="myout">The output is: </pre>
+
+<script>
+    var imports = { };
+    fetch("out.wasm").then(response =>
+       response.arrayBuffer()
+    ).then(bytes =>
+       WebAssembly.instantiate(bytes, imports)
+    ).then(results => {
+       window.main = results.instance.exports.main;
+       out = window.main();
+       document.getElementById("myout").innerHTML += out + "\n";
+    });
+</script>
+</body>
+</html>
