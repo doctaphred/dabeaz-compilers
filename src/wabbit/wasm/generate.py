@@ -100,5 +100,15 @@ if __name__ == '__main__':
 
     encoder = WasmEncoder()
     encoder.encode_function("main", [], [i32], code)
-    print(encoder.wcode)
-    print(encoder.wcode.hex())
+    # print(encoder.wcode.hex())
+
+    print('wcode:', encoder.wcode)
+    print('typesigs:', encoder.typesigs)
+    print('functypes:', encoder.functypes)
+    print('exports:', encoder.exports)
+    print('functions:', encoder.functions)
+
+    assert encoder.typesigs == [b'`\x00\x01\x7f']
+    assert encoder.functypes == [b'\x00']
+    assert encoder.exports == [b'\x04main\x00\x00']
+    assert encoder.functions == [b'\x1b\x01\x03\x7fA\x04!\x00A\x05!\x01 \x00 \x00l \x01 \x01lj!\x02 \x02\x0b']  # noqa
