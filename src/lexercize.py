@@ -68,12 +68,12 @@ def is_separator(c):
     return c == ' '
 
 
-def maybe_number(token, it):
+def maybe_number(it, token):
     for c in it:
         if is_digit(c):
             token += c
         elif is_decimal(c):
-            yield from maybe_float(token + c, it)
+            yield from maybe_float(it, token + c)
         elif is_separator(c):
             yield 'int', token
             yield 'separator', c
@@ -83,7 +83,7 @@ def maybe_number(token, it):
     yield 'int', token
 
 
-def maybe_float(token, it):
+def maybe_float(it, token):
     for c in it:
         if is_digit(c):
             token += c
@@ -96,7 +96,7 @@ def maybe_float(token, it):
     yield 'float', token
 
 
-def maybe_identifier(token, it):
+def maybe_identifier(it, token):
     for c in it:
         # Identifiers can have numbers after an initial letter.
         if is_letter(c) or is_digit(c):
@@ -133,11 +133,11 @@ def tokenize(text):
     it = iter(text)
     for c in it:
         if is_digit(c) or is_sign(c):
-            yield from maybe_number(c, it)
+            yield from maybe_number(it, c)
         elif is_decimal(c):
-            yield from maybe_float(c, it)
+            yield from maybe_float(it, c)
         elif is_letter(c):
-            yield from maybe_identifier(c, it)
+            yield from maybe_identifier(it, c)
         else:
             yield 'other', c
 
