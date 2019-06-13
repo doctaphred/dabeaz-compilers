@@ -16,16 +16,16 @@
     > ('consti', 2)
     > ('consti', 3)
     > ('consti', 4)
-    > muli
-    > addi
-    > printi
+    > ('muli',)
+    > ('addi',)
+    > ('printi',)
     print 2.0 - 3.0 / -4.0;
     > ('constf', 2.0)
     > ('constf', 3.0)
     > ('constf', 4.0)
-    > divf
-    > subf
-    > printf
+    > ('divf',)
+    > ('subf',)
+    > ('printf',)
 
     - TODO: change 'const pi float' to 'const pi'
     - TODO: add parens to print statement

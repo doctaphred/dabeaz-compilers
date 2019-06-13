@@ -420,10 +420,10 @@ class InfixOp(Expression):
         yield from self.right
         name = self.symbol_names[self.symbol]
         if self.type is WabbitType.float:
-            yield name + 'f'
+            yield (name + 'f',)
         else:
             # ints, chars, and bools are all implemented as ints.
-            yield name + 'i'
+            yield (name + 'i',)
 
     def __str__(self):
         return f"{self.left} {self.symbol} {self.right}"
@@ -780,11 +780,11 @@ class Print(Statement):
     def __iter__(self):
         yield from self.value
         if self.value.type is WabbitType.float:
-            yield 'printf'
+            yield ('printf',)
         elif self.value.type is WabbitType.char:
-            yield 'printb'
+            yield ('printb',)
         else:
-            yield 'printi'
+            yield ('printi',)
 
 
 class If(Statement):
