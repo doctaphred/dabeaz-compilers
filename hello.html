@@ -5,15 +5,18 @@
 <pre id="myout">The output is: </pre>
 
 <script>
-    var imports = { };
+    var imports = {
+       runtime : {
+           _printi: (x) => { document.getElementById("myout").innerHTML += x + "\n"; },
+       }
+     };
     fetch("out.wasm").then(response =>
        response.arrayBuffer()
     ).then(bytes =>
        WebAssembly.instantiate(bytes, imports)
     ).then(results => {
        window.main = results.instance.exports.main;
-       out = window.main();
-       document.getElementById("myout").innerHTML += out + "\n";
+       window.main();
     });
 </script>
 </body>
