@@ -616,18 +616,18 @@ class Statement(Node):
     pass
 
 
-class VarDef(Statement):
+class Var(Statement):
     """Variable declaration, without an initial value.
 
-    >>> VarDef('x', WabbitType.int)
-    VarDef(name='x', type=WabbitType('int'))
+    >>> Var('x', WabbitType.int)
+    Var(name='x', type=WabbitType('int'))
 
-    >>> VarDef(1, IntLiteral(2))
+    >>> Var(1, IntLiteral(2))
     Traceback (most recent call last):
       ...
     TypeError: expected str, got int
 
-    >>> VarDef(CharLiteral('x'), IntLiteral(2))
+    >>> Var(CharLiteral('x'), IntLiteral(2))
     Traceback (most recent call last):
       ...
     TypeError: expected str, got CharLiteral
@@ -692,7 +692,8 @@ class VarSet(Statement):
         yield 'store', self.name
 
 
-class VarDefSet(Statement):
+class VarDef(Statement):
+    """Variable declaration with an initial value."""
     #    var name [type] = value;
     def __init__(
         self,
@@ -721,7 +722,7 @@ class VarDefSet(Statement):
         yield 'store', self.name
 
 
-class Const(VarDefSet):
+class Const(VarDef):
     #    const name [type] = value;
     def __str__(self):
         return f"const {self.name} {self.type} = {self.value};"

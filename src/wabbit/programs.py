@@ -38,8 +38,8 @@ from .model import (
     PrefixOp,
     Print,
     Return,
+    Var,
     VarDef,
-    VarDefSet,
     VarGet,
     VarSet,
     While,
@@ -122,7 +122,7 @@ program2 = compile([
         value=FloatLiteral(3.14159),
         type=WabbitType.float,
     ),
-    VarDef(
+    Var(
         name='tau',
         type=WabbitType.float,
     ),
@@ -159,12 +159,12 @@ program2 = compile([
 #
 
 program3 = compile([
-    VarDefSet(
+    VarDef(
         name='a',
         value=IntLiteral(2),
         type=WabbitType.int,
     ),
-    VarDefSet(
+    VarDef(
         name='b',
         value=IntLiteral(3),
         type=WabbitType.int,
@@ -196,12 +196,12 @@ program4 = compile([
         value=IntLiteral(10),
         type=WabbitType.int,
     ),
-    VarDefSet(
+    VarDef(
         name='x',
         value=IntLiteral(1),
         type=WabbitType.int,
     ),
-    VarDefSet(
+    VarDef(
         name='fact',
         value=IntLiteral(1),
         type=WabbitType.int,
@@ -296,12 +296,12 @@ program6 = compile([
         params=[Parameter('n', WabbitType.int)],
         return_type=WabbitType.int,
         body=Block([
-            VarDefSet(
+            VarDef(
                 'x',
                 IntLiteral(1),
                 WabbitType.int,
             ),
-            VarDefSet(
+            VarDef(
                 'result',
                 IntLiteral(1),
                 WabbitType.int,
@@ -332,7 +332,7 @@ program6 = compile([
 #
 
 program7 = compile([
-    VarDefSet(
+    VarDef(
         'memsize',
         PrefixOp('^', IntLiteral(1000)),
         WabbitType.int,
