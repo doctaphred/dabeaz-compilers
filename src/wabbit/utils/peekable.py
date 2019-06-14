@@ -42,6 +42,11 @@ class Peekable(Iterator):
     def _advance(self):
         self._next = next(self._it, self._sentinel)
 
+    def _default(self, value):
+        if value is self._sentinel:
+            raise StopIteration
+        return value
+
     def peek(self, default=_sentinel):
         """Return the next item without advancing the iterator.
 
@@ -49,23 +54,15 @@ class Peekable(Iterator):
         value is provided as a kwarg.
         """
         if not self:
-            if default is not self._sentinel:
-                return default
-            else:
-                raise StopIteration
-        else:
-            return self._next
+            return self._default(default)
+        return self._next
 
     def __next__(self, default=_sentinel):
         if not self:
-            if default is not self._sentinel:
-                return default
-            else:
-                raise StopIteration
-        else:
-            val = self._next
-            self._advance()
-            return val
+            return self._default(default)
+        val = self._next
+        self._advance()
+        return val
 
     def __bool__(self):
         return self._next is not self._sentinel
