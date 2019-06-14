@@ -179,6 +179,45 @@
     }
     print fact(10);
 
+    >>> print(program6.dis())
+    func fact(n int) int {
+        var x int = 1;
+        var result int = 1;
+        while x < n {
+            result = result * x;
+            x = x + 1;
+        }
+        return result;
+    }
+    > ('locali', 'x')
+    > ('consti', 1)
+    > ('store', 'x')
+    > ('locali', 'result')
+    > ('consti', 1)
+    > ('store', 'result')
+    > ('loop',)
+    > ('consti', 1)
+    > ('load', 'x')
+    > ('load', 'n')
+    > ('lti',)
+    > ('subi',)
+    > ('cbreak',)
+    > ('load', 'result')
+    > ('load', 'x')
+    > ('muli',)
+    > ('store', 'result')
+    > ('load', 'x')
+    > ('consti', 1)
+    > ('addi',)
+    > ('store', 'x')
+    > ('endloop',)
+    > ('load', 'result')
+    > ret
+    print fact(10);
+    > ('consti', 10)
+    > ('call', 'fact')
+    > ('printi',)
+
     TODO:
         - 'const addr int' -> 'const addr'
         - add parens to print
