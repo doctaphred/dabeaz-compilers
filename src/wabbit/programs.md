@@ -30,17 +30,16 @@
     > ('subf',)
     > ('printf',)
 
-    - TODO: change 'const pi float' to 'const pi'
     - TODO: add parens to print statement
 
     >>> print(program2)
-    const pi float = 3.14159;
+    const pi = 3.14159;
     var tau float;
     tau = 2.0 * pi;
     print tau;
 
     >>> print(program2.dis())
-    const pi float = 3.14159;
+    const pi = 3.14159;
     > ('localf', 'pi')
     > ('constf', 3.14159)
     > ('store', 'pi')

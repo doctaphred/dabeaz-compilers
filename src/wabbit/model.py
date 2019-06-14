@@ -636,14 +636,17 @@ class Var(Statement):
     #
     #    var name type [= value];
     #    var name [type] = value;
+    prefix = 'var'
+
     def __init__(self, name: str, type: WabbitType):
         super().__init__(name=name, type=type)
 
     def __str__(self):
-        return f"var {self.name} {self.type};"
+        return f"{self.prefix} {self.name} {self.type};"
 
     def check(self, ctx):
         assert self.name not in ctx.vars, self.name
+        assert self.type is not WabbitType.infer
         ctx.vars[self.name] = self
 
     def __iter__(self):
@@ -695,22 +698,34 @@ class VarSet(Statement):
 class VarDef(Statement):
     """Variable declaration with an initial value."""
     #    var name [type] = value;
+    prefix = 'var'
+
     def __init__(
         self,
         name: str,
         value: Expression,
-        type: WabbitType = WabbitType.infer,
+        type: WabbitType = None,
     ):
-        super().__init__(name=name, type=type, value=value)
+        if type is None:
+            declared = None
+            type = WabbitType.infer
+        else:
+            declared = type
+        super().__init__(name=name, value=value, type=type, declared=declared)
 
     def __str__(self):
-        return f"var {self.name} {self.type} = {self.value};"
+        if self.declared is not None:
+            return f"{self.prefix} {self.name} {self.declared} = {self.value};"
+        else:
+            return f"{self.prefix} {self.name} = {self.value};"
 
     def check(self, ctx):
         self.value.check(ctx)
         assert self.name not in ctx.vars, self.name
         ctx.vars[self.name] = self
-        if self.value.type is not self.type:
+        if self.type is WabbitType.infer:
+            self.type = self.value.type
+        elif self.value.type is not self.type:
             ctx.error(self, f"expected {self.type}, got {self.value.type}")
 
     def __iter__(self):
@@ -724,8 +739,7 @@ class VarDef(Statement):
 
 class Const(VarDef):
     #    const name [type] = value;
-    def __str__(self):
-        return f"const {self.name} {self.type} = {self.value};"
+    prefix = 'const'
 
 
 class MemSet(Statement):

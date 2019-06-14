@@ -120,7 +120,6 @@ program2 = compile([
     Const(
         name='pi',
         value=FloatLiteral(3.14159),
-        type=WabbitType.float,
     ),
     Var(
         name='tau',
