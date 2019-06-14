@@ -752,6 +752,10 @@ class Block:
         for statement in self.statements:
             statement.check(ctx)
 
+    def __iter__(self):
+        for statement in self.statements:
+            yield from statement
+
 
 class FuncDef(Statement):
     # 2.3 Function definitions.
@@ -834,6 +838,14 @@ class If(Statement):
             ctx.error(self, f"non-bool test {self.test} ({self.test.type})")
         self.then.check(ctx)
         self.otherwise.check(ctx)
+
+    def __iter__(self):
+        yield from self.test
+        yield ('if',)
+        yield from self.then
+        yield ('else',)
+        yield from self.otherwise
+        yield ('endif',)
 
 
 class While(Statement):

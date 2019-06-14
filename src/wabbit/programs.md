@@ -65,6 +65,31 @@
         print b;
     }
 
+    >>> dis(program3)
+    var a int = 2;
+    > ('locali', 'a')
+    > ('consti', 2)
+    > ('store', 'a')
+    var b int = 3;
+    > ('locali', 'b')
+    > ('consti', 3)
+    > ('store', 'b')
+    if a < b {
+        print a;
+    } else {
+        print b;
+    }
+    > ('load', 'a')
+    > ('load', 'b')
+    > ('lti',)
+    > ('if',)
+    > ('load', 'a')
+    > ('printi',)
+    > ('else',)
+    > ('load', 'b')
+    > ('printi',)
+    > ('endif',)
+
     TODO: 
         - 'const n int' -> 'const n'
 
