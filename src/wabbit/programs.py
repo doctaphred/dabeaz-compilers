@@ -25,6 +25,7 @@
 from .check import Context, compile
 from .model import (
     Block,
+    Const,
     FloatLiteral,
     FuncCall,
     FuncDef,
@@ -116,13 +117,10 @@ program1 = compile([
 #    print(tau);
 
 program2 = compile([
-    VarDefSet(
+    Const(
         name='pi',
+        value=FloatLiteral(3.14159),
         type=WabbitType.float,
-        value=FloatLiteral(
-            value=3.14159,
-        ),
-        const=True,
     ),
     VarDef(
         name='tau',
@@ -163,19 +161,13 @@ program2 = compile([
 program3 = compile([
     VarDefSet(
         name='a',
+        value=IntLiteral(2),
         type=WabbitType.int,
-        value=IntLiteral(
-            value=2,
-        ),
-        const=False,
     ),
     VarDefSet(
         name='b',
+        value=IntLiteral(3),
         type=WabbitType.int,
-        value=IntLiteral(
-            value=3,
-        ),
-        const=False,
     ),
     If(
         test=InfixOp('<', VarGet('a'), VarGet('b')),
@@ -199,23 +191,20 @@ program3 = compile([
 #
 
 program4 = compile([
-    VarDefSet(
+    Const(
         name='n',
-        type=WabbitType.int,
         value=IntLiteral(10),
-        const=True,
+        type=WabbitType.int,
     ),
     VarDefSet(
         name='x',
-        type=WabbitType.int,
         value=IntLiteral(1),
-        const=False,
+        type=WabbitType.int,
     ),
     VarDefSet(
         name='fact',
-        type=WabbitType.int,
         value=IntLiteral(1),
-        const=False,
+        type=WabbitType.int,
     ),
     While(
         test=InfixOp(
@@ -309,15 +298,13 @@ program6 = compile([
         body=Block([
             VarDefSet(
                 'x',
-                WabbitType.int,
                 IntLiteral(1),
-                const=False,
+                WabbitType.int,
             ),
             VarDefSet(
                 'result',
-                WabbitType.int,
                 IntLiteral(1),
-                const=False,
+                WabbitType.int,
             ),
             While(
                 test=InfixOp('<', VarGet('x'), VarGet('n')),
@@ -347,15 +334,13 @@ program6 = compile([
 program7 = compile([
     VarDefSet(
         'memsize',
-        WabbitType.int,
         PrefixOp('^', IntLiteral(1000)),
-        const=False,
-    ),
-    VarDefSet(
-        'addr',
         WabbitType.int,
+    ),
+    Const(
+        'addr',
         IntLiteral(500),
-        const=True,
+        WabbitType.int,
     ),
     MemSet(VarGet('addr'), IntLiteral(1234)),
     Print(

@@ -617,7 +617,8 @@ class Statement(Node):
 
 
 class VarDef(Statement):
-    """
+    """Variable declaration, without an initial value.
+
     >>> VarDef('x', WabbitType.int)
     VarDef(name='x', type=WabbitType('int'))
 
@@ -692,26 +693,21 @@ class VarSet(Statement):
 
 
 class VarDefSet(Statement):
-    #    var name type [= value];
-    #    const name = value;
+    #    var name [type] = value;
     def __init__(
         self,
         name: str,
-        type: WabbitType,  # TODO: make this optional.
         value: Expression,
-        const: bool,
+        type: WabbitType = WabbitType.infer,
     ):
-        super().__init__(name=name, type=type, value=value, const=const)
+        super().__init__(name=name, type=type, value=value)
 
     def __str__(self):
-        if self.const:
-            prefix = 'const'
-        else:
-            prefix = 'var'
-        return f"{prefix} {self.name} {self.type} = {self.value};"
+        return f"var {self.name} {self.type} = {self.value};"
 
     def check(self, ctx):
         self.value.check(ctx)
+        assert self.name not in ctx.vars, self.name
         ctx.vars[self.name] = self
         if self.value.type is not self.type:
             ctx.error(self, f"expected {self.type}, got {self.value.type}")
@@ -723,6 +719,12 @@ class VarDefSet(Statement):
             yield 'locali', self.name
         yield from self.value
         yield 'store', self.name
+
+
+class Const(VarDefSet):
+    #    const name [type] = value;
+    def __str__(self):
+        return f"const {self.name} {self.type} = {self.value};"
 
 
 class MemSet(Statement):
