@@ -15,14 +15,18 @@
     print 2 + 3 * -4;
     > ('consti', 2)
     > ('consti', 3)
+    > ('consti', 0)
     > ('consti', 4)
+    > ('subi',)
     > ('muli',)
     > ('addi',)
     > ('printi',)
     print 2.0 - 3.0 / -4.0;
     > ('constf', 2.0)
     > ('constf', 3.0)
+    > ('constf', 0.0)
     > ('constf', 4.0)
+    > ('subf',)
     > ('divf',)
     > ('subf',)
     > ('printf',)

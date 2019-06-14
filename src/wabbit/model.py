@@ -322,8 +322,26 @@ class PrefixOp(Expression):
             self.type = WabbitType(transitions[name])
 
     def __iter__(self):
-        yield from self.operand
-        # TODO: symbol
+        if self.symbol == '+':
+            # '+' is a no-op: just push the operand on the stack.
+            yield from self.operand
+        elif self.symbol == '-':
+            if self.type is WabbitType.float:
+                # TODO: is this order correct?
+                yield 'constf', 0.0
+                yield from self.operand
+                yield ('subf',)
+            else:
+                yield 'consti', 0
+                yield from self.operand
+                yield ('subi',)
+        elif self.symbol == '!':
+            # 1 - 1 == 0; 1 - 0 == 1
+            yield 'consti', 1
+            yield from self.operand
+            yield ('subi',)
+        else:
+            assert False  # TODO
 
     def __str__(self):
         return f"{self.symbol}{self.operand}"
