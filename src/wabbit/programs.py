@@ -112,7 +112,7 @@ program1 = compile([
 # Encode the following statements.
 #
 #    const pi = 3.14159;
-#    var tau FloatLiteral;
+#    var tau float;
 #    tau = 2.0 * pi;
 #    print(tau);
 
