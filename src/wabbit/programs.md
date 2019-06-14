@@ -150,6 +150,10 @@
     func square(x int) int {
         return x * x;
     }
+    > ('load', 'x')
+    > ('load', 'x')
+    > ('muli',)
+    > ret
     print square(4);
     > ('consti', 4)
     > ('call', 'square')

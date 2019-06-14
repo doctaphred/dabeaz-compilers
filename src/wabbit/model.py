@@ -800,6 +800,9 @@ class FuncDef(Statement):
         # Code was generated in self.check().
         yield from ()
 
+    def dis(self):
+        return '\n'.join([str(self)] + [f"> {inst}" for inst in self.code])
+
 
 class ImportFunc(FuncDef):
     # Functions can be imported from external libraries using
