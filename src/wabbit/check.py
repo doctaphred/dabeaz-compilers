@@ -1,9 +1,17 @@
 from .utils import log
 
 
+def compile(nodes, ctx=None):
+    if ctx is None:
+        ctx = Context()
+    for node in nodes:
+        ctx.append(node)
+    return ctx
+
+
 class Context:
     def __init__(self):
-        self.expressions = {}
+        self.nodes = []
         self.funcs = {}
         self.vars = {}
         self.mem = {}
@@ -13,9 +21,12 @@ class Context:
         self.errors.setdefault(node, []).append(msg)
         log(node, msg)
 
-    @classmethod
-    def eval(cls, stmts):
-        self = cls()
-        for stmt in stmts:
-            stmt.check(self)
-        return self
+    def append(self, node):
+        self.nodes.append(node)
+        node.check(self)
+
+    def __str__(self):
+        return '\n'.join(str(node) for node in self.nodes)
+
+    def dis(self):
+        return '\n'.join(node.dis() for node in self.nodes)

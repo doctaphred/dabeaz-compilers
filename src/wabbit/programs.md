@@ -1,5 +1,4 @@
     >>> from wabbit.programs import *
-    >>> from wabbit.utils import dis, pprog
 
     >>> print(int_expr)
     2 + 3 * 4
@@ -7,11 +6,11 @@
     >>> print(float_expr)
     2.0 + 3.0 * 4.0
 
-    >>> pprog(program1)
+    >>> print(program1)
     print 2 + 3 * -4;
     print 2.0 - 3.0 / -4.0;
 
-    >>> dis(program1)
+    >>> print(program1.dis())
     print 2 + 3 * -4;
     > ('consti', 2)
     > ('consti', 3)
@@ -34,13 +33,13 @@
     - TODO: change 'const pi float' to 'const pi'
     - TODO: add parens to print statement
 
-    >>> pprog(program2)
+    >>> print(program2)
     const pi float = 3.14159;
     var tau float;
     tau = 2.0 * pi;
     print tau;
 
-    >>> dis(program2)
+    >>> print(program2.dis())
     const pi float = 3.14159;
     > ('localf', 'pi')
     > ('constf', 3.14159)
@@ -56,7 +55,7 @@
     > ('load', 'tau')
     > ('printf',)
 
-    >>> pprog(program3)
+    >>> print(program3)
     var a int = 2;
     var b int = 3;
     if a < b {
@@ -65,7 +64,7 @@
         print b;
     }
 
-    >>> dis(program3)
+    >>> print(program3.dis())
     var a int = 2;
     > ('locali', 'a')
     > ('consti', 2)
@@ -93,7 +92,7 @@
     TODO: 
         - 'const n int' -> 'const n'
 
-    >>> pprog(program4)
+    >>> print(program4)
     const n int = 10;
     var x int = 1;
     var fact int = 1;
@@ -103,7 +102,7 @@
         x = x + 1;
     }
 
-    >>> dis(program4)
+    >>> print(program4.dis())
     const n int = 10;
     > ('locali', 'n')
     > ('consti', 10)
@@ -140,18 +139,31 @@
     > ('store', 'x')
     > ('endloop',)
 
-    >>> pprog(program5)
+    >>> print(program5)
     func square(x int) int {
         return x * x;
     }
     print square(4);
     print square(10);
 
+    >>> print(program5.dis())
+    func square(x int) int {
+        return x * x;
+    }
+    print square(4);
+    > ('consti', 4)
+    > ('call', 'square')
+    > ('printi',)
+    print square(10);
+    > ('consti', 10)
+    > ('call', 'square')
+    > ('printi',)
+
     TODO:
         - parentheses for print
         - no semicolon after print(??)
 
-    >>> pprog(program6)
+    >>> print(program6)
     func fact(n int) int {
         var x int = 1;
         var result int = 1;
@@ -167,7 +179,7 @@
         - 'const addr int' -> 'const addr'
         - add parens to print
 
-    >>> pprog(program7)
+    >>> print(program7)
     var memsize int = ^1000;
     const addr int = 500;
     `addr = 1234;

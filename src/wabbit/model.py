@@ -173,6 +173,9 @@ class Node(AttrValidator):
     def __iter__(self):
         raise NotImplementedError(self.__class__.__name__)
 
+    def dis(self):
+        return '\n'.join([str(self)] + [f"> {inst}" for inst in self])
+
 
 class Expression(Node):
     # Every expression must have a type.
@@ -761,7 +764,8 @@ class FuncDef(Statement):
     # 2.3 Function definitions.
     #
     #    func name(parameters) return_type { statements }
-    def __init__(self, name, params, return_type, body: Block):
+
+    def __init__(self, name, params, return_type: WabbitType, body: Block):
         super().__init__(
             name=name,
             params=params,
@@ -777,6 +781,9 @@ class FuncDef(Statement):
     def check(self, ctx):
         for param in self.params:
             param.check(ctx)
+        # Create a new Context for the function body.
+        self.body.check(type(ctx)())
+        self.code = list(self.body)
         assert self.name not in ctx.funcs, self.name
         ctx.funcs[self.name] = self
 
@@ -788,6 +795,10 @@ class FuncDef(Statement):
             self.return_type,
             self.body,
         )
+
+    def __iter__(self):
+        # Code was generated in self.check().
+        yield from ()
 
 
 class ImportFunc(FuncDef):
@@ -916,3 +927,7 @@ class Return(Statement):
 
     def check(self, ctx):
         self.value.check(ctx)
+
+    def __iter__(self):
+        yield from self.value
+        yield 'ret'

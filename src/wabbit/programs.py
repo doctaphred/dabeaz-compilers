@@ -22,7 +22,7 @@
 # checks that prevent the creation of a bad model.  Those assertions
 # will help you here if you screw things up.
 
-from .check import Context
+from .check import Context, compile
 from .model import (
     Block,
     FloatLiteral,
@@ -62,7 +62,7 @@ float_expr = InfixOp('+', FloatLiteral(2.0),
                      InfixOp('*', FloatLiteral(3.0), FloatLiteral(4.0)))
 float_expr.check(Context())
 
-program0 = [int_expr, float_expr]
+program0 = compile([int_expr, float_expr])
 
 # ----------------------------------------------------------------------
 # Program 1: Printing
@@ -73,7 +73,7 @@ program0 = [int_expr, float_expr]
 #    print 2.0 - 3.0 / -4.0;
 #
 
-program1 = [
+program1 = compile([
     Print(
         InfixOp(
             '+',
@@ -102,7 +102,7 @@ program1 = [
             ),
         ),
     ),
-]
+])
 
 # ----------------------------------------------------------------------
 # Program 2: Variable and constant declarations.
@@ -115,7 +115,7 @@ program1 = [
 #    tau = 2.0 * pi;
 #    print(tau);
 
-program2 = [
+program2 = compile([
     VarDefSet(
         name='pi',
         type=WabbitType.float,
@@ -145,7 +145,7 @@ program2 = [
             name='tau',
         ),
     ),
-]
+])
 
 # ----------------------------------------------------------------------
 # Program 3: Conditionals.  This program prints out the minimum of
@@ -160,7 +160,7 @@ program2 = [
 #    }
 #
 
-program3 = [
+program3 = compile([
     VarDefSet(
         name='a',
         type=WabbitType.int,
@@ -182,7 +182,7 @@ program3 = [
         then=Block([Print(VarGet('a'))]),
         otherwise=Block([Print(VarGet('b'))]),
     ),
-]
+])
 
 # ----------------------------------------------------------------------
 # Program 4: Loops.  This program prints out the first 10 factorials.
@@ -198,7 +198,7 @@ program3 = [
 #    }
 #
 
-program4 = [
+program4 = compile([
     VarDefSet(
         name='n',
         type=WabbitType.int,
@@ -245,7 +245,7 @@ program4 = [
             ),
         ),
     ),
-]
+])
 
 # ----------------------------------------------------------------------
 # Program 5: Functions (simple)
@@ -258,7 +258,7 @@ program4 = [
 #    print square(10);
 #
 
-program5 = [
+program5 = compile([
     FuncDef(
         name='square',
         params=[
@@ -284,7 +284,7 @@ program5 = [
             args=[IntLiteral(10)],
         ),
     ),
-]
+])
 
 # ----------------------------------------------------------------------
 # Program 6: Functions (complex)
@@ -301,7 +301,7 @@ program5 = [
 #
 #    print(fact(10))
 
-program6 = [
+program6 = compile([
     FuncDef(
         name='fact',
         params=[Parameter('n', WabbitType.int)],
@@ -333,7 +333,7 @@ program6 = [
         ]),
     ),
     Print(FuncCall('fact', [IntLiteral(10)])),
-]
+])
 
 # ----------------------------------------------------------------------
 # Program 7: Memory
@@ -344,7 +344,7 @@ program6 = [
 #    print(`addr + 10000);  // Reads 1234 from memory address addr
 #
 
-program7 = [
+program7 = compile([
     VarDefSet(
         'memsize',
         WabbitType.int,
@@ -365,13 +365,12 @@ program7 = [
             IntLiteral(10000),
         ),
     ),
-]
+])
 
 
 for i in range(8):
     program = globals()[f'program{i}']
-    c = Context.eval(program)
-    if c.errors:
+    if program.errors:
         import pdb
         pdb.set_trace()
-    assert not c.errors
+    assert not program.errors
