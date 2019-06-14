@@ -181,5 +181,6 @@ def tokenize(text):
             index += 1
 
 
-for match in tokenize(text):
-    print(match)
+if __name__ == '__main__':
+    for match in tokenize(text):
+        print(match)
