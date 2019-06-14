@@ -103,6 +103,42 @@
         x = x + 1;
     }
 
+    >>> dis(program4)
+    const n int = 10;
+    > ('locali', 'n')
+    > ('consti', 10)
+    > ('store', 'n')
+    var x int = 1;
+    > ('locali', 'x')
+    > ('consti', 1)
+    > ('store', 'x')
+    var fact int = 1;
+    > ('locali', 'fact')
+    > ('consti', 1)
+    > ('store', 'fact')
+    while x < n {
+        fact = fact * x;
+        print fact;
+        x = x + 1;
+    }
+    > ('loop',)
+    > ('consti', 1)
+    > ('load', 'x')
+    > ('load', 'n')
+    > ('lti',)
+    > ('subi',)
+    > ('cbreak',)
+    > ('load', 'fact')
+    > ('load', 'x')
+    > ('muli',)
+    > ('store', 'fact')
+    > ('load', 'fact')
+    > ('printi',)
+    > ('load', 'x')
+    > ('consti', 1)
+    > ('addi',)
+    > ('store', 'x')
+    > ('endloop',)
 
     >>> pprog(program5)
     func square(x int) int {

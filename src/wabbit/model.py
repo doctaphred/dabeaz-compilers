@@ -864,6 +864,15 @@ class While(Statement):
             ctx.error(self, f"non-bool test {self.test} ({self.test.type})")
         self.body.check(ctx)
 
+    def __iter__(self):
+        yield ('loop',)
+        yield ('consti', 1)
+        yield from self.test
+        yield ('subi',)
+        yield ('cbreak',)
+        yield from self.body
+        yield ('endloop',)
+
 
 class Break(Statement):
     # 3.5 Break and Continue
