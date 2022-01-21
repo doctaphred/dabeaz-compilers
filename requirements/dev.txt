@@ -4,25 +4,48 @@
 #
 #    pip-compile requirements/dev.in
 #
-appnope==0.1.0            # via ipython
-backcall==0.1.0           # via ipython
-decorator==4.4.0          # via ipython, traitlets
-fancycompleter==0.8       # via pdbpp
-ipython-genutils==0.2.0   # via traitlets
-ipython==7.5.0
-jedi==0.13.3              # via ipython
-parso==0.4.0              # via jedi
+backcall==0.1.0
+    # via ipython
+decorator==4.4.0
+    # via
+    #   ipython
+    #   traitlets
+fancycompleter==0.8
+    # via pdbpp
+ipython==7.16.3
+    # via -r dev.in
+ipython-genutils==0.2.0
+    # via traitlets
+jedi==0.13.3
+    # via ipython
+parso==0.4.0
+    # via jedi
 pdbpp==0.10.0
-pexpect==4.7.0            # via ipython
-pickleshare==0.7.5        # via ipython
+    # via -r dev.in
+pexpect==4.7.0
+    # via ipython
+pickleshare==0.7.5
+    # via ipython
 pp-ez==0.2.0
-prompt-toolkit==2.0.9     # via ipython
-ptyprocess==0.6.0         # via pexpect
-pygments==2.4.2           # via ipython, pdbpp
-six==1.12.0               # via prompt-toolkit, traitlets
-traitlets==4.3.2          # via ipython
-wcwidth==0.1.7            # via prompt-toolkit
-wmctrl==0.3               # via pdbpp
+    # via -r dev.in
+prompt-toolkit==2.0.9
+    # via ipython
+ptyprocess==0.6.0
+    # via pexpect
+pygments==2.4.2
+    # via
+    #   ipython
+    #   pdbpp
+six==1.12.0
+    # via
+    #   prompt-toolkit
+    #   traitlets
+traitlets==4.3.2
+    # via ipython
+wcwidth==0.1.7
+    # via prompt-toolkit
+wmctrl==0.3
+    # via pdbpp
 
 # The following packages are considered to be unsafe in a requirements file:
-# setuptools==41.0.1        # via ipython
+# setuptools
